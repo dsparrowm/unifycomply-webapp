@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-onest);
+  --color-background: var(--bg-base);
+  --color-foreground: var(--text-primary);
+}
+
+:root {
+  --bg-base: #f7f9fc;
+  --bg-surface: #ffffff;
+  --bg-muted: #f7f9fc;
+  --accent-primary: #00454c;
+  --accent-primary-hover: #007984;
+  --accent-primary-soft: #eefcfe;
+  --chart-api-success: #007984;
+  --chart-api-failed: #8ecfd6;
+  --text-primary: #101928;
+  --text-muted: #475367;
+  --text-light: #667185;
+  --border-default: #e4e7ec;
+  --border-subtle: #f0f2f5;
+  --sandbox-bg: #fffce6;
+  --sandbox-border: #cfb10b;
+  --sandbox-text: #443c1b;
+  --state-success: #16a34a;
+  --state-success-soft: #dcfce7;
+  --state-warning: #f59e0b;
+  --state-warning-soft: #fef3c7;
+  --state-error: #ff383c;
+  --state-error-soft: #fee2e2;
+  --state-info: #2563eb;
+  --state-info-soft: #dbeafe;
+  --sidebar-width: 293px;
+  --auth-panel-bg: #050505;
+  --auth-panel-subtext: #8b95a5;
+  --auth-testimonial-bg: #042f33;
+  --auth-testimonial-role: #7aa8ad;
+  --auth-heading: #111111;
+  --auth-subtitle: #645d5d;
+  --auth-label: #344054;
+  --auth-input-border: #d0d5dd;
+  --auth-placeholder: #667085;
+  --auth-footer-text: #1d2739;
+}
+
+@layer base {
+  * {
+    @apply border-[color:var(--border-default)];
+  }
+
+  body {
+    @apply bg-[color:var(--bg-base)] text-[color:var(--text-primary)] antialiased;
+    font-family: var(--font-onest), system-ui, sans-serif;
+  }
+}

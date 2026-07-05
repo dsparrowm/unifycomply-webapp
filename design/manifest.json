@@ -1,0 +1,129 @@
+{
+  "figmaFileKey": "gJgHsHV3Jt9wYKJfstVdWB",
+  "figmaUrl": "https://www.figma.com/design/gJgHsHV3Jt9wYKJfstVdWB/%F0%9F%AA%AAUnifycomply",
+  "lastSyncedAt": "2026-07-01",
+  "scope": "WebApp page (1:2) only — Landing Page built elsewhere",
+  "pages": [
+    {
+      "name": "Cover",
+      "slug": "cover",
+      "nodeId": "0:1",
+      "inScope": false,
+      "directory": "design/figma/cover",
+      "frames": []
+    },
+    {
+      "name": "Landing Page",
+      "slug": "landing-page",
+      "nodeId": "1:3",
+      "inScope": false,
+      "notes": "Built in another repository",
+      "directory": "design/figma/landing-page",
+      "frames": []
+    },
+    {
+      "name": "WebApp",
+      "slug": "webapp",
+      "nodeId": "1:2",
+      "inScope": true,
+      "directory": "design/figma/webapp",
+      "sections": [
+        {
+          "name": "ONBOARDING - COMPLIANCE OFFICER",
+          "nodeId": "886:48671",
+          "notes": "Sign-in and onboarding flows"
+        },
+        {
+          "name": "OVERVIEW PAGE",
+          "nodeId": "886:49385",
+          "route": "/overview",
+          "notes": "Dashboard overview"
+        },
+        {
+          "name": "KYC COMPLIANCE",
+          "nodeId": "886:53858",
+          "route": "/kyc",
+          "representativeFrame": "886:70409",
+          "notes": "Customer KYC list and detail screens"
+        },
+        {
+          "name": "KYB COMPLIANCE",
+          "nodeId": "886:105537",
+          "route": "/kyb",
+          "notes": "Know Your Business"
+        },
+        {
+          "name": "BANK ANALYSIS",
+          "nodeId": "886:161365",
+          "route": "/bank-analysis",
+          "notes": null
+        },
+        {
+          "name": "AML SCREENING",
+          "nodeId": "886:134392",
+          "route": "/aml-screening",
+          "notes": null
+        },
+        {
+          "name": "Transaction Monitoring",
+          "nodeId": "1532:157043",
+          "route": "/transaction-monitoring",
+          "notes": "Module 4 — includes Overview, Transactions, TM Not-Blocked, Stop Payment, etc."
+        },
+        {
+          "name": "SETTINGS",
+          "nodeId": "886:184304",
+          "route": "/settings",
+          "notes": null
+        },
+        {
+          "name": "MVP FLowchart",
+          "nodeId": "1624:69149",
+          "notes": "Reference diagram — not a build target"
+        }
+      ],
+      "moduleLabels": [
+        { "name": "Module 4", "nodeId": "1532:245371", "notes": "Transaction Monitoring container" },
+        { "name": "Module 5", "nodeId": "1532:157028" },
+        { "name": "Module 6", "nodeId": "1532:157031" },
+        { "name": "Module 7", "nodeId": "1532:157033" },
+        { "name": "Module 8", "nodeId": "1532:157035" },
+        { "name": "Module 9", "nodeId": "1532:157037" },
+        { "name": "Module 10", "nodeId": "1532:157039" },
+        { "name": "Module 11", "nodeId": "1532:157041" }
+      ],
+      "frames": [
+        {
+          "name": "Overview",
+          "nodeId": "886:49386",
+          "section": "OVERVIEW PAGE",
+          "file": "design/figma/webapp/overview.png",
+          "route": "/overview",
+          "featureSpec": "context/feature-specs/02-overview-dashboard.md",
+          "priority": 1,
+          "notes": "Compliance dashboard — quick actions, verification metrics, endpoints, API chart"
+        },
+        {
+          "name": "Search modal",
+          "nodeId": null,
+          "section": "APP SHELL",
+          "file": "design/figma/webapp/search-modal.png",
+          "route": null,
+          "featureSpec": null,
+          "priority": 2,
+          "notes": "Global search overlay — empty state, Cancel dismiss, blurred backdrop"
+        },
+        {
+          "name": "Customer // KYC // 79",
+          "nodeId": "886:70409",
+          "section": "KYC COMPLIANCE",
+          "file": "design/figma/webapp/kyc-list.png",
+          "route": "/kyc",
+          "featureSpec": null,
+          "priority": 1,
+          "notes": "Primary KYC list screen — sidebar, metric cards, filters, data table"
+        }
+      ]
+    }
+  ]
+}

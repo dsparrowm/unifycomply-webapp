@@ -1,0 +1,50 @@
+export type SidebarIconKey =
+  | "overview"
+  | "kyc"
+  | "kyb"
+  | "bank-analysis"
+  | "packages"
+  | "request"
+  | "aml-screening"
+  | "tm-overview"
+  | "transactions"
+  | "tm-not-blocked"
+  | "stop-payment"
+  | "cumulative-frequency"
+  | "tm-blocked"
+  | "sar-report"
+  | "pnd-watchlist"
+  | "rules"
+  | "risk-score"
+  | "organization"
+  | "users"
+  | "roles"
+  | "api-keys"
+  | "logout"
+  | "chevron";
+
+export const sidebarIcons: Record<SidebarIconKey, string> = {
+  overview: "/assets/sidebar/overview.svg",
+  kyc: "/assets/sidebar/kyc.svg",
+  kyb: "/assets/sidebar/kyb.svg",
+  "bank-analysis": "/assets/sidebar/bank-analysis.svg",
+  packages: "/assets/sidebar/packages.svg",
+  request: "/assets/sidebar/request.svg",
+  "aml-screening": "/assets/sidebar/aml-screening.svg",
+  "tm-overview": "/assets/sidebar/tm-overview.svg",
+  transactions: "/assets/sidebar/transactions.svg",
+  "tm-not-blocked": "/assets/sidebar/tm-not-blocked.svg",
+  "stop-payment": "/assets/sidebar/stop-payment.svg",
+  "cumulative-frequency": "/assets/sidebar/cumulative-frequency.svg",
+  "tm-blocked": "/assets/sidebar/tm-blocked.svg",
+  "sar-report": "/assets/sidebar/sar-report.svg",
+  "pnd-watchlist": "/assets/sidebar/pnd-watchlist.svg",
+  rules: "/assets/sidebar/rules.svg",
+  "risk-score": "/assets/sidebar/risk-score.svg",
+  organization: "/assets/sidebar/kyb.svg",
+  users: "/assets/sidebar/request.svg",
+  roles: "/assets/sidebar/rules.svg",
+  "api-keys": "/assets/sidebar/packages.svg",
+  logout: "/assets/sidebar/logout.svg",
+  chevron: "/assets/sidebar/chevron.svg",
+};
