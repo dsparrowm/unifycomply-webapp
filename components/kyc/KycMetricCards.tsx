@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle2, Clock3, XCircle } from "lucide-react";
-import type { KycMetric } from "@/lib/data/kyc";
+import type { KycMetric } from "@/types/kyc";
 import { cn } from "@/lib/utils";
 
 const toneStyles = {

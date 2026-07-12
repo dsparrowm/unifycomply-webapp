@@ -20,6 +20,7 @@ export type SidebarIconKey =
   | "users"
   | "roles"
   | "api-keys"
+  | "billing"
   | "logout"
   | "chevron";
 
@@ -45,6 +46,7 @@ export const sidebarIcons: Record<SidebarIconKey, string> = {
   users: "/assets/sidebar/request.svg",
   roles: "/assets/sidebar/rules.svg",
   "api-keys": "/assets/sidebar/packages.svg",
+  billing: "/assets/sidebar/packages.svg",
   logout: "/assets/sidebar/logout.svg",
   chevron: "/assets/sidebar/chevron.svg",
 };

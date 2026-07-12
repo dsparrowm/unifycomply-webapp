@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { TenantRole } from "@/types/rbac";
 
 export type AuthUser = {
   id: string;
@@ -11,7 +12,7 @@ export type AuthUser = {
 export type Tenant = {
   id: string;
   name: string;
-  role: string;
+  role: TenantRole;
 };
 
 export type AuthStep = "signed_out" | "pending_email" | "pending_mfa" | "pending_tenant" | "authenticated";
@@ -29,8 +30,10 @@ type AuthState = {
 };
 
 const mockTenants: Tenant[] = [
-  { id: "tenant-1", name: "Hyperpels Tech", role: "Compliance Officer" },
-  { id: "tenant-2", name: "Rokswood Financial", role: "Compliance Manager" },
+  { id: "tenant-1", name: "Hyperpels Tech", role: "compliance-officer" },
+  { id: "tenant-2", name: "Rokswood Financial", role: "compliance-manager" },
+  { id: "tenant-3", name: "Acme Corp", role: "admin" },
+  { id: "tenant-4", name: "DevOps Labs", role: "developer" },
 ];
 
 const defaultUser: AuthUser = {

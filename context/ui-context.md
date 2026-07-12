@@ -79,7 +79,7 @@ Sign-in split layout (`886:48672`) uses the same auth field tokens; primary butt
 
 ## App Shell
 
-- **Sidebar** — logo, grouped nav with section headers and chevrons
+- **Sidebar** — logo, grouped nav with section headers and chevrons; desktop fixed width (`lg+`), mobile drawer via header menu button
 - **Sandbox banner** — full-width yellow strip when environment is sandbox
 - **Header** — search, Sandbox/Production toggle, user menu, primary CTA
 - **Main** — scrollable content on `--bg-base`

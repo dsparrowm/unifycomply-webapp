@@ -10,6 +10,10 @@ type UiState = {
   requestWalletTopUp: () => void;
   closeWalletTopUp: () => void;
   confirmSwitchToProduction: () => void;
+  sidebarOpen: boolean;
+  openSidebar: () => void;
+  closeSidebar: () => void;
+  toggleSidebar: () => void;
 };
 
 export const useUiStore = create<UiState>((set, get) => ({
@@ -25,4 +29,8 @@ export const useUiStore = create<UiState>((set, get) => ({
   closeWalletTopUp: () => set({ walletTopUpModal: "closed" }),
   confirmSwitchToProduction: () =>
     set({ environment: "production", walletTopUpModal: "funding" }),
+  sidebarOpen: false,
+  openSidebar: () => set({ sidebarOpen: true }),
+  closeSidebar: () => set({ sidebarOpen: false }),
+  toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
 }));

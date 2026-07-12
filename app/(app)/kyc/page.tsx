@@ -1,10 +1,6 @@
-import { redirect } from "next/navigation";
-import { CURRENT_MILESTONE } from "@/lib/constants/milestones";
+import { KycListPanel } from "@/components/kyc/KycListPanel";
+import { kycListDataPopulated } from "@/lib/data/kyc";
 
 export default function KycPage() {
-  if (CURRENT_MILESTONE < 2) {
-    redirect("/overview");
-  }
-
-  return null;
+  return <KycListPanel data={kycListDataPopulated} />;
 }

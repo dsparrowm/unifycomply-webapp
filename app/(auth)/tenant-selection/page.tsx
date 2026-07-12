@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Building2, ChevronRight } from "lucide-react";
 import { AuthSplitLayout } from "@/components/auth/AuthLayout";
 import { mockTenants, useAuthStore } from "@/store/auth.store";
+import { getTenantRoleLabel } from "@/lib/rbac/permissions";
 import type { Tenant } from "@/store/auth.store";
 
 export default function TenantSelectionPage() {
@@ -43,7 +44,9 @@ export default function TenantSelectionPage() {
                   <p className="text-sm font-medium text-[color:var(--text-primary)]">
                     {tenant.name}
                   </p>
-                  <p className="text-xs text-[color:var(--text-light)]">{tenant.role}</p>
+                  <p className="text-xs text-[color:var(--text-light)]">
+                    {getTenantRoleLabel(tenant.role)}
+                  </p>
                 </div>
               </div>
               <ChevronRight className="h-4 w-4 text-[color:var(--text-light)]" />

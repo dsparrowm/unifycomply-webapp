@@ -4,18 +4,21 @@ import {
   Building2,
   ClipboardCheck,
   FileText,
+  KeyRound,
   Lock,
   Shield,
   User,
   UserCheck,
   Users,
 } from "lucide-react";
+import type { NavPermission } from "@/types/rbac";
 
 export type SettingsNavItem = {
   id: string;
   label: string;
   href: string;
   icon: LucideIcon;
+  permission: NavPermission;
 };
 
 export type SettingsNavGroup = {
@@ -27,35 +30,87 @@ export const settingsNavGroups: SettingsNavGroup[] = [
   {
     title: "Profile Management",
     items: [
-      { id: "profile", label: "Profile Management", href: "/settings", icon: User },
+      {
+        id: "profile",
+        label: "Profile Management",
+        href: "/settings",
+        icon: User,
+        permission: "settings.profile",
+      },
       {
         id: "business-information",
         label: "Business Information",
         href: "/settings/business-information",
         icon: Building2,
+        permission: "settings.business-information",
       },
-      { id: "teams", label: "Teams", href: "/settings/teams", icon: Users },
+      {
+        id: "teams",
+        label: "Teams",
+        href: "/settings/teams",
+        icon: Users,
+        permission: "settings.teams",
+      },
       {
         id: "roles-and-permission",
         label: "Roles and Permission",
         href: "/settings/roles-and-permission",
         icon: Shield,
+        permission: "settings.roles-and-permission",
       },
-      { id: "security", label: "Security", href: "/settings/security", icon: Lock },
-      { id: "audit-logs", label: "Audit Logs", href: "/settings/audit-logs", icon: FileText },
+      {
+        id: "security",
+        label: "Security",
+        href: "/settings/security",
+        icon: Lock,
+        permission: "settings.security",
+      },
+      {
+        id: "audit-logs",
+        label: "Audit Logs",
+        href: "/settings/audit-logs",
+        icon: FileText,
+        permission: "settings.audit-logs",
+      },
     ],
   },
   {
     title: "Compliance Configuration",
     items: [
-      { id: "approvals", label: "Approvals", href: "/settings/approvals", icon: ClipboardCheck },
-      { id: "pep-settings", label: "PEP Settings", href: "/settings/pep-settings", icon: UserCheck },
-      { id: "notification", label: "Notification", href: "/settings/notification", icon: Bell },
+      {
+        id: "approvals",
+        label: "Approvals",
+        href: "/settings/approvals",
+        icon: ClipboardCheck,
+        permission: "settings.approvals",
+      },
+      {
+        id: "pep-settings",
+        label: "PEP Settings",
+        href: "/settings/pep-settings",
+        icon: UserCheck,
+        permission: "settings.pep-settings",
+      },
+      {
+        id: "notification",
+        label: "Notification",
+        href: "/settings/notification",
+        icon: Bell,
+        permission: "settings.notification",
+      },
       {
         id: "compliance-rules",
         label: "Compliance Rules",
         href: "/settings/compliance-rules",
         icon: Shield,
+        permission: "settings.compliance-rules",
+      },
+      {
+        id: "api-keys",
+        label: "API Keys",
+        href: "/settings/api-keys",
+        icon: KeyRound,
+        permission: "settings.api-keys",
       },
     ],
   },

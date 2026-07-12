@@ -79,5 +79,5 @@ Mock data shape (required for v1).
 | Spec | Description | Status |
 | ---- | ----------- | ------ |
 | `00-design-inventory.md` | Figma frame inventory and build order | Blocked (Figma access) |
-
-_Add rows as specs are created from the inventory._
+| `02-overview-dashboard.md` | Overview / compliance dashboard | Done |
+| `03-kyc-compliance.md` | KYC list, lookup, detail (frames 79–156) | In progress — empty list done |

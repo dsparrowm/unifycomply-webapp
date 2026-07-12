@@ -119,9 +119,19 @@
           "section": "KYC COMPLIANCE",
           "file": "design/figma/webapp/kyc-list.png",
           "route": "/kyc",
-          "featureSpec": null,
+          "featureSpec": "context/feature-specs/03-kyc-compliance.md",
           "priority": 1,
-          "notes": "Primary KYC list screen — sidebar, metric cards, filters, data table"
+          "notes": "Default empty KYC list — metrics 0, table 'No User Activity'"
+        },
+        {
+          "name": "Customer // KYC // 86",
+          "nodeId": "886:73019",
+          "section": "KYC COMPLIANCE",
+          "file": null,
+          "route": "/kyc",
+          "featureSpec": "context/feature-specs/03-kyc-compliance.md",
+          "priority": 2,
+          "notes": "Populated KYC list reference — metrics 12/6/2/1, table rows + pagination"
         }
       ]
     }

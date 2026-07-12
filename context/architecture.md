@@ -63,9 +63,8 @@ types/                 ← shared TypeScript types
 
 | Milestone | Routes under `app/(app)/` | Status |
 | --------- | ------------------------- | ------ |
-| **M1 (current)** | `/overview`, `/settings`, `/settings/users`, `/settings/roles`, `/settings/api-keys` | In progress |
-| M1 `(auth)/` | `/sign-in`, `/register`, `/mfa`, … | Not started |
-| M2 | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, … | Blocked until M2 |
+| **M1** | `/overview`, `/settings`, auth routes | Complete |
+| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, … | In progress — `/kyc` done |
 | M3 | `/transaction-monitoring`, … | Blocked until M3 |
 | M4 | `/cases`, `/sar`, … | Blocked until M4 |
 
@@ -85,6 +84,7 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 - **Form state (React Hook Form):** All multi-field forms; schemas colocated with forms.
 - **UI state (Zustand or local state):** Sidebar, active nav, wizard step, mock auth/role.
 - **Mock data (v1 default):** Static typed fixtures in `lib/data/` for all WebApp screens.
+- **RBAC (v1):** Tenant role on auth tenant context. Permission matrix in `lib/rbac/permissions.ts`. Nav items declare `permission` in navigation constants. `RbacRouteGuard` redirects unauthorized deep links.
 
 ## Data Source
 

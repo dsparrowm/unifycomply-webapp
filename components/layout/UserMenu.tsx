@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Building2, ChevronDown, LogOut, Settings } from "lucide-react";
+import { useRbac } from "@/lib/hooks/use-rbac";
 import { useAuthStore } from "@/store/auth.store";
 import { cn } from "@/lib/utils";
 
@@ -19,6 +20,7 @@ export function UserMenu() {
   const user = useAuthStore((state) => state.user);
   const tenant = useAuthStore((state) => state.tenant);
   const signOut = useAuthStore((state) => state.signOut);
+  const { hasPermission, roleLabel } = useRbac();
 
   const initials = user?.initials ?? "AA";
   const name = user?.name ?? "Alimi Ayomikun";
@@ -107,24 +109,31 @@ export function UserMenu() {
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[color:var(--accent-primary-soft)] text-xs font-semibold text-[color:var(--accent-primary)]">
                 {organizationInitial}
               </span>
-              <span className="truncate text-sm font-medium text-[color:var(--text-primary)]">
-                {organizationName}
-              </span>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-medium text-[color:var(--text-primary)]">
+                  {organizationName}
+                </p>
+                {roleLabel ? (
+                  <p className="truncate text-xs text-[color:var(--text-light)]">{roleLabel}</p>
+                ) : null}
+              </div>
             </div>
           </div>
 
           <div className="my-4 border-t border-[color:var(--border-subtle)]" />
 
           <div className="space-y-1">
-            <Link
-              href="/settings"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-2 py-2.5 text-sm text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--bg-muted)]"
-            >
-              <Settings className="h-4 w-4 text-[color:var(--text-muted)]" />
-              Settings
-            </Link>
+            {hasPermission("nav.settings") ? (
+              <Link
+                href="/settings"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-2 py-2.5 text-sm text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--bg-muted)]"
+              >
+                <Settings className="h-4 w-4 text-[color:var(--text-muted)]" />
+                Settings
+              </Link>
+            ) : null}
 
             <button
               type="button"
