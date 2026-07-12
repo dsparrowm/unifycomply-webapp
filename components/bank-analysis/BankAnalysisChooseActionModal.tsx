@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect } from "react";
-import { ChevronRight, FileSearch, Search, X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { ChevronRight, Layers, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type KycChooseActionModalProps = {
+type BankAnalysisChooseActionModalProps = {
   open: boolean;
   onClose: () => void;
 };
 
-export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProps) {
-  const router = useRouter();
-
+export function BankAnalysisChooseActionModal({
+  open,
+  onClose,
+}: BankAnalysisChooseActionModalProps) {
   useEffect(() => {
     if (!open) {
       return;
@@ -34,22 +34,16 @@ export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProp
 
   const actions = [
     {
-      id: "lookup",
-      label: "Perform Lookup",
+      id: "single",
+      label: "Single Lookup",
       icon: Search,
-      onClick: () => {
-        onClose();
-        router.push("/kyc/lookup");
-      },
+      onClick: onClose,
     },
     {
-      id: "validate",
-      label: "Validate Document",
-      icon: FileSearch,
-      onClick: () => {
-        onClose();
-        router.push("/kyc/onboarding");
-      },
+      id: "batch",
+      label: "Batch Lookup",
+      icon: Layers,
+      onClick: onClose,
     },
   ];
 
@@ -65,11 +59,14 @@ export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProp
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="kyc-choose-action-title"
+        aria-labelledby="bank-analysis-choose-action-title"
         className="relative w-full max-w-xl overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-xl"
       >
         <div className="flex items-center justify-between border-b border-[color:var(--border-subtle)] px-6 py-4">
-          <h2 id="kyc-choose-action-title" className="text-lg font-semibold text-[color:var(--text-primary)]">
+          <h2
+            id="bank-analysis-choose-action-title"
+            className="text-lg font-semibold text-[color:var(--text-primary)]"
+          >
             Choose action
           </h2>
           <button
@@ -88,10 +85,7 @@ export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProp
               type="button"
               onClick={action.onClick}
               className={cn(
-                "flex w-full items-center justify-between rounded-xl border border-[color:var(--border-default)] px-6 py-5 text-left transition-colors",
-                action.id === "lookup"
-                  ? "hover:border-[color:var(--accent-primary-hover)] hover:bg-[color:var(--accent-primary-soft)]"
-                  : "hover:bg-[color:var(--bg-muted)]",
+                "flex w-full items-center justify-between rounded-xl border border-[color:var(--border-default)] px-6 py-5 text-left transition-colors hover:border-[color:var(--accent-primary-hover)] hover:bg-[color:var(--accent-primary-soft)]",
               )}
             >
               <span className="flex items-center gap-4">

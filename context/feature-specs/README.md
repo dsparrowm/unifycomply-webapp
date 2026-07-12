@@ -80,4 +80,7 @@ Mock data shape (required for v1).
 | ---- | ----------- | ------ |
 | `00-design-inventory.md` | Figma frame inventory and build order | Blocked (Figma access) |
 | `02-overview-dashboard.md` | Overview / compliance dashboard | Done |
-| `03-kyc-compliance.md` | KYC list, lookup, detail (frames 79–156) | In progress — empty list done |
+| `03-kyc-compliance.md` | KYC list, lookup, detail (frames 79–156) | In progress |
+| `04-kyb-compliance.md` | KYB list + Perform Lookup + detail (frames 79–88, 93) | In progress — list + lookup + detail done |
+| `05-customer-onboarding-wizard.md` | KYC customer onboarding wizard (`/kyc/onboarding`) | Done — pending Figma frame export |
+| `07-bank-analysis.md` | Bank analysis list (frames 11–16); lookup/detail deferred | In progress — list done |

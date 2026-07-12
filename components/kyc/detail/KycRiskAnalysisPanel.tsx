@@ -1,7 +1,6 @@
 import { Check, X } from "lucide-react";
 import { getRiskAnalysisScoreLabel } from "@/lib/kyc/risk-score";
 import type {
-  KycDetail,
   KycRiskAnalysisAction,
   KycRiskAnalysisData,
   KycRiskAnalysisItem,
@@ -10,7 +9,7 @@ import type {
 import { cn } from "@/lib/utils";
 
 type KycRiskAnalysisPanelProps = {
-  detail: KycDetail;
+  riskScore: number;
   riskAnalysis: KycRiskAnalysisData;
 };
 
@@ -138,10 +137,10 @@ function RiskAnalysisActionButton({ action }: { action: KycRiskAnalysisAction })
   );
 }
 
-export function KycRiskAnalysisPanel({ detail, riskAnalysis }: KycRiskAnalysisPanelProps) {
-  const scoreTone = getScoreTone(detail.riskScore);
-  const failIconTone = getFailIconTone(detail.riskScore);
-  const scoreLabel = riskAnalysis.scoreLevel || getRiskAnalysisScoreLabel(detail.riskScore);
+export function KycRiskAnalysisPanel({ riskScore, riskAnalysis }: KycRiskAnalysisPanelProps) {
+  const scoreTone = getScoreTone(riskScore);
+  const failIconTone = getFailIconTone(riskScore);
+  const scoreLabel = riskAnalysis.scoreLevel || getRiskAnalysisScoreLabel(riskScore);
   const isCleared = riskAnalysis.clearanceStatus.toLowerCase() === "cleared";
   const recommendationTone = riskAnalysis.recommendationTone ?? "info";
   const recommendationStyle = recommendationStyles[recommendationTone];
@@ -178,7 +177,7 @@ export function KycRiskAnalysisPanel({ detail, riskAnalysis }: KycRiskAnalysisPa
         >
           <p className="text-sm font-medium text-[color:var(--text-primary)]">Risk Score Analysis</p>
           <p className={cn("mt-6 text-5xl font-semibold leading-none", scoreToneStyles[scoreTone])}>
-            {detail.riskScore}
+            {riskScore}
           </p>
           <p className={cn("mt-2 text-sm font-medium", scoreToneStyles[scoreTone])}>{scoreLabel}</p>
         </div>

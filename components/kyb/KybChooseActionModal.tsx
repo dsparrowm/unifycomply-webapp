@@ -5,12 +5,12 @@ import { ChevronRight, FileSearch, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-type KycChooseActionModalProps = {
+type KybChooseActionModalProps = {
   open: boolean;
   onClose: () => void;
 };
 
-export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProps) {
+export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProps) {
   const router = useRouter();
 
   useEffect(() => {
@@ -39,17 +39,14 @@ export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProp
       icon: Search,
       onClick: () => {
         onClose();
-        router.push("/kyc/lookup");
+        router.push("/kyb/lookup");
       },
     },
     {
       id: "validate",
       label: "Validate Document",
       icon: FileSearch,
-      onClick: () => {
-        onClose();
-        router.push("/kyc/onboarding");
-      },
+      onClick: onClose,
     },
   ];
 
@@ -65,11 +62,11 @@ export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProp
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="kyc-choose-action-title"
+        aria-labelledby="kyb-choose-action-title"
         className="relative w-full max-w-xl overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-xl"
       >
         <div className="flex items-center justify-between border-b border-[color:var(--border-subtle)] px-6 py-4">
-          <h2 id="kyc-choose-action-title" className="text-lg font-semibold text-[color:var(--text-primary)]">
+          <h2 id="kyb-choose-action-title" className="text-lg font-semibold text-[color:var(--text-primary)]">
             Choose action
           </h2>
           <button

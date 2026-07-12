@@ -67,7 +67,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
       ) : null}
 
       {activeTab === "risk-analysis" ? (
-        <KycRiskAnalysisPanel detail={detail} riskAnalysis={detail.riskAnalysis} />
+        <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
       ) : null}
 
       {activeTab === "aml-screening" ? (

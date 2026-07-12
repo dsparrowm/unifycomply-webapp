@@ -34,7 +34,13 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 
 ## Current Goal (M2)
 
-1. KYB list, onboarding wizard, compliance queue, bank analysis, AML (remaining M2)
+1. AML screening UI (remaining M2)
+
+## Open Questions
+
+- **Customer onboarding wizard Figma frames:** MVP flowchart references module 1.1 (`1532:157029`) but no WebApp frame exports in `design/manifest.json`. Wizard implemented from `mvp-roadmap.md` step list; re-align when frames are exported.
+- **Compliance queue:** Not a separate Figma route — reviewer workflow uses KYC/KYB list status filters (`Pending`, `In Review`, etc.) per frames 79–86. Do not add `/compliance-queue`.
+- **Bank analysis fourth metric label:** Frame 11 uses **high risk alerts**; populated frame 16 uses **high risk Entity**. List UI uses frame 11 string until design confirms one label.
 
 ## Milestone Status
 
@@ -67,16 +73,11 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 
 ## Deferred to M2+
 
-- KYB, AML, bank analysis screens (M2 — not started)
 - Transaction monitoring (M3)
 
 ## Next Up (M2)
 
-1. KYC detail / verification dashboard (`/kyc/[id]`)
-2. KYB list page
-3. Onboarding wizard
-4. Compliance queue
-5. Bank analysis and AML screening UI
+1. AML screening UI
 
 ## Feature Unit Queue (M1 only)
 
@@ -94,11 +95,23 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 | 10 | KYC filter dropdowns | `886:70782`–`886:72648` | Done |
 | 11 | KYC detail page (frame 96) | `886:76212` | Done — aligned to reference screenshot |
 | 12 | KYC Perform Lookup flow | `886:74699`–`886:75456`, `886:81117` | Done |
+| 13 | KYB list page (empty + populated) | `886:106307`, `886:108206` | Done |
+| 14 | Customer onboarding wizard | MVP flowchart `1532:157029` | Done — `/kyc/onboarding` |
+| 15 | KYB Perform Lookup flow | `886:108577`–`886:109104` | Done — `/kyb/lookup` |
+| 16 | Bank analysis list | `886:161366`, `886:163331` | Done — `/bank-analysis` |
+| 17 | KYB detail page (frame 93) | `886:110808` | Done — `/kyb/[id]` Business Overview |
 
 ## Architecture Decisions
 
 - `CURRENT_MILESTONE = 2` in `lib/constants/milestones.ts` — M2 routes enabled through KYC/KYB/AML/bank analysis
 - `/kyc` uses populated list (frame 86) for M2 development; `kycListDataEmpty` reserved for post–Add Customer flow
+- `/kyc/onboarding` — five-step customer wizard (personal → business → documents → review → consent); entry via Validate Document modal
+- `/kyb` — KYB list (frame 79 empty default, frame 84 populated fixture); mock via `lib/data/kyb.ts`; filters reuse KYC dropdown pattern
+- `/kyb/lookup` — Perform Lookup entry (frames 85–88) with country/app/lookup-type form, single + bulk modes
+- `/kyb/lookup/result` — business registry lookup results with tabs, summary panel, footer actions; mock via `lib/data/kyb-lookup.ts`
+- `/kyb/[id]` — KYB detail (frame 93) with Business Overview tab, risk/verification/business-size sidebar, decision modals; mock via `lib/data/kyb-detail.ts`; table rows link from `/kyb`
+- KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`
+- `/bank-analysis` — list (frame 11 empty, frame 16 populated); metrics Total screening / Total Alerts Generated / Completed / high risk alerts; **New Lookup** choose-action modal (Single / Batch Lookup)
 - `/kyc/[id]` detail page — frame 96 baseline with document viewer, extracted fields, risk/biometric/timeline panels; mock via `lib/data/kyc-detail.ts`; **0–4 risk score** drives per-tab UI variants via `lib/kyc/risk-score.ts` (no separate tier enum)
 - `/kyc/lookup` — Perform Lookup entry (frame 90) with lookup type/country/identifier form, sandbox/production toggle
 - `/kyc/lookup/result` — BVN lookup results (frames 91–94) with tabs, summary panel, address tab, footer actions
@@ -127,7 +140,16 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 - 2026-07-11: KYC filter dropdowns (frames 80–85) — Date/Status/Priorities/Single entity search modes/Bulk search/More filters
 - 2026-07-11: KYC Perform Lookup bulk mode (frame 109) — Country, Batch Name, Select app, Select ID, Bulk Upload (xlsx drag-and-drop); Staging/Production app options; Figma copy for upload hint
 - 2026-07-11: KYC Perform Lookup result page (frame 91) — BVN card + summary panel, underline tabs, risk score badge, Request Resubmission / Cancel / Approve actions
+- 2026-07-12: Customer onboarding wizard (`/kyc/onboarding`) — five-step flow with document upload, review, consent; wired from KYC Validate Document action
+- 2026-07-12: KYB list page (`/kyb`, frames `886:106307` / `886:108206`) — metrics, filters, search, table, pagination, Add Business choose-action modal; mock via `lib/data/kyb.ts`
+- 2026-07-12: KYB Perform Lookup flow (`/kyb/lookup`, frames `886:108577`–`886:109104`) — single + bulk entry, CAC/TIN/RC lookup types, result page with registry card + summary panel
 - 2026-07-12: KYC AML Screening tab (frame 143 / `886:96317`) — summary cards (Medium, risk 2/4), PEP match detail panel, sanctions/adverse media/watchlist dark sections aligned to Figma reference screenshot
 - 2026-07-12: KYC Request Document Re-submission modal — checkbox issue list, wired to detail and lookup footer actions
 - 2026-07-12: KYC AML PEP match detail panel — flagged screening view with bio analysis, sources, timeline, risk factors
-- 2026-07-12: KYC document viewer — Compare with Selfie mode shows Nigerian passport + selfie placeholder side-by-side with biometric match score; passport/selfie tab images updated
+- 2026-07-12: Bank analysis list (`/bank-analysis`, frames `886:161366` / `886:163331`) — metrics, filters, search, table, pagination, New Lookup choose-action modal; mock via `lib/data/bank-analysis.ts`
+- 2026-07-12: KYB detail page (`/kyb/[id]`, frame `886:110808`) — Business Overview tab, risk/verification/business-size sidebar, approve/reject/resubmission/escalate modals; mock via `lib/data/kyb-detail.ts`; canonical fixture `kyb-record-5` (TechVentures Nigeria Limited)
+- 2026-07-12: KYB detail Risk Score Analysis tab — reuses `KycRiskAnalysisPanel` with shared `lib/compliance/risk-analysis.ts` builder for all risk levels 0–4
+- 2026-07-12: KYB detail Directors & Officers tab — score 0/1/3/4 layouts with director cards and AML screening rows; mock via `lib/data/kyb-directors.ts`
+- 2026-07-12: KYB detail Shareholders tab — Share Capital Structure table with type badges and percentage bars; mock via `lib/data/kyb-shareholders.ts`
+- 2026-07-12: KYB detail Document tab — Submitted Documents cards with verified status and view/download actions; mock via `lib/data/kyb-documents.ts`
+- 2026-07-12: KYB detail tab section headers — transparent header style (title + soft status badge) shared across Directors, Shareholders, Documents, and Compliance Checks

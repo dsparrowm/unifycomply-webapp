@@ -50,7 +50,8 @@
           "name": "KYB COMPLIANCE",
           "nodeId": "886:105537",
           "route": "/kyb",
-          "notes": "Know Your Business"
+          "representativeFrame": "886:106307",
+          "notes": "Know Your Business — list and verification flows"
         },
         {
           "name": "BANK ANALYSIS",
@@ -132,6 +133,76 @@
           "featureSpec": "context/feature-specs/03-kyc-compliance.md",
           "priority": 2,
           "notes": "Populated KYC list reference — metrics 12/6/2/1, table rows + pagination"
+        },
+        {
+          "name": "Customer // KYB // 79",
+          "nodeId": "886:106307",
+          "section": "KYB COMPLIANCE",
+          "file": null,
+          "route": "/kyb",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 1,
+          "notes": "Default empty KYB list — metrics 0, table 'No User Activity'"
+        },
+        {
+          "name": "Customer // KYB // 84",
+          "nodeId": "886:108206",
+          "section": "KYB COMPLIANCE",
+          "file": null,
+          "route": "/kyb",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 2,
+          "notes": "Populated KYB list reference — metrics 12/4/4/4, table rows + pagination"
+        },
+        {
+          "name": "Customer // KYB // 85",
+          "nodeId": "886:108577",
+          "section": "KYB COMPLIANCE",
+          "file": null,
+          "route": "/kyb/lookup",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 3,
+          "notes": "Perform Lookup entry — single verification form"
+        },
+        {
+          "name": "Customer // KYB // 88",
+          "nodeId": "886:109104",
+          "section": "KYB COMPLIANCE",
+          "file": null,
+          "route": "/kyb/lookup",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 4,
+          "notes": "Perform Lookup bulk mode with xlsx upload"
+        },
+        {
+          "name": "Customer // KYB // 93",
+          "nodeId": "886:110808",
+          "section": "KYB COMPLIANCE",
+          "file": null,
+          "route": "/kyb/[id]",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 5,
+          "notes": "KYB detail Business Overview — TechVentures Nigeria Limited baseline"
+        },
+        {
+          "name": "Bank Analysis // 11",
+          "nodeId": "886:161366",
+          "section": "BANK ANALYSIS",
+          "file": null,
+          "route": "/bank-analysis",
+          "featureSpec": "context/feature-specs/07-bank-analysis.md",
+          "priority": 2,
+          "notes": "Empty bank analysis list — metrics 0, No User Activity"
+        },
+        {
+          "name": "Bank Analysis // 16",
+          "nodeId": "886:163331",
+          "section": "BANK ANALYSIS",
+          "file": null,
+          "route": "/bank-analysis",
+          "featureSpec": "context/feature-specs/07-bank-analysis.md",
+          "priority": 3,
+          "notes": "Populated bank analysis list — metrics 20/8/12/3, table rows + pagination"
         }
       ]
     }
