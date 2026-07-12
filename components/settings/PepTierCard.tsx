@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { Pencil } from "lucide-react";
 import { PepTierBadge } from "@/components/settings/PepTierBadge";
 import type { SettingsPepTier } from "@/types/settings";

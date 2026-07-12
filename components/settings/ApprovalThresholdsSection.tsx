@@ -19,7 +19,7 @@ const riskScale = [
     className: "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
   },
   {
-    label: "4 - High Risk",
+    label: "4 - Very High",
     className: "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)] opacity-90",
   },
 ];

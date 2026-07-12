@@ -7,28 +7,52 @@ type KycAmlScreeningPanelProps = {
   amlScreening: KycAmlScreeningData;
 };
 
+type SummaryCardTone = "cleared" | "warning" | "flagged";
+
+function getSummaryCardTone(riskScore: number): SummaryCardTone {
+  if (riskScore === 0) {
+    return "cleared";
+  }
+
+  if (riskScore === 1) {
+    return "warning";
+  }
+
+  return "flagged";
+}
+
 function SummaryCard({
   title,
   value,
   note,
-  showAlert,
+  tone,
 }: {
   title: string;
   value: string;
   note: string;
-  showAlert?: boolean;
+  tone: SummaryCardTone;
 }) {
+  const valueStyles: Record<SummaryCardTone, string> = {
+    cleared: "text-[color:var(--accent-primary-hover)]",
+    warning: "text-[color:var(--state-warning)]",
+    flagged: "text-[color:var(--state-error)]",
+  };
+
   return (
     <div className="rounded-xl border border-[color:var(--accent-primary-hover)]/25 bg-[color:var(--bg-surface)] p-5">
       <p className="text-sm font-medium text-[color:var(--text-muted)]">{title}</p>
       <div className="mt-4">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-5xl font-semibold leading-none text-[color:var(--state-error)]">{value}</p>
-          {showAlert ? (
+          <p className={cn("text-5xl font-semibold leading-none", valueStyles[tone])}>{value}</p>
+          {tone === "cleared" ? (
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[color:var(--accent-primary-hover)] text-white">
+              <Check className="h-4 w-4" />
+            </span>
+          ) : (
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[color:var(--state-error)] text-white">
               <X className="h-4 w-4" />
             </span>
-          ) : null}
+          )}
         </div>
         <p className="mt-2 text-sm font-medium text-[color:var(--accent-primary-hover)]">{note}</p>
       </div>
@@ -40,6 +64,15 @@ function NoMatchBadge() {
   return (
     <span className="rounded-full bg-[color:var(--state-success-soft)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--state-success)]">
       No Match
+    </span>
+  );
+}
+
+function MatchBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[color:var(--state-success)]">
+      <Check className="h-4 w-4" />
+      {label}
     </span>
   );
 }
@@ -74,7 +107,7 @@ function SanctionsScreeningRow({
   status,
 }: {
   label: string;
-  status: "match" | "no-match";
+  status: KycAmlScreeningData["sanctionsLists"][number]["status"];
 }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3">
@@ -83,7 +116,9 @@ function SanctionsScreeningRow({
         <p className="text-sm font-semibold text-[color:var(--text-primary)]">{label}</p>
       </div>
       {status === "match" ? (
-        <span className="text-sm font-medium text-[color:var(--state-error)]">Match</span>
+        <MatchBadge label="Match" />
+      ) : status === "flagged" ? (
+        <span className="text-sm font-medium text-[color:var(--state-error)]">Flagged</span>
       ) : (
         <NoMatchBadge />
       )}
@@ -102,18 +137,23 @@ function ScreeningRow({ row }: { row: KycAmlScreeningRow }) {
           <p className="mt-1 text-sm text-[color:var(--text-muted)]">{row.description}</p>
         ) : null}
       </div>
-      {isNoMatch ? (
-        <NoMatchBadge />
-      ) : (
-        <span className="text-sm font-medium text-[color:var(--state-error)]">{row.statusLabel}</span>
-      )}
+      {isNoMatch ? <NoMatchBadge /> : <MatchBadge label={row.statusLabel} />}
     </div>
   );
 }
 
+function getRiskLevelCardValue(amlScreening: KycAmlScreeningData): string {
+  if (amlScreening.riskScore === 0) {
+    return amlScreening.riskLevelLabel;
+  }
+
+  return String(amlScreening.riskScore);
+}
+
 export function KycAmlScreeningPanel({ amlScreening }: KycAmlScreeningPanelProps) {
   const hasPepMatch = Boolean(amlScreening.pepMatchDetail);
-  const hasPepAlert = amlScreening.screeningStatusNote.toLowerCase().includes("pep");
+  const isCleared = amlScreening.clearanceStatus.toLowerCase() === "cleared";
+  const summaryCardTone = getSummaryCardTone(amlScreening.riskScore);
 
   return (
     <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
@@ -128,10 +168,10 @@ export function KycAmlScreeningPanel({ amlScreening }: KycAmlScreeningPanelProps
         </div>
         <span
           className={cn(
-            "text-sm font-medium",
-            hasPepMatch
-              ? "text-[color:var(--state-error)]"
-              : "text-[color:var(--state-success)]",
+            "rounded-full px-3 py-1 text-sm font-medium",
+            isCleared
+              ? "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]"
+              : "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
           )}
         >
           {amlScreening.clearanceStatus}
@@ -143,19 +183,22 @@ export function KycAmlScreeningPanel({ amlScreening }: KycAmlScreeningPanelProps
           title="Screening Status"
           value={amlScreening.screeningStatus}
           note={amlScreening.screeningStatusNote}
-          showAlert={hasPepAlert}
+          tone={summaryCardTone}
         />
         <SummaryCard
           title="Risk Level"
-          value={String(amlScreening.riskLevel)}
+          value={getRiskLevelCardValue(amlScreening)}
           note={`Risk Score : ${amlScreening.riskScore}/${amlScreening.riskScoreMax}`}
-          showAlert={amlScreening.riskLevel > 0}
+          tone={summaryCardTone}
         />
       </div>
 
       <div className="space-y-6 px-6 pb-6">
         {hasPepMatch && amlScreening.pepMatchDetail ? (
-          <KycPepMatchDetailPanel detail={amlScreening.pepMatchDetail} />
+          <KycPepMatchDetailPanel
+            detail={amlScreening.pepMatchDetail}
+            defaultExpanded={amlScreening.riskScore >= 3}
+          />
         ) : (
           <ScreeningSection title="Politically Exposed Person (PEP) Check">
             <ScreeningRow row={amlScreening.pepCheck} />
@@ -170,7 +213,7 @@ export function KycAmlScreeningPanel({ amlScreening }: KycAmlScreeningPanelProps
           </div>
         </ScreeningSection>
 
-        <ScreeningSection title="Adverse Media Screening">
+        <ScreeningSection title="Warning and Regulatory Enforcement">
           <ScreeningRow row={amlScreening.warningEnforcement} />
         </ScreeningSection>
 

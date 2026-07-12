@@ -37,7 +37,7 @@ export function KycBiometricVerification({ detail }: KycBiometricVerificationPro
           </div>
           <div className="flex items-center justify-between rounded-lg border border-[color:var(--border-default)] px-3 py-3">
             <span className="text-sm text-[color:var(--text-primary)]">Liveness Detection</span>
-            <span className="text-sm font-medium text-[color:var(--state-success)]">
+            <span className="rounded-md border border-[color:var(--accent-primary-hover)]/30 bg-[color:var(--accent-primary-soft)] px-2.5 py-1 text-sm font-medium text-[color:var(--state-success)]">
               {detail.livenessStatus}
             </span>
           </div>

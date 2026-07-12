@@ -1,19 +1,22 @@
 import { kycListDataPopulated } from "@/lib/data/kyc";
+import { getAmlRiskLevelLabel, getAmlScreeningStatusLabel, getRiskScoreLabel, RISK_SCORE_MAX, type RiskScore } from "@/lib/kyc/risk-score";
 import type {
   KycAmlScreeningData,
   KycDetail,
   KycExtractedField,
   KycIpDeviceData,
   KycLivenessData,
+  KycPepMatchDetail,
   KycRecord,
   KycRiskAnalysisData,
+  KycTimelineEvent,
 } from "@/types/kyc";
 
-const favourExtractedFields: KycExtractedField[] = [
+const defaultExtractedFields: KycExtractedField[] = [
   {
     id: "full-name",
     label: "Full Name",
-    value: "Favour Peter Soma",
+    value: "Customer Name",
     confidence: 93,
   },
   {
@@ -48,11 +51,53 @@ const favourExtractedFields: KycExtractedField[] = [
   },
 ];
 
-const favourPepMatchDetail = {
+const favourExtractedFields: KycExtractedField[] = [
+  { ...defaultExtractedFields[0], value: "Favour Peter Soma" },
+  ...defaultExtractedFields.slice(1),
+];
+
+const score2ExtractedFields: KycExtractedField[] = [
+  { id: "full-name", label: "Full Name", value: "Favour Peter Soma", confidence: 90 },
+  { id: "date-of-birth", label: "Date Of Birth", value: "14/02/2001", confidence: 90 },
+  { id: "document-number", label: "Document Number", value: "2212A46789", confidence: 90 },
+  { id: "issued-date", label: "Issued Date", value: "12/09/2020", confidence: 90 },
+  { id: "expiry-date", label: "Expiry Date", value: "12/09/2020", confidence: 90 },
+  { id: "address", label: "Address", value: "12 Victoria Island, Lagos", confidence: 90 },
+];
+
+const score2Timeline: KycTimelineEvent[] = [
+  { id: "tl-1", title: "Document Uploaded", timestamp: "2 hours ago", status: "completed" },
+  { id: "tl-2", title: "OCR processing completed", timestamp: "2 hours ago", status: "completed" },
+  { id: "tl-3", title: "Biometric check completed", timestamp: "2 hours ago", status: "completed" },
+  { id: "tl-4", title: "Manual review started", timestamp: "12 mins ago", status: "in-progress" },
+];
+
+const score2DocumentRiskTier = {
+  tierLabel: "TIER 3",
+  title: "PEP (Politically Exposed Person)",
+  description:
+    "This person holds or has recently held a prominent public position in a domestic political office. Enhanced due diligence is required.",
+  detail: "Lagos State House of Assembly Member (2023-Present)",
+  recommendation: "APPROVE - Enhanced DD + Periodic Monitoring",
+};
+
+const score2DocumentAlert = {
+  title: "Multiple Failed Verification Attempts",
+  description:
+    "Customer has attempted verification 3 times in the past 7 days with different documents. Previous attempts were rejected due to poor document quality and selfie mismatch.",
+};
+
+const defaultTimeline: KycTimelineEvent[] = [
+  { id: "tl-1", title: "Document Uploaded", timestamp: "2 hours ago", status: "completed" },
+  { id: "tl-2", title: "OCR processing completed", timestamp: "2 hours ago", status: "completed" },
+  { id: "tl-3", title: "Biometric check completed", timestamp: "2 hours ago", status: "completed" },
+];
+
+const pepMatchDetail: KycPepMatchDetail = {
   summary: "1 director(s) matched against Politically Exposed Persons database",
   screeningDate: "10/1/2026 | 10:30AM",
   matchType: "Partial Name (83% similarity)",
-  riskLevel: "Medium",
+  riskLevel: "High Risk",
   subject: {
     name: "Adebayo Ibrahim Musa",
     title: "Director",
@@ -74,13 +119,9 @@ const favourPepMatchDetail = {
     },
   ],
   sources: [
-    { id: "world-bank", label: "World Bank Politically Exposed Persons Database", status: "passed" as const },
-    {
-      id: "nigeria-gov",
-      label: "Nigerian Federal Government Official Records",
-      status: "passed" as const,
-    },
-    { id: "dow-jones", label: "Dow Jones Watchlist", status: "passed" as const },
+    { id: "world-bank", label: "World Bank Politically Exposed Persons Database", status: "passed" },
+    { id: "nigeria-gov", label: "Nigerian Federal Government Official Records", status: "passed" },
+    { id: "dow-jones", label: "Dow Jones Watchlist", status: "passed" },
   ],
   timeline: {
     commenced: "May 1, 2015",
@@ -91,16 +132,8 @@ const favourPepMatchDetail = {
     { id: "father", relationship: "Father", name: "Adebayo Bello Galedima", pepMatch: true },
   ],
   associatedEntities: [
-    {
-      id: "commerce",
-      name: "Ministry of Commerce and Industry",
-      period: "2015 - 2019",
-    },
-    {
-      id: "nnpc",
-      name: "Nigerian National Petroleum Board",
-      period: "2016 - 2018",
-    },
+    { id: "commerce", name: "Ministry of Commerce and Industry", period: "2015 - 2019" },
+    { id: "nnpc", name: "Nigerian National Petroleum Board", period: "2016 - 2018" },
   ],
   riskFactors: [
     "Served in high-level government position",
@@ -112,74 +145,31 @@ const favourPepMatchDetail = {
     "Enhanced Due Diligence (EDD) must be performed. Source of wealth verification, ongoing transaction monitoring, and senior management approval required for account opening.",
 };
 
-const favourAmlScreening: KycAmlScreeningData = {
-  clearanceStatus: "Flagged",
-  screeningStatus: "Medium",
-  screeningStatusNote: "PEP Detected",
-  riskLevel: 2,
-  riskScore: 3,
-  riskScoreMax: 4,
-  pepCheck: {
-    label: "PEP Match",
-    description: "Political Exposed Person",
-    status: "match",
-    statusLabel: "Match",
-  },
-  pepMatchDetail: favourPepMatchDetail,
-  sanctionsLists: [
-    { id: "ofac", label: "OFAC", status: "no-match" },
-    { id: "un", label: "UN", status: "no-match" },
-    { id: "eu", label: "EU", status: "no-match" },
-    { id: "uk-hmt", label: "UK HMT", status: "no-match" },
-  ],
-  warningEnforcement: {
-    label: "Adverse Media",
-    description: "No negative news or adverse media mentions detected",
-    status: "no-match",
-    statusLabel: "No Match",
-  },
-  watchlist: {
-    label: "Watchlist Matches",
-    description: "Individual not found on any monitored watchlists",
-    status: "no-match",
-    statusLabel: "No Match",
-  },
-};
-
-const clearAmlScreening: KycAmlScreeningData = {
+const clearedIpDevice: KycIpDeviceData = {
   clearanceStatus: "Cleared",
-  screeningStatus: "Low",
-  screeningStatusNote: "No PEP Detected",
-  riskLevel: 0,
-  riskScore: 0,
-  riskScoreMax: 4,
-  pepCheck: {
-    label: "PEP Match",
-    description: "Political Exposed Person",
-    status: "no-match",
-    statusLabel: "No Match",
-  },
-  sanctionsLists: [
-    { id: "ofac", label: "OFAC", status: "no-match" },
-    { id: "un", label: "UN", status: "no-match" },
-    { id: "eu", label: "EU", status: "no-match" },
-    { id: "uk-hmt", label: "UK HMT", status: "no-match" },
-  ],
-  warningEnforcement: {
-    label: "Adverse Media",
-    description: "No negative news or adverse media mentions detected",
-    status: "no-match",
-    statusLabel: "No Match",
-  },
-  watchlist: {
-    label: "Watchlist Matches",
-    description: "Individual not found on any monitored watchlists.",
-    status: "no-match",
-    statusLabel: "No Match",
-  },
+  ipAddress: "102.89.42.18",
+  ipAddressNote: "No matches found",
+  location: "Lagos",
+  countryLabel: "Country: Nigeria",
+  vpnDetection: { label: "VPN Detection", statusLabel: "Match", detected: false },
+  proxyDetection: { label: "Proxy Detection", statusLabel: "Match", detected: false },
+  device: { label: "Mobile", version: "Android 14", status: "pass" },
+  usageStats: { count: "8 times", deviceType: "Mobile", status: "pass" },
 };
 
-const favourLiveness: KycLivenessData = {
+const flaggedIpDevice: KycIpDeviceData = {
+  clearanceStatus: "Review Required",
+  ipAddress: "185.220.101.42",
+  ipAddressNote: "VPN provider detected",
+  location: "Unknown",
+  countryLabel: "Country: Nigeria",
+  vpnDetection: { label: "VPN Detection", statusLabel: "Match", detected: true },
+  proxyDetection: { label: "Proxy Detection", statusLabel: "Match", detected: true },
+  device: { label: "Mobile", version: "Android 14", status: "fail" },
+  usageStats: { count: "3 times", deviceType: "Mobile", status: "fail" },
+};
+
+const passedLiveness: KycLivenessData = {
   overallStatusLabel: "Passed",
   livenessStatus: "Passed",
   livenessStatusNote: "Real person detected",
@@ -196,250 +186,350 @@ const favourLiveness: KycLivenessData = {
   ],
 };
 
-const clearLiveness: KycLivenessData = {
-  overallStatusLabel: "Passed",
-  livenessStatus: "Passed",
-  livenessStatusNote: "Real person detected",
-  confidenceScore: "94.0%",
-  confidenceNote: "High Confidence",
-  completionTime: "10 Seconds",
-  attemptsLabel: "1 attempts",
+const reviewLiveness: KycLivenessData = {
+  overallStatusLabel: "Review",
+  livenessStatus: "Review",
+  livenessStatusNote: "Manual review required",
+  confidenceScore: "62.0%",
+  confidenceNote: "Low Confidence",
+  completionTime: "14 Seconds",
+  attemptsLabel: "2 attempts",
   checks: [
     { id: "face", label: "Face Detection", status: "passed" },
-    { id: "real-person", label: "Real Person (Live Person Verified)", status: "passed" },
+    { id: "real-person", label: "Real Person (Live Person Verified)", status: "review" },
     { id: "mask", label: "No Mask Detected", status: "passed" },
-    { id: "eyes", label: "Eyes Open", status: "passed" },
+    { id: "eyes", label: "Eyes Open", status: "review" },
     { id: "facing", label: "Facing Camera", status: "passed" },
   ],
 };
 
-const favourIpDevice: KycIpDeviceData = {
-  clearanceStatus: "Cleared",
-  ipAddress: "197.210.76.45",
-  ipAddressNote: "No matches found",
-  location: "Lagos",
-  countryLabel: "Country: Nigeria",
-  vpnDetection: {
-    label: "VPN Detection",
-    statusLabel: "Match",
-    detected: false,
-  },
-  proxyDetection: {
-    label: "Proxy Detection",
-    statusLabel: "Match",
-    detected: false,
-  },
-  device: {
-    label: "Mobile",
-    version: "ios 17.2",
-    status: "pass",
-  },
-  usageStats: {
-    count: "12 times",
-    deviceType: "Mobile",
-    status: "pass",
-  },
-};
+function buildAmlScreening(score: RiskScore, options?: { pepMatch?: boolean }): KycAmlScreeningData {
+  if (score === 0) {
+    return {
+      clearanceStatus: "Cleared",
+      screeningStatus: "Clear",
+      screeningStatusNote: "No matches found",
+      riskLevelLabel: getAmlRiskLevelLabel(score),
+      riskLevel: score,
+      riskScore: score,
+      riskScoreMax: RISK_SCORE_MAX,
+      pepCheck: {
+        label: "PEP Match",
+        description: "Political Exposed Person (Not Exposed)",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+      sanctionsLists: [
+        { id: "ofac", label: "OFAC", status: "no-match" },
+        { id: "un", label: "UN", status: "no-match" },
+        { id: "eu", label: "EU", status: "no-match" },
+        { id: "uk-hmt", label: "UK HMT", status: "no-match" },
+      ],
+      warningEnforcement: {
+        label: "Warning Matches",
+        description:
+          "Checks for adverse media, regulatory actions, or enforcement proceedings against the individual.",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+      watchlist: {
+        label: "Watchlist Matches",
+        description: "Individual not found on any monitored watchlists",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+    };
+  }
 
-const standardIpDevice: KycIpDeviceData = {
-  clearanceStatus: "Cleared",
-  ipAddress: "102.89.42.18",
-  ipAddressNote: "No matches found",
-  location: "Lagos",
-  countryLabel: "Country: Nigeria",
-  vpnDetection: {
-    label: "VPN Detection",
-    statusLabel: "Match",
-    detected: false,
-  },
-  proxyDetection: {
-    label: "Proxy Detection",
-    statusLabel: "Match",
-    detected: false,
-  },
-  device: {
-    label: "Mobile",
-    version: "Android 14",
-    status: "pass",
-  },
-  usageStats: {
-    count: "8 times",
-    deviceType: "Mobile",
-    status: "pass",
-  },
-};
+  if (score === 1) {
+    return {
+      clearanceStatus: "Cleared",
+      screeningStatus: "Low",
+      screeningStatusNote: "PEP Detected",
+      riskLevelLabel: getAmlRiskLevelLabel(score),
+      riskLevel: score,
+      riskScore: score,
+      riskScoreMax: RISK_SCORE_MAX,
+      pepCheck: {
+        label: "PEP Match",
+        description: "Political Exposed Person",
+        status: "match",
+        statusLabel: "Match",
+      },
+      sanctionsLists: [
+        { id: "ofac", label: "OFAC", status: "no-match" },
+        { id: "un", label: "UN", status: "no-match" },
+        { id: "eu", label: "EU", status: "no-match" },
+        { id: "uk-hmt", label: "UK HMT", status: "no-match" },
+      ],
+      warningEnforcement: {
+        label: "Warning Matches",
+        description:
+          "Checks for adverse media, regulatory actions, or enforcement proceedings against the individual.",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+      watchlist: {
+        label: "Watchlist Matches",
+        description: "Individual not found on any monitored watchlists",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+    };
+  }
 
-const favourRiskAnalysis: KycRiskAnalysisData = {
-  clearanceStatus: "Cleared",
-  scoreLevel: "Low",
-  analysisItems: [
-    { id: "risk-factor", label: "Risk Factor", status: "pass" },
-    { id: "pep-detection", label: "PEP Detection", status: "pass" },
-    { id: "all-checks", label: "All Check Passed", status: "fail" },
-  ],
-  recommendation:
-    "Business has passed most verification checks, but a possible PEP connection was detected. This adds +1 to the risk score. While not a critical issue, it requires enhanced due diligence and ongoing monitoring to ensure compliance with AML regulations.",
-};
+  if (score === 2) {
+    return {
+      clearanceStatus: "Cleared",
+      screeningStatus: "Medium",
+      screeningStatusNote: "PEP Detected",
+      riskLevelLabel: getAmlRiskLevelLabel(score),
+      riskLevel: score,
+      riskScore: score,
+      riskScoreMax: RISK_SCORE_MAX,
+      pepCheck: {
+        label: "PEP Screening",
+        description: "Politically exposed person",
+        status: "flagged",
+        statusLabel: "Flagged",
+      },
+      pepMatchDetail: {
+        ...pepMatchDetail,
+        riskLevel: "Medium Risk",
+      },
+      sanctionsLists: [
+        { id: "ofac", label: "OFAC", status: "no-match" },
+        { id: "un", label: "UN", status: "no-match" },
+        { id: "eu", label: "EU", status: "no-match" },
+        { id: "uk-hmt", label: "UK HMT", status: "no-match" },
+      ],
+      warningEnforcement: {
+        label: "Warning Matches",
+        description:
+          "Checks for adverse media, regulatory actions, or enforcement proceedings against the individual.",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+      watchlist: {
+        label: "Watchlist Matches",
+        description: "Individual not found on any monitored watchlists",
+        status: "no-match",
+        statusLabel: "No Match",
+      },
+    };
+  }
 
-const standardRiskAnalysis: KycRiskAnalysisData = {
-  clearanceStatus: "Cleared",
-  scoreLevel: "Low",
-  analysisItems: [
-    { id: "risk-factor", label: "Risk Factor", status: "pass" },
-    { id: "pep-detection", label: "PEP Detection", status: "pass" },
-    { id: "all-checks", label: "All Check Passed", status: "pass" },
-  ],
-  recommendation:
-    "No risk factors. All checks passed. You can proceed to approve this user verification.",
-};
+  const hasPepMatch = options?.pepMatch ?? score >= 3;
 
-const favourDetail: KycDetail = {
-  id: "kyc-record-2",
-  kycId: "KYC-2024-0155",
-  customerName: "Favour Peter Soma",
-  documentType: "National ID + Selfie",
-  country: "Nigeria",
-  status: "in-review",
-  priority: "medium",
-  riskScore: 1,
-  riskLevel: "Low",
-  riskSummary:
-    "Business has passed most verification checks, but a possible PEP connection was detected. This adds +1 to the risk score.",
-  matchScore: 94,
-  livenessStatus: "Passed",
-  extractionStatus: "88% Overall",
-  extractedFields: favourExtractedFields,
-  timeline: [
-    { id: "tl-1", title: "Document Uploaded", timestamp: "2 hours ago", status: "completed" },
-    { id: "tl-2", title: "OCR processing completed", timestamp: "2 hours ago", status: "completed" },
-    { id: "tl-3", title: "Biometric check completed", timestamp: "2 hours ago", status: "completed" },
-    { id: "tl-4", title: "Manual review started", timestamp: "12 mins ago", status: "in-progress" },
-  ],
-  riskAnalysis: favourRiskAnalysis,
-  amlScreening: favourAmlScreening,
-  ipDevice: favourIpDevice,
-  liveness: favourLiveness,
-};
+  return {
+    clearanceStatus: "Flagged",
+    screeningStatus: getAmlScreeningStatusLabel(score),
+    screeningStatusNote: hasPepMatch ? "PEP Detected" : "Elevated risk signals",
+    riskLevelLabel: getAmlRiskLevelLabel(score),
+    riskLevel: score,
+    riskScore: score,
+    riskScoreMax: RISK_SCORE_MAX,
+    pepCheck: {
+      label: "PEP Match",
+      description: "Political Exposed Person",
+      status: hasPepMatch ? "match" : "no-match",
+      statusLabel: hasPepMatch ? "Match" : "No Match",
+    },
+    pepMatchDetail: hasPepMatch ? pepMatchDetail : undefined,
+    sanctionsLists: [
+      { id: "ofac", label: "OFAC", status: score >= 4 ? "match" : "no-match" },
+      { id: "un", label: "UN", status: "no-match" },
+      { id: "eu", label: "EU", status: "no-match" },
+      { id: "uk-hmt", label: "UK HMT", status: "no-match" },
+    ],
+    warningEnforcement: {
+      label: "Warning Matches",
+      description:
+        score >= 4
+          ? "Negative news mentions detected in monitored sources"
+          : "Checks for adverse media, regulatory actions, or enforcement proceedings against the individual.",
+      status: score >= 4 ? "match" : "no-match",
+      statusLabel: score >= 4 ? "Match" : "No Match",
+    },
+    watchlist: {
+      label: "Watchlist Matches",
+      description:
+        score >= 4
+          ? "Individual found on monitored watchlists"
+          : "Individual not found on any monitored watchlists",
+      status: score >= 4 ? "match" : "no-match",
+      statusLabel: score >= 4 ? "Match" : "No Match",
+    },
+  };
+}
 
-function buildRiskAnalysis(record: KycRecord): KycRiskAnalysisData {
-  if (record.riskScore >= 70) {
+function buildRiskAnalysis(score: RiskScore): KycRiskAnalysisData {
+  const scoreLevel = getRiskScoreLabel(score);
+
+  if (score === 0) {
+    return {
+      clearanceStatus: "Cleared",
+      scoreLevel: "Standard Score",
+      analysisItems: [
+        { id: "risk-factor", label: "Risk Factor", status: "no-match", statusLabel: "No Match" },
+        { id: "all-checks", label: "All Check Passed", status: "pass" },
+      ],
+      recommendation:
+        "Customer has passed most verification checks. You can proceed to approve this user verification",
+    };
+  }
+
+  if (score === 1) {
+    return {
+      clearanceStatus: "Cleared",
+      scoreLevel: "Low",
+      analysisItems: [
+        { id: "risk-factor", label: "Risk Factor", status: "pass" },
+        { id: "pep-detection", label: "PEP Detection", status: "pass" },
+        { id: "all-checks", label: "All Check Passed", status: "fail" },
+      ],
+      recommendation:
+        "Business has passed most verification checks, but a possible PEP connection was detected. This adds +1 to the risk score. While not a critical issue, it requires enhanced due diligence and ongoing monitoring to ensure compliance with AML regulations.",
+    };
+  }
+
+  if (score === 2) {
+    return {
+      clearanceStatus: "Cleared",
+      scoreLevel: "Medium",
+      analysisItems: [
+        { id: "risk-factor", label: "Risk Factor", status: "pass" },
+        { id: "pep-detection", label: "PEP Detection", status: "pass" },
+        { id: "all-checks", label: "All Check Passed", status: "fail" },
+      ],
+      recommendationHeading: "APPROVAL NOT RECOMMENDED - LIKELY REJECT",
+      recommendationTone: "reject",
+      recommendation:
+        "Customer presents HIGH RISK with 3 contributing factors: possible PEP association, high-risk geographic location, and multiple failed verification attempts. The pattern of repeated attempts with different documents raises significant fraud concerns. Strong recommendation to reject unless exceptional circumstances can be verified.",
+      actions: [
+        { id: "view-ofac", label: "View Full OFAC SDN", variant: "outline" },
+        { id: "flag-investigation", label: "Flag for further Investigation", variant: "outline-danger" },
+        { id: "clear-false-positive", label: "Clear as False Positive", variant: "primary" },
+      ],
+    };
+  }
+
+  if (score === 3) {
     return {
       clearanceStatus: "Review Required",
-      scoreLevel: "High",
+      scoreLevel,
       analysisItems: [
         { id: "risk-factor", label: "Risk Factor", status: "fail" },
         { id: "pep-detection", label: "PEP Detection", status: "fail" },
         { id: "all-checks", label: "All Check Passed", status: "fail" },
       ],
       recommendation:
-        "Elevated risk factors detected. Escalate to senior compliance review before approving this verification.",
-    };
-  }
-
-  if (record.riskScore >= 40) {
-    return {
-      clearanceStatus: "Review Required",
-      scoreLevel: "Medium",
-      analysisItems: [
-        { id: "risk-factor", label: "Risk Factor", status: "pass" },
-        { id: "pep-detection", label: "PEP Detection", status: "fail" },
-        { id: "all-checks", label: "All Check Passed", status: "fail" },
-      ],
-      recommendation:
-        "Some verification checks require manual review. Complete enhanced due diligence before approval.",
-    };
-  }
-
-  if (record.riskScore > 0) {
-    return favourRiskAnalysis;
-  }
-
-  return standardRiskAnalysis;
-}
-
-function buildAmlScreening(record: KycRecord): KycAmlScreeningData {
-  if (record.riskScore >= 70) {
-    return {
-      ...favourAmlScreening,
-      clearanceStatus: "Flagged",
-      screeningStatus: "High",
-      riskLevel: record.riskScore,
-    };
-  }
-
-  if (record.riskScore > 0) {
-    return {
-      ...favourAmlScreening,
-      riskLevel: record.riskScore,
-    };
-  }
-
-  return clearAmlScreening;
-}
-
-function buildIpDevice(record: KycRecord): KycIpDeviceData {
-  if (record.riskScore >= 70) {
-    return {
-      clearanceStatus: "Review Required",
-      ipAddress: "185.220.101.42",
-      ipAddressNote: "VPN provider detected",
-      location: "Unknown",
-      countryLabel: `Country: ${record.country}`,
-      vpnDetection: {
-        label: "VPN Detection",
-        statusLabel: "Match",
-        detected: true,
-      },
-      proxyDetection: {
-        label: "Proxy Detection",
-        statusLabel: "Match",
-        detected: true,
-      },
-      device: {
-        label: "Mobile",
-        version: "Android 14",
-        status: "fail",
-      },
-      usageStats: {
-        count: "3 times",
-        deviceType: "Mobile",
-        status: "fail",
-      },
-    };
-  }
-
-  return standardIpDevice;
-}
-
-function buildLiveness(record: KycRecord): KycLivenessData {
-  if (record.riskScore >= 70) {
-    return {
-      overallStatusLabel: "Review",
-      livenessStatus: "Review",
-      livenessStatusNote: "Manual review required",
-      confidenceScore: `${Math.max(60, 100 - record.riskScore)}.0%`,
-      confidenceNote: "Low Confidence",
-      completionTime: "14 Seconds",
-      attemptsLabel: "2 attempts",
-      checks: [
-        { id: "face", label: "Face Detection", status: "passed" },
-        { id: "real-person", label: "Real Person (Live Person Verified)", status: "review" },
-        { id: "mask", label: "No Mask Detected", status: "passed" },
-        { id: "eyes", label: "Eyes Open", status: "review" },
-        { id: "facing", label: "Facing Camera", status: "passed" },
-      ],
+        "PEP match and elevated risk factors detected. Senior compliance review and enhanced due diligence required before approval.",
     };
   }
 
   return {
-    ...clearLiveness,
-    confidenceScore: `${Math.max(60, 100 - record.riskScore)}.0%`,
+    clearanceStatus: "Review Required",
+    scoreLevel,
+    analysisItems: [
+      { id: "risk-factor", label: "Risk Factor", status: "fail" },
+      { id: "pep-detection", label: "PEP Detection", status: "fail" },
+      { id: "all-checks", label: "All Check Passed", status: "fail" },
+    ],
+    recommendation:
+      "Critical risk factors detected across multiple checks. Escalate to senior compliance review. Approval is blocked at this risk level.",
   };
 }
 
-function buildGenericDetail(record: KycRecord): KycDetail {
-  const riskLevel =
-    record.riskScore >= 70 ? "High Risk" : record.riskScore >= 40 ? "Medium Risk" : "Standard";
+type KycDetailTemplate = Omit<
+  KycDetail,
+  "id" | "kycId" | "customerName" | "documentType" | "country" | "status" | "priority"
+>;
+
+function buildDetailTemplate(score: RiskScore): KycDetailTemplate {
+  const riskSummaryByScore: Record<RiskScore, string> = {
+    0: "Customer has passed most verification checks. You can proceed to approve this user verification",
+    1: "Business has passed most verification checks, but a possible PEP connection was detected. This adds +1 to the risk score.",
+    2: "Customer presents elevated risk with multiple contributing factors. Manual review and enhanced due diligence are required before approval.",
+    3: "High risk factors detected including PEP match. Senior compliance review required before approval.",
+    4: "Critical risk factors detected across multiple checks. Escalate immediately. Approval is blocked.",
+  };
+
+  const matchScoreByScore: Record<RiskScore, number> = {
+    0: 98,
+    1: 94,
+    2: 94,
+    3: 74,
+    4: 61,
+  };
+
+  const livenessStatusByScore: Record<RiskScore, string> = {
+    0: "Passed",
+    1: "Passed",
+    2: "Passed",
+    3: "Passed",
+    4: "Review",
+  };
+
+  return {
+    riskScore: score,
+    riskSummary: riskSummaryByScore[score],
+    matchScore: matchScoreByScore[score],
+    livenessStatus: livenessStatusByScore[score],
+    extractionStatus: "88% Overall",
+    extractedFields:
+      score === 2 ? score2ExtractedFields : score === 1 ? favourExtractedFields : defaultExtractedFields,
+    timeline:
+      score === 2
+        ? score2Timeline
+        : score === 1
+          ? [
+              ...defaultTimeline,
+              {
+                id: "tl-4",
+                title: "Manual review started",
+                timestamp: "12 mins ago",
+                status: "in-progress",
+              },
+            ]
+          : defaultTimeline,
+    riskAnalysis: buildRiskAnalysis(score),
+    amlScreening: buildAmlScreening(score, { pepMatch: score >= 3 }),
+    ipDevice: score >= 4 ? flaggedIpDevice : clearedIpDevice,
+    liveness: score >= 4 ? reviewLiveness : passedLiveness,
+    documentRiskTier: score === 2 ? score2DocumentRiskTier : undefined,
+    documentAlert: score === 2 ? score2DocumentAlert : undefined,
+  };
+}
+
+const kycDetailByScore: Record<RiskScore, KycDetailTemplate> = {
+  0: buildDetailTemplate(0),
+  1: buildDetailTemplate(1),
+  2: buildDetailTemplate(2),
+  3: buildDetailTemplate(3),
+  4: buildDetailTemplate(4),
+};
+
+function buildExtractedFields(record: KycRecord, templateFields: KycExtractedField[]): KycExtractedField[] {
+  return templateFields.map((field) =>
+    field.id === "full-name" ? { ...field, value: record.customerName } : field,
+  );
+}
+
+function buildTimeline(record: KycRecord, templateTimeline: KycTimelineEvent[]): KycTimelineEvent[] {
+  if (templateTimeline.length > 3) {
+    return templateTimeline;
+  }
+
+  return templateTimeline.map((event) => ({
+    ...event,
+    timestamp: record.timeInQueue,
+  }));
+}
+
+function buildDetailFromRecord(record: KycRecord): KycDetail {
+  const score = Math.min(RISK_SCORE_MAX, Math.max(0, record.riskScore)) as RiskScore;
+  const template = kycDetailByScore[score];
 
   return {
     id: record.id,
@@ -449,62 +539,32 @@ function buildGenericDetail(record: KycRecord): KycDetail {
     country: record.country,
     status: record.status,
     priority: record.priority,
-    riskScore: record.riskScore,
-    riskLevel,
-    riskSummary:
-      record.riskScore >= 70
-        ? "Elevated risk factors detected. Review required before approval."
-        : "No risk factors. All checks passed. You can proceed to approve this user verification.",
-    matchScore: Math.max(60, 100 - record.riskScore),
-    livenessStatus: record.riskScore >= 70 ? "Review" : "Passed",
-    extractionStatus: record.status === "rejected" ? "Failed" : "88% Overall",
-    extractedFields: [
-      {
-        id: "full-name",
-        label: "Full Name",
-        value: record.customerName,
-        confidence: 90,
-      },
-      {
-        id: "document-type",
-        label: "Document Type",
-        value: record.documentType,
-        confidence: 90,
-      },
-      {
-        id: "country",
-        label: "Country",
-        value: record.country,
-        confidence: 90,
-      },
-    ],
-    timeline: [
-      { id: "tl-1", title: "Document Uploaded", timestamp: record.timeInQueue, status: "completed" },
-      {
-        id: "tl-2",
-        title: "OCR processing completed",
-        timestamp: record.timeInQueue,
-        status: "completed",
-      },
-      {
-        id: "tl-3",
-        title: "Biometric check completed",
-        timestamp: record.timeInQueue,
-        status: "completed",
-      },
-    ],
-    riskAnalysis: buildRiskAnalysis(record),
-    amlScreening: buildAmlScreening(record),
-    ipDevice: buildIpDevice(record),
-    liveness: buildLiveness(record),
+    riskScore: score,
+    riskSummary: template.riskSummary,
+    matchScore: template.matchScore,
+    livenessStatus: template.livenessStatus,
+    extractionStatus: record.status === "rejected" ? "Failed" : template.extractionStatus,
+    extractedFields: buildExtractedFields(record, template.extractedFields),
+    timeline: buildTimeline(record, template.timeline),
+    riskAnalysis: template.riskAnalysis,
+    amlScreening: {
+      ...template.amlScreening,
+      riskLevel: score,
+      riskScore: score,
+      riskLevelLabel: getAmlRiskLevelLabel(score),
+    },
+    ipDevice: {
+      ...template.ipDevice,
+      countryLabel: `Country: ${record.country}`,
+    },
+    liveness: template.liveness,
+    documentRiskTier: template.documentRiskTier,
+    documentAlert: template.documentAlert,
   };
 }
 
 const detailById = new Map<string, KycDetail>(
-  kycListDataPopulated.records.map((record) => [
-    record.id,
-    record.id === favourDetail.id ? favourDetail : buildGenericDetail(record),
-  ]),
+  kycListDataPopulated.records.map((record) => [record.id, buildDetailFromRecord(record)]),
 );
 
 export function getKycDetailById(id: string): KycDetail | undefined {

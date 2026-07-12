@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { Check, X } from "lucide-react";
 import type { KycDetail } from "@/types/kyc";
+import { getRiskScoreShortLabel } from "@/lib/kyc/risk-score";
 
 type KycApproveModalProps = {
   open: boolean;
@@ -38,10 +39,7 @@ export function KycApproveModal({ open, detail, onClose, onConfirm }: KycApprove
     return null;
   }
 
-  const riskLevelLabel =
-    detail.riskLevel === "Low" || detail.riskLevel === "Standard"
-      ? "Standard"
-      : detail.riskLevel;
+  const riskLevelLabel = getRiskScoreShortLabel(detail.riskScore);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">

@@ -70,6 +70,23 @@ App shell is provided by `app/(app)/layout.tsx`.
 
 Detail frames repeat at multiple Y offsets in Figma (`771`, `3214`, `5657`, `8158`, `10558`, `13059`, `15963`) — same flows in sandbox vs production / workflow branches.
 
+### Risk score model (0–4)
+
+KYC uses the same **0–4 risk score scale** as Settings → Approvals (`maxScore: 4`). The numeric score is the source of truth — not a separate tier enum or route.
+
+| Score | Label | Tab UI behaviour |
+| ----- | ----- | ---------------- |
+| 0 | No Risk | All checks pass; AML cleared; approve immediately |
+| 1 | Low Risk | Minor flag (e.g. possible PEP); light EDD note |
+| 2 | Moderate Risk | Warning threshold; some checks fail; manual review |
+| 3 | High Risk | PEP/sanctions flagged; approval blocked |
+| 4 | Very High | Multiple failures; escalate; approval blocked |
+
+- **List + detail** share `riskScore` on `KycRecord` / `KycDetail` (0–4).
+- **Tab panels** are data-driven: `lib/data/kyc-detail.ts` provides per-score fixtures; `lib/kyc/risk-score.ts` supplies labels and threshold helpers aligned to Settings.
+- **Footer actions**: approve disabled when `riskScore >= approvalBlockThreshold` (default 3); warning copy at `>= warningThreshold` (default 2).
+- **High-risk list filter** (`More filters → High risk`) matches scores `>= approvalBlockThreshold`.
+
 ### D — Modals and actions (cross-cutting)
 
 Document per frame when implementing detail (frames 124+):

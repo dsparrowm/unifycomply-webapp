@@ -62,6 +62,7 @@ export type KycRecord = {
   country: string;
   status: KycVerificationStatus;
   priority: KycPriority;
+  /** Composite risk score on the 0–4 scale (Settings → Approvals). */
   riskScore: number;
   timeInQueue: string;
   submittedAt: string;
@@ -95,22 +96,37 @@ export type KycTimelineEvent = {
   status: KycTimelineEventStatus;
 };
 
-export type KycRiskAnalysisItemStatus = "pass" | "fail";
+export type KycRiskAnalysisItemStatus = "pass" | "fail" | "no-match";
 
 export type KycRiskAnalysisItem = {
   id: string;
   label: string;
   status: KycRiskAnalysisItemStatus;
+  /** Badge copy when status is `no-match` (defaults to "No Match"). */
+  statusLabel?: string;
 };
+
+export type KycRiskAnalysisActionVariant = "outline" | "outline-danger" | "primary";
+
+export type KycRiskAnalysisAction = {
+  id: string;
+  label: string;
+  variant: KycRiskAnalysisActionVariant;
+};
+
+export type KycRiskAnalysisRecommendationTone = "info" | "warning" | "reject";
 
 export type KycRiskAnalysisData = {
   clearanceStatus: string;
   scoreLevel: string;
   analysisItems: KycRiskAnalysisItem[];
   recommendation: string;
+  recommendationHeading?: string;
+  recommendationTone?: KycRiskAnalysisRecommendationTone;
+  actions?: KycRiskAnalysisAction[];
 };
 
-export type KycAmlResultStatus = "match" | "no-match";
+export type KycAmlResultStatus = "match" | "no-match" | "flagged";
 
 export type KycDocumentIssueTone = "warning" | "error";
 
@@ -199,6 +215,8 @@ export type KycAmlScreeningData = {
   clearanceStatus: string;
   screeningStatus: string;
   screeningStatusNote: string;
+  /** Display label for the Risk Level summary card (e.g. "No Risk", "Low"). */
+  riskLevelLabel: string;
   riskLevel: number;
   riskScore: number;
   riskScoreMax: number;
@@ -256,6 +274,19 @@ export type KycLivenessData = {
   checks: KycLivenessCheckItem[];
 };
 
+export type KycDocumentRiskTier = {
+  tierLabel: string;
+  title: string;
+  description: string;
+  detail: string;
+  recommendation: string;
+};
+
+export type KycDocumentAlert = {
+  title: string;
+  description: string;
+};
+
 export type KycDetail = {
   id: string;
   kycId: string;
@@ -264,8 +295,8 @@ export type KycDetail = {
   country: string;
   status: KycVerificationStatus;
   priority: KycPriority;
+  /** Composite risk score on the 0–4 scale (Settings → Approvals). */
   riskScore: number;
-  riskLevel: string;
   riskSummary: string;
   matchScore: number;
   livenessStatus: string;
@@ -276,6 +307,10 @@ export type KycDetail = {
   amlScreening: KycAmlScreeningData;
   ipDevice: KycIpDeviceData;
   liveness: KycLivenessData;
+  /** Document tab tier card — shown at elevated risk scores (e.g. score 2). */
+  documentRiskTier?: KycDocumentRiskTier;
+  /** Document tab alert panel — shown when verification warnings apply. */
+  documentAlert?: KycDocumentAlert;
 };
 
 export type KycLookupType =

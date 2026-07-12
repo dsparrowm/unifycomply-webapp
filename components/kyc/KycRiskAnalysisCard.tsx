@@ -1,4 +1,5 @@
 import type { KycDetail } from "@/types/kyc";
+import { getRiskScoreShortLabel } from "@/lib/kyc/risk-score";
 
 type KycRiskAnalysisCardProps = {
   detail: KycDetail;
@@ -17,7 +18,7 @@ export function KycRiskAnalysisCard({ detail }: KycRiskAnalysisCardProps) {
             Risk Score: {detail.riskScore}
           </span>
           <span className="rounded-full bg-[color:var(--state-success-soft)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--state-success)]">
-            {detail.riskLevel}
+            {getRiskScoreShortLabel(detail.riskScore)}
           </span>
         </div>
         <p className="mt-3 text-sm leading-5 text-[color:var(--text-muted)]">{detail.riskSummary}</p>

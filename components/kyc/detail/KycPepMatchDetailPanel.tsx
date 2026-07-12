@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 type KycPepMatchDetailPanelProps = {
   detail: KycPepMatchDetail;
+  defaultExpanded?: boolean;
 };
 
 function FlaggedBadge({ compact = false }: { compact?: boolean }) {
@@ -81,8 +82,11 @@ function SectionBlock({
   );
 }
 
-export function KycPepMatchDetailPanel({ detail }: KycPepMatchDetailPanelProps) {
-  const [expanded, setExpanded] = useState(true);
+export function KycPepMatchDetailPanel({
+  detail,
+  defaultExpanded = true,
+}: KycPepMatchDetailPanelProps) {
+  const [expanded, setExpanded] = useState(defaultExpanded);
 
   return (
     <div>

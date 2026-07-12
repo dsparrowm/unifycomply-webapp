@@ -1,6 +1,7 @@
+import { defaultApprovalThresholds } from "@/lib/kyc/risk-score";
 import type { KycListFilters, KycRecord, KycStatusFilter } from "@/types/kyc";
 
-const HIGH_RISK_THRESHOLD = 70;
+const HIGH_RISK_THRESHOLD = defaultApprovalThresholds.approvalBlockThreshold;
 
 const statusFilterMap: Record<Exclude<KycStatusFilter, "all">, KycRecord["status"]> = {
   success: "approved",
