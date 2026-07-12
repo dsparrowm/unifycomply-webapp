@@ -28,25 +28,25 @@ deployment of the frontend.
 
 ### Milestone 1 — Foundation
 
-- [ ] UI design system completed
-- [ ] Authentication pages completed
-- [ ] Dashboard framework completed (sidebar, header, nav)
-- [ ] User management screens completed
-- [ ] Tenant management screens completed
-- [ ] Responsive layouts completed
-- [ ] Loading and error states completed
-- [ ] RBAC-aware navigation implemented
+- [x] UI design system completed
+- [x] Authentication pages completed
+- [x] Dashboard framework completed (sidebar, header, nav)
+- [x] User management screens completed
+- [x] Tenant management screens completed
+- [x] Responsive layouts completed
+- [x] Loading and error states completed
+- [x] RBAC-aware navigation implemented
 
 ### Milestone 2 — KYC Orchestration
 
-- [ ] Customer onboarding wizard completed
+- [x] Customer onboarding wizard completed
 - [ ] Business onboarding screens completed
-- [ ] Document upload UI completed
-- [ ] Verification dashboard completed
+- [x] Document upload UI completed (onboarding wizard)
+- [x] Verification dashboard completed (KYC/KYB detail)
 - [ ] Compliance queue — not a separate Figma screen; use KYC/KYB list status filters
-- [ ] Risk score visualization completed
+- [x] Risk score visualization completed
 - [x] Bank analysis list screen completed (`/bank-analysis`)
-- [ ] AML screening screens completed
+- [ ] AML screening screens completed (placeholder at `/aml-screening`; list UI pending)
 
 ### Milestone 3 — Transaction Monitoring
 
@@ -72,7 +72,7 @@ deployment of the frontend.
 - [ ] Cross-browser testing completed
 - [ ] Responsive testing completed
 - [ ] Error pages completed (404, 500)
-- [ ] Production build verified (`npm run build` passes)
+- [x] Production build verified (`pnpm run build` passes)
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Milestone:** M2  
 **Figma section:** KYC COMPLIANCE (`886:53858`)  
-**Status:** In progress — list empty state aligned to frame 79
+**Status:** In progress — list, lookup, detail, and populated list default
 
 Read `AGENTS.md` before starting.
 
@@ -19,7 +19,7 @@ The KYC section contains **78 frames** (`Customer // KYC // 79` … `156`). Fram
 
 | Route | Purpose | Status |
 | ----- | ------- | ------ |
-| `/kyc` | KYC customer list | Done — empty default (frame 79) |
+| `/kyc` | KYC customer list | Done — populated default (frame 86); empty fixture reserved |
 | `/kyc/[id]` | Verification detail / dashboard | Done — tabs + decision modals |
 | `/kyc/lookup` | Perform lookup (BVN, etc.) | Done — entry + result (frames 90–94) |
 
@@ -104,6 +104,9 @@ Document per frame when implementing detail (frames 124+):
 
 Do not show populated list until Add Customer or lookup flow adds records (future units).
 
+**Current dev default:** `/kyc` uses `kycListDataPopulated` (frame 86) for M2 development.
+`kycListDataEmpty` remains the post–Add Customer empty-state fixture.
+
 ## Components
 
 | Component | Purpose |
@@ -140,8 +143,8 @@ Do not show populated list until Add Customer or lookup flow adds records (futur
 - [x] Filter bar renders per Figma (interactions deferred)
 - [x] Add Customer button visible (flow deferred)
 - [x] Filter dropdown overlays (frames 80–85)
-- [ ] Populated list wired after Add Customer flow
-- [ ] TypeScript clean
+- [x] Populated list fixture wired for M2 development (`kycListDataPopulated` on `/kyc`)
+- [x] TypeScript clean
 - [x] progress-tracker updated
 
 ## Out of scope (this unit)

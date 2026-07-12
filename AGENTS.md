@@ -5,9 +5,10 @@
 This repository is **frontend only** — the **WebApp** from Figma (page `1:2`). Do not
 implement backend services or the **Landing Page** (built in a separate project).
 
-**Current milestone: M1 only.** Do not implement routes, pages, or feature specs for
-M2–M5 until Milestone 1 completion criteria in `mvp-roadmap.md` are met and
-`lib/constants/milestones.ts` is advanced.
+**Current milestone: M2** (`lib/constants/milestones.ts`). M1 is complete. Implement
+routes and feature specs for the active milestone and earlier milestones only. Do not
+implement M3–M5 until `CURRENT_MILESTONE` is advanced and `mvp-roadmap.md` completion
+criteria are met.
 
 Use **Next.js App Router** with routes under `app/` at the project root. Use mock data
 until external APIs are integrated.

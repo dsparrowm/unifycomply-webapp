@@ -57,7 +57,7 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 - Next.js App Router scaffold
 - Design tokens from KYC frame (used for shell styling)
 - App shell — sidebar, header, sandbox/production toggle
-- Milestone gating — `CURRENT_MILESTONE = 1`, disabled M2+ nav
+- Milestone gating — `CURRENT_MILESTONE = 2`; M3+ nav disabled in sidebar and route guard
 - Overview dashboard (`/overview`) — Figma `886:49386`
 - Settings placeholders (`/settings`, `/settings/[section]`)
 - Default route `/` → `/overview`
@@ -79,7 +79,7 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 
 1. AML screening UI
 
-## Feature Unit Queue (M1 only)
+## Feature Unit Queue (through M2)
 
 | Order | Unit | Figma node | Status |
 | ----- | ---- | ---------- | ------ |
@@ -99,7 +99,9 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 | 14 | Customer onboarding wizard | MVP flowchart `1532:157029` | Done — `/kyc/onboarding` |
 | 15 | KYB Perform Lookup flow | `886:108577`–`886:109104` | Done — `/kyb/lookup` |
 | 16 | Bank analysis list | `886:161366`, `886:163331` | Done — `/bank-analysis` |
-| 17 | KYB detail page (frame 93) | `886:110808` | Done — `/kyb/[id]` Business Overview |
+| 17 | KYB detail page (frame 93) | `886:110808` | Done — all secondary tabs |
+| 18 | M2 placeholder routes | — | Done — `/aml-screening`, `/packages`, `/request` |
+| 19 | AML screening list UI | `886:134392` | Not started |
 
 ## Architecture Decisions
 
@@ -116,6 +118,8 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 - `/kyc/lookup` — Perform Lookup entry (frame 90) with lookup type/country/identifier form, sandbox/production toggle
 - `/kyc/lookup/result` — BVN lookup results (frames 91–94) with tabs, summary panel, address tab, footer actions
 - KYC list **Add Customer** opens choose-action modal (frame 115) — Perform Lookup → `/kyc/lookup`
+- `/aml-screening`, `/packages`, `/request` — placeholder routes via `RoutePlaceholderPanel`; milestone + RBAC gating enforced in `canAccessPath`
+- `canAccessPath` combines RBAC permissions with `isPathEnabledForCurrentMilestone` for deep-link protection
 
 ## Session Notes
 
@@ -152,4 +156,4 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 - 2026-07-12: KYB detail Directors & Officers tab — score 0/1/3/4 layouts with director cards and AML screening rows; mock via `lib/data/kyb-directors.ts`
 - 2026-07-12: KYB detail Shareholders tab — Share Capital Structure table with type badges and percentage bars; mock via `lib/data/kyb-shareholders.ts`
 - 2026-07-12: KYB detail Document tab — Submitted Documents cards with verified status and view/download actions; mock via `lib/data/kyb-documents.ts`
-- 2026-07-12: KYB detail tab section headers — transparent header style (title + soft status badge) shared across Directors, Shareholders, Documents, and Compliance Checks
+- 2026-07-12: Compliance review fixes — `AGENTS.md` M2 scope, placeholder routes, milestone gating in `canAccessPath`, reconciled feature specs, refreshed architecture/go-live docs

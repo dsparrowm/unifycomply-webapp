@@ -1,4 +1,5 @@
 import { settingsNavGroups } from "@/lib/constants/settings-nav";
+import { isPathEnabledForCurrentMilestone } from "@/lib/constants/navigation";
 import type { NavPermission, TenantRole } from "@/types/rbac";
 
 const ALL_PERMISSIONS: NavPermission[] = [
@@ -204,6 +205,10 @@ export function getPermissionForPath(pathname: string): NavPermission | null {
 }
 
 export function canAccessPath(role: TenantRole, pathname: string): boolean {
+  if (!isPathEnabledForCurrentMilestone(pathname)) {
+    return false;
+  }
+
   const permission = getPermissionForPath(pathname);
 
   if (!permission) {

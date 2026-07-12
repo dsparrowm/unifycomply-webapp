@@ -84,3 +84,4 @@ Mock data shape (required for v1).
 | `04-kyb-compliance.md` | KYB list + Perform Lookup + detail (frames 79–88, 93) | In progress — list + lookup + detail done |
 | `05-customer-onboarding-wizard.md` | KYC customer onboarding wizard (`/kyc/onboarding`) | Done — pending Figma frame export |
 | `07-bank-analysis.md` | Bank analysis list (frames 11–16); lookup/detail deferred | In progress — list done |
+| `08-aml-screening.md` | Standalone AML screening (`/aml-screening`) | Placeholder route only |

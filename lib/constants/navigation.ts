@@ -1,4 +1,5 @@
 import type { Milestone } from "@/lib/constants/milestones";
+import { isRouteEnabledForCurrentMilestone } from "@/lib/constants/milestones";
 import type { SidebarIconKey } from "@/lib/constants/sidebar-icons";
 import type { NavPermission } from "@/types/rbac";
 
@@ -156,3 +157,25 @@ export const m1Routes = appNavigation
   .flatMap((section) => section.items)
   .filter((item) => item.milestone === 1 && item.href)
   .map((item) => item.href as string);
+
+export function getRouteMilestone(pathname: string): Milestone | null {
+  const items = appNavigation
+    .flatMap((section) => section.items)
+    .filter((item): item is NavItem & { href: string } => Boolean(item.href));
+
+  const match = items
+    .sort((a, b) => b.href.length - a.href.length)
+    .find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
+
+  return match?.milestone ?? null;
+}
+
+export function isPathEnabledForCurrentMilestone(pathname: string): boolean {
+  const milestone = getRouteMilestone(pathname);
+
+  if (milestone === null) {
+    return true;
+  }
+
+  return isRouteEnabledForCurrentMilestone(milestone);
+}

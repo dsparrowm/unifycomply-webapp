@@ -100,15 +100,18 @@ Same **0–4 risk score scale** as KYC and Settings → Approvals. Numeric score
 - [x] Perform Lookup result — registry card, summary panel, tabs, footer actions
 - [x] KYB detail route (`/kyb/[id]`) — frame 93 Business Overview baseline
 - [x] KYB detail Risk Score Analysis tab — reuses `KycRiskAnalysisPanel` for scores 0–4
-- [x] KYB detail Directors & Officers tab — scores 0, 1, 3, and 4 baselines
+- [x] KYB detail Directors & Officers tab — scores 0, 1, 3, and 4 baselines (score 2 placeholder)
 - [x] KYB detail Shareholders tab — Share Capital Structure table for all risk levels
+- [x] KYB detail Document tab — Submitted Documents list for all risk levels
 - [x] KYB detail Compliance Checks tab — AML screening sections for all risk levels 0–4
+- [x] KYB detail transparent section headers — shared `KybDetailSectionHeader`
 
 ## Out of scope (this unit)
 
 - Real API integration
 - Validate Document flow from choose-action modal
-- All KYB detail secondary tabs implemented for applicable risk levels
+- Directors & Officers tab for risk score 2 baseline
+- Standalone `/aml-screening` list UI (see `08-aml-screening.md`)
 
 ## Related docs
 

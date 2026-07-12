@@ -1,20 +1,20 @@
-                                                                            w# Architecture Context
+# Architecture Context
 
-## Stack (planned)
+## Stack
 
 | Layer         | Technology                         | Role                                                     |
 | ------------- | ---------------------------------- | -------------------------------------------------------- |
-| Framework     | Next.js App Router + TypeScript    | Page routing under `app/` at project root                |
-| UI            | Tailwind CSS + shadcn/ui           | Styling system and accessible component primitives       |
-| State         | Zustand (if needed)                | Global client state — auth UI, filters, wizard steps     |
-| Data Fetching | TanStack Query                     | Server state when APIs are integrated                    |
+| Framework     | Next.js 15 App Router + TypeScript | Page routing under `app/` at project root                |
+| UI            | Tailwind CSS 4 + Lucide icons      | Styling system and iconography                           |
+| State         | Zustand                            | Auth UI, tenant context, sandbox toggle                  |
 | Forms         | React Hook Form + Zod              | Form management and validation                           |
+| Data (v1)     | Typed mock fixtures in `lib/data/` | Static data until APIs are integrated                    |
 
 Use the **App Router** (`app/` directory). Do not use the Pages Router (`pages/`).
 Do not use a `src/` wrapper — routes live at `app/` in the project root.
 
-The project is not yet scaffolded. When `package.json` is added, update this table
-with the exact versions in use.
+Custom presentational components live under `components/` (feature folders + shared
+layout/feedback). There is no generated `components/ui/` shadcn layer in this repo.
 
 ## Multi-Tenant UI Considerations
 
@@ -36,6 +36,8 @@ app/
     kyb/
     bank-analysis/
     aml-screening/
+    packages/
+    request/
     transaction-monitoring/
     settings/
     …                    ← per Figma WebApp sections
@@ -43,17 +45,19 @@ app/
   layout.tsx             ← Root layout, fonts, providers
 
 components/
-  ui/                  ← shadcn/ui primitives — do not modify
   layout/              ← AppSidebar, AppHeader, PageHeader
-  [feature]/           ← kyc/, aml/, monitoring/, etc.
+  feedback/            ← EmptyState, loading/error states
+  placeholders/        ← Route placeholder panels
+  [feature]/           ← kyc/, kyb/, bank-analysis/, etc.
 
 lib/
   utils.ts
-  constants.ts
+  constants/           ← navigation, milestones, settings-nav
   data/                ← mock fixtures (v1)
-  hooks/               ← React Query hooks (when APIs exist)
+  rbac/                ← permission matrix
+  hooks/               ← useRbac and feature hooks
 
-store/                 ← Zustand slices (if needed)
+store/                 ← Zustand slices
 types/                 ← shared TypeScript types
 ```
 
@@ -63,10 +67,10 @@ types/                 ← shared TypeScript types
 
 | Milestone | Routes under `app/(app)/` | Status |
 | --------- | ------------------------- | ------ |
-| **M1** | `/overview`, `/settings`, auth routes | Complete |
-| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, … | In progress — KYB detail done; AML next |
+| **M1** | `/overview`, `/settings`, `/billing`, auth routes | Complete |
+| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding` | In progress — AML list UI remaining |
 | M3 | `/transaction-monitoring`, … | Blocked until M3 |
-| M4 | `/cases`, `/sar`, … | Blocked until M4 |
+| M4 | `/sar`, `/pnd-watchlist`, … | Blocked until M4 |
 
 Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 
@@ -76,20 +80,21 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
   toggle, user menu. All WebApp feature pages render inside this layout.
 - **Feature sections** — One presentational component per major Figma section (metric
   cards, filter bar, data table). Container pages assemble sections and pass typed props.
-- **Design system** — shadcn/ui primitives in `components/ui/` are not modified.
+- **Placeholders** — Routes enabled in nav but not yet fully implemented use
+  `RoutePlaceholderPanel` until the feature spec unit is built.
 
 ## State Model (initial)
 
-- **Server state (TanStack Query):** When APIs are integrated; until then, mock fixtures.
 - **Form state (React Hook Form):** All multi-field forms; schemas colocated with forms.
 - **UI state (Zustand or local state):** Sidebar, active nav, wizard step, mock auth/role.
 - **Mock data (v1 default):** Static typed fixtures in `lib/data/` for all WebApp screens.
 - **RBAC (v1):** Tenant role on auth tenant context. Permission matrix in `lib/rbac/permissions.ts`. Nav items declare `permission` in navigation constants. `RbacRouteGuard` redirects unauthorized deep links.
+- **Later:** TanStack Query hooks in `lib/hooks/` when API contracts are provided.
 
 ## Data Source
 
 - **v1 (default):** Mock data in `lib/data/`. Components consume typed props.
-- **Later:** TanStack Query hooks in `lib/hooks/` when API contracts are provided.
+- **Later:** Data hooks when API contracts are provided.
 
 ## Invariants
 
@@ -103,8 +108,9 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 7. Do not implement Landing Page or marketing routes in this repo.
 8. RBAC: hide or disable navigation and actions the active role cannot perform.
 9. **Milestone gating:** `CURRENT_MILESTONE` in `lib/constants/milestones.ts` controls
-   which routes are active. Sidebar shows future milestones disabled. Do not add M2+
-   pages until the milestone constant is incremented.
+   which routes are active. Sidebar disables future-milestone nav items. `canAccessPath`
+   in `lib/rbac/permissions.ts` also enforces milestone gating for deep links. Do not add
+   pages for milestones above `CURRENT_MILESTONE`.
 
 ## Figma → Code Mapping
 

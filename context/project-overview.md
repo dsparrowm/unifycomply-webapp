@@ -91,6 +91,6 @@ See `context/mvp-roadmap.md` for frontend scope. Summary:
 ## Out of Scope
 
 - **Landing Page** (Figma page `1:3`) — built in another repository
-- **M2–M5 features** until Milestone 1 is complete (see `lib/constants/milestones.ts`)
+- **M3–M5 features** until the active milestone in `lib/constants/milestones.ts` reaches that milestone (currently **M2**)
 - Backend implementation (separate repository / team)
 - API integration until OpenAPI contracts are provided
