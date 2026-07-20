@@ -123,6 +123,7 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 
 ## Session Notes
 
+- 2026-07-20: Auth split layout — mobile logo top-left (sidebar size), top-aligned column; not removed (brand required)
 - 2026-07-02: Realigned to M1-only — disabled M2+ nav, overview as home, KYC deferred
 - 2026-07-03: Sidebar nav icons exported from Figma (`886:70409`) to `public/assets/sidebar/` and wired in `AppSidebar`
 - 2026-07-03: Search modal overlay (`AppSearchModal`) — blurred backdrop, Cancel dismiss, empty state per reference screenshot

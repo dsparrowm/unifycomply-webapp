@@ -6,13 +6,18 @@ const AVATAR_SRC = "/images/testimonial-avatar.jpg";
 
 type AuthBrandPanelProps = {
   compact?: boolean;
+  /** Left-align compact logo with form content (split layout mobile). Default centers for card layouts. */
+  align?: "center" | "start";
 };
 
-export function AuthBrandPanel({ compact = false }: AuthBrandPanelProps) {
+export function AuthBrandPanel({
+  compact = false,
+  align = "center",
+}: AuthBrandPanelProps) {
   if (compact) {
     return (
-      <div className="flex justify-center">
-        <UnifycomplyLogo variant="dark" />
+      <div className={align === "start" ? "flex justify-start" : "flex justify-center"}>
+        <UnifycomplyLogo variant="dark" size="sidebar" />
       </div>
     );
   }

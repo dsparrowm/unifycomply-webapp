@@ -19,7 +19,8 @@
 ## Layout patterns
 
 1. **Split layout** (`AuthSplitLayout`) — sign-in, forgot/reset password, MFA, tenant selection  
-   - Left: brand panel with logo, headline, testimonial (`AuthBrandPanel`)  
+   - Left: brand panel with logo, headline, testimonial (`AuthBrandPanel`) — desktop (`lg+`) only  
+   - Mobile: smaller dark logo top-left above the form (`AuthBrandPanel compact align="start"`); form column top-aligned  
    - Right: form content, max width 461px
 
 2. **Card layout** (`AuthCardLayout`) — register, verify-email  
