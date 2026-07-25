@@ -2,16 +2,19 @@
 
 ## Scope
 
-This repository is **frontend only** — the **WebApp** from Figma (page `1:2`). Do not
-implement backend services or the **Landing Page** (built in a separate project).
+This repository is the **WebApp frontend** from Figma (page `1:2`), including a
+**Next.js BFF** (`app/api/`) that proxies the UnifyComply Core Platform and holds
+JWTs in httpOnly cookies. Do **not** implement the Core Platform backend itself, or
+the **Landing Page** (built in a separate project).
 
 **Current milestone: M2** (`lib/constants/milestones.ts`). M1 is complete. Implement
 routes and feature specs for the active milestone and earlier milestones only. Do not
 implement M3–M5 until `CURRENT_MILESTONE` is advanced and `mvp-roadmap.md` completion
 criteria are met.
 
-Use **Next.js App Router** with routes under `app/` at the project root. Use mock data
-until external APIs are integrated.
+Use **Next.js App Router** with routes under `app/` at the project root. Use **live
+APIs** for auth and tenant settings via the BFF; use **mock data** for modules without
+OpenAPI contracts (KYC, KYB, AML, bank analysis, overview, audit logs).
 
 ## Design Source of Truth
 

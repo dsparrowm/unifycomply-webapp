@@ -79,6 +79,7 @@ export const TENANT_ROLE_LABELS: Record<TenantRole, string> = {
 
 const ROLE_ALIASES: Record<string, TenantRole> = {
   admin: "admin",
+  administrator: "admin",
   "compliance officer": "compliance-officer",
   "compliance-officer": "compliance-officer",
   "compliance manager": "compliance-manager",

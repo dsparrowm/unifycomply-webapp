@@ -22,8 +22,11 @@ All components use CSS custom properties from `app/globals.css`.
 | Primary accent (teal) | `--accent-primary` | `#00454C` |
 | Primary hover | `--accent-primary-hover` | `#007984` |
 | Active nav background | `--accent-primary-soft` | `#EEFCFE` |
+| Primary subtle card background | `--accent-primary-subtle` | `#F7FFFF` |
+| Network graph secondary node | `--network-secondary` | `#2BB7C3` |
 | Border default | `--border-default` | `#E4E7EC` |
 | Border subtle | `--border-subtle` | `#F0F2F5` |
+| Skeleton pulse | `--bg-skeleton` | `#E4E7EC` |
 | Sandbox banner bg | `--sandbox-bg` | `#FFFCE6` |
 | Sandbox banner border | `--sandbox-border` | `#CFB10B` |
 | Sandbox banner text | `--sandbox-text` | `#443C1B` |
@@ -75,6 +78,7 @@ Sign-in split layout (`886:48672`) uses the same auth field tokens; primary butt
 | Page padding | `p-6` |
 | Card radius | `rounded-xl` |
 | Button / input radius | `rounded-lg` |
+| Toast | Top-right stack via `ToastViewport`; use `runAction` / `toastSuccess` / `toastError` |
 | Nav item radius | `rounded-lg` |
 
 ## App Shell

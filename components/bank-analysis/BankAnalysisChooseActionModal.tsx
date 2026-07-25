@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { ChevronRight, Layers, Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 type BankAnalysisChooseActionModalProps = {
@@ -13,6 +14,8 @@ export function BankAnalysisChooseActionModal({
   open,
   onClose,
 }: BankAnalysisChooseActionModalProps) {
+  const router = useRouter();
+
   useEffect(() => {
     if (!open) {
       return;
@@ -37,7 +40,10 @@ export function BankAnalysisChooseActionModal({
       id: "single",
       label: "Single Lookup",
       icon: Search,
-      onClick: onClose,
+      onClick: () => {
+        onClose();
+        router.push("/bank-analysis/lookup?mode=single");
+      },
     },
     {
       id: "batch",

@@ -14,9 +14,9 @@ const profileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Enter a valid email address"),
-  phone: z.string().min(1, "Phone number is required"),
-  role: z.string().min(1, "Role is required"),
-  department: z.string().min(1, "Department is required"),
+  phone: z.string(),
+  role: z.string(),
+  department: z.string(),
   timezone: z.string().min(1, "Timezone is required"),
   language: z.string().min(1, "Language is required"),
 });
@@ -25,9 +25,10 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 type ProfileManagementPanelProps = {
   profile: SettingsProfile;
+  onSave?: (values: SettingsProfile) => Promise<void>;
 };
 
-export function ProfileManagementPanel({ profile }: ProfileManagementPanelProps) {
+export function ProfileManagementPanel({ profile, onSave }: ProfileManagementPanelProps) {
   const {
     register,
     handleSubmit,
@@ -46,7 +47,16 @@ export function ProfileManagementPanel({ profile }: ProfileManagementPanelProps)
     },
   });
 
-  const onSubmit = handleSubmit(async () => {
+  const onSubmit = handleSubmit(async (values) => {
+    if (onSave) {
+      await onSave({
+        ...profile,
+        ...values,
+        displayName: `${values.firstName} ${values.lastName}`.trim(),
+        initials: profile.initials,
+      });
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 400));
   });
 

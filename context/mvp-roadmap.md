@@ -5,7 +5,8 @@ Source: `UNIFYCOMPLY MVP Development Roadmap.docx` — **frontend scope only**.
 This repository implements the **WebApp UI** for all five milestones. The public
 landing page is built elsewhere — do not implement Figma page `1:3` here.
 
-Use **mock data** until external APIs are wired in.
+Use **live APIs** (via the Next.js BFF) for auth and tenant settings. Use **mock data**
+for modules without OpenAPI contracts (KYC, KYB, AML, bank analysis, overview, audit logs).
 
 ## Development Methodology
 
@@ -16,9 +17,9 @@ Requirements (Figma + feature spec)
     ↓
 UI / component design
     ↓
-Frontend implementation (mock data)
+Frontend implementation (mock or live data)
     ↓
-Integration (when APIs are available)
+Integration (BFF + OpenAPI when available)
     ↓
 UI testing
     ↓
@@ -95,7 +96,7 @@ Hide or disable nav items and actions the active role cannot access.
 
 ### Completion Criteria
 
-- Authentication UI complete (mock auth acceptable)
+- Authentication UI complete (live BFF auth)
 - RBAC-aware navigation working
 - App shell and design system complete
 - Overview dashboard renders with mock data

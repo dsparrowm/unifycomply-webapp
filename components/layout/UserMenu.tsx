@@ -54,9 +54,9 @@ export function UserMenu() {
     };
   }, [open]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setOpen(false);
-    signOut();
+    await signOut();
     router.push("/sign-in");
   };
 

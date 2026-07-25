@@ -4,7 +4,7 @@ function SkeletonBlock({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "animate-pulse rounded-lg bg-[color:var(--border-subtle)]",
+        "animate-pulse rounded-lg bg-[color:var(--bg-skeleton)]",
         className,
       )}
     />

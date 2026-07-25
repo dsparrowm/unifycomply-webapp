@@ -3,14 +3,16 @@
 import { useState } from "react";
 import { SettingsField } from "@/components/settings/SettingsField";
 import { SettingsToggle } from "@/components/settings/SettingsToggle";
+import { toastSuccess } from "@/lib/toast";
 import type { SettingsNotifications } from "@/types/settings";
 import { cn } from "@/lib/utils";
 
 type NotificationPanelProps = {
   notifications: SettingsNotifications;
+  onSave?: (input: { webhookEnabled: boolean; webhookUrl: string }) => Promise<void>;
 };
 
-export function NotificationPanel({ notifications }: NotificationPanelProps) {
+export function NotificationPanel({ notifications, onSave }: NotificationPanelProps) {
   const [webhookEnabled, setWebhookEnabled] = useState(notifications.webhookEnabled);
   const [webhookUrl, setWebhookUrl] = useState(notifications.webhookUrl);
   const [isDirty, setIsDirty] = useState(false);
@@ -21,15 +23,26 @@ export function NotificationPanel({ notifications }: NotificationPanelProps) {
 
   const handleSave = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsSubmitting(false);
-    setIsDirty(false);
+    try {
+      if (onSave) {
+        await onSave({ webhookEnabled, webhookUrl });
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      setIsDirty(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleTestWebhook = async () => {
     setIsTesting(true);
-    await new Promise((resolve) => setTimeout(resolve, 600));
-    setIsTesting(false);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      toastSuccess("Test webhook sent");
+    } finally {
+      setIsTesting(false);
+    }
   };
 
   return (

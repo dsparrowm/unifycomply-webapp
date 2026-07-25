@@ -107,9 +107,9 @@ export function SidebarContent({ onNavigate, showCloseButton, onClose }: Sidebar
     }));
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     onNavigate?.();
-    signOut();
+    await signOut();
     router.push("/sign-in");
   };
 

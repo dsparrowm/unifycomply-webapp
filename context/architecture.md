@@ -6,9 +6,11 @@
 | ------------- | ---------------------------------- | -------------------------------------------------------- |
 | Framework     | Next.js 15 App Router + TypeScript | Page routing under `app/` at project root                |
 | UI            | Tailwind CSS 4 + Lucide icons      | Styling system and iconography                           |
-| State         | Zustand                            | Auth UI, tenant context, sandbox toggle                  |
+| State         | Zustand                            | Auth session metadata, tenant context, sandbox toggle    |
+| Server state  | TanStack Query                     | Settings and authenticated API reads/mutations           |
 | Forms         | React Hook Form + Zod              | Form management and validation                           |
-| Data (v1)     | Typed mock fixtures in `lib/data/` | Static data until APIs are integrated                    |
+| API           | Next.js BFF (`app/api/`)           | Proxies UnifyComply Core Platform; httpOnly JWT cookies  |
+| Data (hybrid) | Live auth/settings + mock fixtures | KYC/KYB/AML/overview still mock until those APIs exist   |
 
 Use the **App Router** (`app/` directory). Do not use the Pages Router (`pages/`).
 Do not use a `src/` wrapper — routes live at `app/` in the project root.
@@ -18,9 +20,10 @@ layout/feedback). There is no generated `components/ui/` shadcn layer in this re
 
 ## Multi-Tenant UI Considerations
 
-When APIs are integrated later, the UI should support tenant context (tenant selection,
-scoped lists). For v1 with mock data, model tenant and role in client state to
-exercise RBAC navigation.
+Tenant context comes from `/v1/auth/sign-in` / `/v1/auth/access` (`userAccess`,
+`currentAccess`). Workspace switching uses `POST /v1/auth/access/switch`. Role names
+from the API (e.g. `Administrator`) map to UI `TenantRole` slugs via
+`normalizeTenantRole` / `ROLE_ALIASES` in `lib/rbac/permissions.ts`.
 
 ## System Boundaries
 
@@ -41,34 +44,48 @@ app/
     transaction-monitoring/
     settings/
     …                    ← per Figma WebApp sections
+  api/
+    auth/              ← BFF auth routes (set/clear httpOnly cookies)
+    v1/[...path]/     ← Authenticated proxy to upstream /v1/*
   globals.css
-  layout.tsx             ← Root layout, fonts, providers
+  layout.tsx             ← Root layout, fonts, AppProviders
 
 components/
   layout/              ← AppSidebar, AppHeader, PageHeader
+  providers/           ← React Query AppProviders
   feedback/            ← EmptyState, loading/error states
   placeholders/        ← Route placeholder panels
   [feature]/           ← kyc/, kyb/, bank-analysis/, etc.
 
 lib/
+  api/                 ← client helpers, types, server upstream + cookies
   utils.ts
   constants/           ← navigation, milestones, settings-nav
-  data/                ← mock fixtures (v1)
+  data/                ← mock fixtures (KYC/KYB/AML/overview/audit logs)
   rbac/                ← permission matrix
-  hooks/               ← useRbac and feature hooks
+  hooks/               ← useRbac, use-settings (React Query)
 
-store/                 ← Zustand slices
+store/                 ← Zustand slices (session metadata only — no JWTs)
 types/                 ← shared TypeScript types
 ```
 
 **Out of scope:** `app/(marketing)/`, landing page, Cover page.
 
+### Upstream API
+
+- Base URL: `API_BASE_URL` (server-only env). Docs: `https://unifycomply.svr.monolith.ng/v1/docs`
+- Envelope: `{ status: boolean, message: string, data: T }`
+- Auth: JWT Bearer. Cookies `uc_access` / `uc_refresh` (httpOnly). Refresh uses
+  `Authorization: Bearer <refreshToken>`.
+- Live today: authentication, tenant settings, user profile, public misc.
+- Still mock: KYC, KYB, bank analysis, AML, overview charts, audit logs (no endpoint).
+
 ### Route map by milestone
 
 | Milestone | Routes under `app/(app)/` | Status |
 | --------- | ------------------------- | ------ |
-| **M1** | `/overview`, `/settings`, `/billing`, auth routes | Complete |
-| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding` | In progress — AML list UI remaining |
+| **M1** | `/overview`, `/settings`, `/billing`, auth routes | Complete (settings live via API) |
+| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding` | In progress — AML list UI remaining; data still mock |
 | M3 | `/transaction-monitoring`, … | Blocked until M3 |
 | M4 | `/sar`, `/pnd-watchlist`, … | Blocked until M4 |
 
@@ -77,24 +94,36 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 ## Component Boundaries
 
 - **App shell** — Sidebar (293px from KYC frame), header with search, Sandbox/Production
-  toggle, user menu. All WebApp feature pages render inside this layout.
+  toggle (wired to `POST /v1/tenants/settings/domain/switch`), user menu. All WebApp
+  feature pages render inside this layout.
 - **Feature sections** — One presentational component per major Figma section (metric
   cards, filter bar, data table). Container pages assemble sections and pass typed props.
+- **Settings** — Page containers use React Query hooks (`lib/hooks/use-settings.ts`);
+  panels remain presentational with optional `onSave` callbacks.
+- **Bank Analysis detail** — `/bank-analysis/[id]` composes a detail header, two-level
+  tab navigation, account portfolio cards, and a risk/profile/network sidebar from
+  typed mock data under `components/bank-analysis/detail/`.
+- **Bank Analysis lookup** — `/bank-analysis/lookup` reuses the KYB lookup layout
+  pattern with bank-specific single-verification fields under `components/bank-analysis/lookup/`.
 - **Placeholders** — Routes enabled in nav but not yet fully implemented use
   `RoutePlaceholderPanel` until the feature spec unit is built.
 
-## State Model (initial)
+## State Model
 
 - **Form state (React Hook Form):** All multi-field forms; schemas colocated with forms.
-- **UI state (Zustand or local state):** Sidebar, active nav, wizard step, mock auth/role.
-- **Mock data (v1 default):** Static typed fixtures in `lib/data/` for all WebApp screens.
-- **RBAC (v1):** Tenant role on auth tenant context. Permission matrix in `lib/rbac/permissions.ts`. Nav items declare `permission` in navigation constants. `RbacRouteGuard` redirects unauthorized deep links.
-- **Later:** TanStack Query hooks in `lib/hooks/` when API contracts are provided.
+- **UI state (Zustand):** Sidebar, sandbox/production environment.
+- **Auth session (Zustand persist):** `authStep`, user, tenant/access metadata, domain —
+  **never** JWTs (cookies only).
+- **Server state (TanStack Query):** Settings and other BFF-backed reads/mutations.
+- **Mock data:** Static fixtures in `lib/data/` for M2 compliance modules until APIs exist.
+- **RBAC:** Tenant role on auth tenant context. Permission matrix in
+  `lib/rbac/permissions.ts`. Nav items declare `permission` in navigation constants.
+  `RbacRouteGuard` redirects unauthorized deep links.
 
 ## Data Source
 
-- **v1 (default):** Mock data in `lib/data/`. Components consume typed props.
-- **Later:** Data hooks when API contracts are provided.
+- **Live (BFF):** Auth, tenant settings, user profile, public misc, domain switch.
+- **Mock:** KYC, KYB, bank analysis, AML, overview, audit logs.
 
 ## Invariants
 
@@ -111,6 +140,7 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
    which routes are active. Sidebar disables future-milestone nav items. `canAccessPath`
    in `lib/rbac/permissions.ts` also enforces milestone gating for deep links. Do not add
    pages for milestones above `CURRENT_MILESTONE`.
+10. Browser code never holds access/refresh tokens; only the BFF reads httpOnly cookies.
 
 ## Figma → Code Mapping
 

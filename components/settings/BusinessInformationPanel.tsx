@@ -18,7 +18,7 @@ const businessInformationSchema = z.object({
   registrationNumber: z.string().min(1, "Registration number is required"),
   taxIdentificationNumber: z.string().min(1, "Tax identification number is required"),
   industry: z.string().min(1, "Industry is required"),
-  website: z.string().url("Enter a valid website URL"),
+  website: z.string().min(1, "Website is required"),
   yearOfEstablishment: z
     .string()
     .min(4, "Enter a valid year")
@@ -36,9 +36,19 @@ type BusinessInformationFormValues = z.infer<typeof businessInformationSchema>;
 
 type BusinessInformationPanelProps = {
   business: SettingsBusinessInformation;
+  industryOptionsOverride?: Array<{ label: string; value: string }>;
+  employeeCountOptionsOverride?: Array<{ label: string; value: string }>;
+  onSave?: (values: SettingsBusinessInformation) => Promise<void>;
 };
 
-export function BusinessInformationPanel({ business }: BusinessInformationPanelProps) {
+export function BusinessInformationPanel({
+  business,
+  industryOptionsOverride,
+  employeeCountOptionsOverride,
+  onSave,
+}: BusinessInformationPanelProps) {
+  const industryChoices = industryOptionsOverride ?? industryOptions;
+  const employeeChoices = employeeCountOptionsOverride ?? employeeCountOptions;
   const {
     register,
     handleSubmit,
@@ -61,7 +71,11 @@ export function BusinessInformationPanel({ business }: BusinessInformationPanelP
     },
   });
 
-  const onSubmit = handleSubmit(async () => {
+  const onSubmit = handleSubmit(async (values) => {
+    if (onSave) {
+      await onSave(values);
+      return;
+    }
     await new Promise((resolve) => setTimeout(resolve, 400));
   });
 
@@ -108,7 +122,7 @@ export function BusinessInformationPanel({ business }: BusinessInformationPanelP
             />
             <SettingsSelect
               label="Industry"
-              options={industryOptions}
+              options={industryChoices}
               error={errors.industry?.message}
               {...register("industry")}
             />
@@ -125,7 +139,7 @@ export function BusinessInformationPanel({ business }: BusinessInformationPanelP
             />
             <SettingsSelect
               label="Number of Employees"
-              options={employeeCountOptions}
+              options={employeeChoices}
               error={errors.numberOfEmployees?.message}
               {...register("numberOfEmployees")}
             />

@@ -2,17 +2,24 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthButton, AuthDivider, GoogleSignInButton } from "@/components/auth/AuthButton";
-import { AuthField } from "@/components/auth/AuthField";
+import { AuthField, AuthPasswordField } from "@/components/auth/AuthField";
 import { AuthCardLayout } from "@/components/auth/AuthLayout";
 import { UnifycomplyLogo } from "@/components/brand/UnifycomplyLogo";
+import { signUp } from "@/lib/api/auth";
+import { getErrorMessage } from "@/lib/api/errors";
 import { useAuthStore } from "@/store/auth.store";
 
 const registerSchema = z.object({
   email: z.string().email("Enter a valid work email"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  countryCode: z.string().min(2, "Country code is required").max(2),
+  password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
 type RegisterValues = z.infer<typeof registerSchema>;
@@ -20,18 +27,37 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export default function RegisterPage() {
   const router = useRouter();
   const registerUser = useAuthStore((state) => state.register);
+  const [formError, setFormError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { email: "" },
+    defaultValues: {
+      email: "",
+      firstName: "",
+      lastName: "",
+      countryCode: "NG",
+      password: "",
+    },
   });
 
-  const onSubmit = (values: RegisterValues) => {
-    registerUser(values.email);
-    router.push("/verify-email");
+  const onSubmit = async (values: RegisterValues) => {
+    setFormError(null);
+    try {
+      await signUp({
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        countryCode: values.countryCode.toUpperCase(),
+        password: values.password,
+      });
+      registerUser(values.email);
+      router.push("/verify-email");
+    } catch (error) {
+      setFormError(getErrorMessage(error, "Registration failed"));
+    }
   };
 
   return (
@@ -55,9 +81,26 @@ export default function RegisterPage() {
                 <div className="flex flex-col gap-6">
                   <GoogleSignInButton
                     label="Sign Up with Google"
-                    onClick={() => router.push("/verify-email")}
+                    onClick={() => {
+                      window.location.href = "/api/auth/google";
+                    }}
                   />
                   <AuthDivider />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <AuthField
+                    label="First name"
+                    autoComplete="given-name"
+                    error={errors.firstName?.message}
+                    {...register("firstName")}
+                  />
+                  <AuthField
+                    label="Last name"
+                    autoComplete="family-name"
+                    error={errors.lastName?.message}
+                    {...register("lastName")}
+                  />
                 </div>
 
                 <AuthField
@@ -68,6 +111,26 @@ export default function RegisterPage() {
                   error={errors.email?.message}
                   {...register("email")}
                 />
+
+                <AuthField
+                  label="Country code"
+                  placeholder="NG"
+                  error={errors.countryCode?.message}
+                  {...register("countryCode")}
+                />
+
+                <AuthPasswordField
+                  placeholder="Password"
+                  autoComplete="new-password"
+                  error={errors.password?.message}
+                  {...register("password")}
+                />
+
+                {formError ? (
+                  <p className="text-sm text-[color:var(--state-error)]" role="alert">
+                    {formError}
+                  </p>
+                ) : null}
               </div>
 
               <div className="flex flex-col gap-3">
@@ -76,7 +139,7 @@ export default function RegisterPage() {
                   disabled={isSubmitting}
                   className="bg-[color:var(--accent-primary-hover)] hover:bg-[color:var(--accent-primary)]"
                 >
-                  Sign Up
+                  {isSubmitting ? "Creating account…" : "Sign Up"}
                 </AuthButton>
 
                 <p className="text-center text-xs leading-[18px] text-[color:var(--text-light)]">

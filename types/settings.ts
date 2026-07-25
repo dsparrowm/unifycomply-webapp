@@ -53,6 +53,10 @@ export type SettingsRole = {
   id: string;
   name: string;
   riskLevel: string;
+  riskLevelMinimum: number;
+  riskLevelMaximum: number;
+  department: string | null;
+  description: string | null;
   permissions: SettingsRolePermission[];
   summary: string;
 };

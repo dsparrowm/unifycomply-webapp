@@ -1,15 +1,21 @@
 "use client";
 
 import { useRef, useState } from "react";
+import type { ClipboardEvent, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { AuthSplitLayout } from "@/components/auth/AuthLayout";
-import { mockTenants, useAuthStore } from "@/store/auth.store";
+import { getErrorMessage } from "@/lib/api/errors";
+import { useAuthStore } from "@/store/auth.store";
+import { useUiStore } from "@/store/ui.store";
 
 export default function MfaPage() {
   const router = useRouter();
   const completeMfa = useAuthStore((state) => state.completeMfa);
+  const setEnvironment = useUiStore((state) => state.setEnvironment);
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
   const code = digits.join("");
@@ -31,9 +37,29 @@ export default function MfaPage() {
     }
   };
 
-  const handleSubmit = () => {
-    completeMfa();
-    router.push(mockTenants.length > 1 ? "/tenant-selection" : "/overview");
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    if (!pasted) return;
+    const next = Array.from({ length: 6 }, (_, i) => pasted[i] ?? "");
+    setDigits(next);
+    const focusIndex = Math.min(pasted.length, 5);
+    inputsRef.current[focusIndex]?.focus();
+  };
+
+  const handleSubmit = async () => {
+    setFormError(null);
+    setIsSubmitting(true);
+    try {
+      const next = await completeMfa(code);
+      const domain = useAuthStore.getState().domain;
+      setEnvironment(domain);
+      router.push(next === "tenant" ? "/tenant-selection" : "/overview");
+    } catch (error) {
+      setFormError(getErrorMessage(error, "Invalid verification code"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -56,27 +82,31 @@ export default function MfaPage() {
                 inputsRef.current[index] = element;
               }}
               inputMode="numeric"
+              autoComplete={index === 0 ? "one-time-code" : "off"}
               maxLength={1}
               value={digit}
               onChange={(event) => handleChange(index, event.target.value)}
-              onKeyDown={(event) => handleKeyDown(index, event.key)}
+              onKeyDown={(event: KeyboardEvent<HTMLInputElement>) =>
+                handleKeyDown(index, event.key)
+              }
+              onPaste={handlePaste}
               className="h-12 w-12 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] text-center text-lg font-medium outline-none focus:border-[color:var(--accent-primary)] focus:ring-2 focus:ring-[color:var(--accent-primary-soft)]"
             />
           ))}
         </div>
 
-        <AuthButton type="button" disabled={!isComplete} onClick={handleSubmit}>
-          Verify code
+        {formError ? (
+          <p className="mb-4 text-sm text-[color:var(--state-error)]" role="alert">
+            {formError}
+          </p>
+        ) : null}
+
+        <AuthButton type="button" disabled={!isComplete || isSubmitting} onClick={handleSubmit}>
+          {isSubmitting ? "Verifying…" : "Verify code"}
         </AuthButton>
 
         <p className="mt-8 text-center text-sm text-[color:var(--text-muted)]">
-          Didn&apos;t receive a code?{" "}
-          <button
-            type="button"
-            className="font-medium text-[color:var(--accent-primary-hover)] hover:underline"
-          >
-            Resend
-          </button>
+          Open your authenticator app to view the current code.
         </p>
       </div>
     </AuthSplitLayout>

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { SettingsField } from "@/components/settings/SettingsField";
+import { getErrorMessage } from "@/lib/api/errors";
 
 const changePasswordSchema = z
   .object({
@@ -23,9 +24,11 @@ type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 type ChangePasswordModalProps = {
   open: boolean;
   onClose: () => void;
+  onSubmitPassword?: (password: string) => Promise<void>;
 };
 
-export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps) {
+export function ChangePasswordModal({ open, onClose, onSubmitPassword }: ChangePasswordModalProps) {
+  const [formError, setFormError] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -42,6 +45,7 @@ export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps)
 
   useEffect(() => {
     if (!open) {
+      setFormError(null);
       return;
     }
 
@@ -62,10 +66,19 @@ export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps)
     };
   }, [open, onClose]);
 
-  const onSubmit = handleSubmit(async () => {
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    reset();
-    onClose();
+  const onSubmit = handleSubmit(async (values) => {
+    setFormError(null);
+    try {
+      if (onSubmitPassword) {
+        await onSubmitPassword(values.newPassword);
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      reset();
+      onClose();
+    } catch (error) {
+      setFormError(getErrorMessage(error, "Could not update password"));
+    }
   });
 
   if (!open) {
@@ -127,6 +140,12 @@ export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps)
             {...register("confirmPassword")}
           />
 
+          {formError ? (
+            <p className="text-sm text-[color:var(--state-error)]" role="alert">
+              {formError}
+            </p>
+          ) : null}
+
           <div className="flex gap-5 pt-2">
             <button
               type="button"
@@ -140,7 +159,7 @@ export function ChangePasswordModal({ open, onClose }: ChangePasswordModalProps)
               disabled={isSubmitting}
               className="flex-1 rounded-lg bg-[color:var(--accent-primary-hover)] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)] disabled:cursor-not-allowed disabled:opacity-70"
             >
-              Update password
+              {isSubmitting ? "Updating…" : "Update password"}
             </button>
           </div>
         </form>

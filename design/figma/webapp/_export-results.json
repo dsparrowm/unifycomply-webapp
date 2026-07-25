@@ -1,0 +1,37 @@
+{
+  "ok": [],
+  "fail": [
+    {
+      "id": "886:70409",
+      "file": "kyc-customer-kyc-79.png",
+      "section": "KYC COMPLIANCE",
+      "error": "exhausted retries"
+    },
+    {
+      "id": "886:81117",
+      "file": "kyc-customer-kyc-115.png",
+      "section": "KYC COMPLIANCE",
+      "error": "exhausted retries"
+    },
+    {
+      "id": "886:70782",
+      "file": "kyc-customer-kyc-80.png",
+      "section": "KYC COMPLIANCE",
+      "error": "exhausted retries"
+    },
+    {
+      "id": "886:71156",
+      "file": "kyc-customer-kyc-81.png",
+      "section": "KYC COMPLIANCE",
+      "error": "exhausted retries"
+    },
+    {
+      "id": "886:71529",
+      "file": "kyc-customer-kyc-82.png",
+      "section": "KYC COMPLIANCE",
+      "error": "exhausted retries"
+    }
+  ],
+  "started": "2026-07-24T16:16:00",
+  "mode": "prioritized-m2-upward"
+}

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unifycomply — Frontend Status Update</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ddd;
+      --bg: #fff;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Georgia, "Times New Roman", serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .meta p { margin: 0.15rem 0; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin: 1.75rem 0 0.75rem;
+    }
+    h3 {
+      font-size: 1.05rem;
+      margin: 1.25rem 0 0.5rem;
+    }
+    p { margin: 0.5rem 0 0.75rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 0.5rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f5f5f5;
+      font-weight: 600;
+    }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85em;
+      background: #f3f4f6;
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    @media print {
+      body { padding: 0; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Unifycomply — Frontend Status Update</h1>
+  <div class="meta">
+    <p><strong>Author:</strong> Davies Aniefiok</p>
+    <p><strong>Date:</strong> 20 July 2026</p>
+    <p><strong>Scope:</strong> WebApp frontend (Next.js) — screens/modules completed and API usage</p>
+    <p><strong>Live site:</strong> <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a></p>
+  </div>
+
+  <hr />
+
+  <h2>Summary</h2>
+  <p>
+    Milestone 1 (Foundation) is complete. Milestone 2 (KYC Orchestration) is in progress,
+    with most KYC/KYB and bank analysis screens delivered. No live backend endpoints have
+    been consumed yet — the UI runs on typed mock data until API contracts are provided.
+  </p>
+  <p>
+    You can view the deployed WebApp here:
+    <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a>
+  </p>
+
+  <h2>Completed modules / screens</h2>
+
+  <h3>Milestone 1 — Foundation (complete)</h3>
+  <table>
+    <thead>
+      <tr><th>Area</th><th>Screens / modules</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Authentication</td>
+        <td>Sign-in, register, forgot/reset password, MFA, verify email, tenant selection</td>
+      </tr>
+      <tr>
+        <td>App shell</td>
+        <td>Sidebar, header, sandbox/production toggle, global search, RBAC nav gating</td>
+      </tr>
+      <tr>
+        <td>Dashboard</td>
+        <td>Overview dashboard</td>
+      </tr>
+      <tr>
+        <td>Tenant admin / Settings</td>
+        <td>Profile, business information, team management, roles &amp; permissions, security, audit logs, approvals, PEP settings, notifications, compliance rules</td>
+      </tr>
+      <tr>
+        <td>Placeholders</td>
+        <td>Billing, API keys</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Milestone 2 — KYC Orchestration (in progress)</h3>
+  <table>
+    <thead>
+      <tr><th>Area</th><th>Screens / modules</th><th>Routes</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>KYC list</td>
+        <td>Metrics, filters, search, table, pagination</td>
+        <td><code>/kyc</code></td>
+      </tr>
+      <tr>
+        <td>KYC detail</td>
+        <td>Document viewer, risk/biometric/timeline panels, AML tab, decision modals</td>
+        <td><code>/kyc/[id]</code></td>
+      </tr>
+      <tr>
+        <td>KYC Perform Lookup</td>
+        <td>Single + bulk lookup entry and result</td>
+        <td><code>/kyc/lookup</code>, <code>/kyc/lookup/result</code></td>
+      </tr>
+      <tr>
+        <td>Customer onboarding</td>
+        <td>Five-step wizard (personal → business → documents → review → consent)</td>
+        <td><code>/kyc/onboarding</code></td>
+      </tr>
+      <tr>
+        <td>KYB list</td>
+        <td>Metrics, filters, search, table, pagination</td>
+        <td><code>/kyb</code></td>
+      </tr>
+      <tr>
+        <td>KYB detail</td>
+        <td>Business Overview, Risk Score, Directors &amp; Officers, Shareholders, Documents</td>
+        <td><code>/kyb/[id]</code></td>
+      </tr>
+      <tr>
+        <td>KYB Perform Lookup</td>
+        <td>Single + bulk lookup entry and result</td>
+        <td><code>/kyb/lookup</code>, <code>/kyb/lookup/result</code></td>
+      </tr>
+      <tr>
+        <td>Bank analysis</td>
+        <td>List with metrics, filters, New Lookup modal</td>
+        <td><code>/bank-analysis</code></td>
+      </tr>
+      <tr>
+        <td>Placeholders</td>
+        <td>AML Screening, Packages, Request</td>
+        <td><code>/aml-screening</code>, <code>/packages</code>, <code>/request</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Outstanding (Milestone 2)</h2>
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AML Screening list UI</td>
+        <td>Not started</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Endpoints consumed</h2>
+  <p><strong>None.</strong></p>
+  <p>
+    This repository is frontend-only. All screens use typed mock fixtures under
+    <code>lib/data/</code>. No live backend APIs have been integrated. API wiring is
+    deferred until OpenAPI contracts are provided.
+  </p>
+
+  <h2>Milestone status overview</h2>
+  <table>
+    <thead>
+      <tr><th>Milestone</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>M1 — Foundation</td><td>Complete</td></tr>
+      <tr><td>M2 — KYC Orchestration</td><td>In progress (active)</td></tr>
+      <tr><td>M3 — Transaction Monitoring</td><td>Not started (blocked)</td></tr>
+      <tr><td>M4 — SAR &amp; Case Management</td><td>Not started (blocked)</td></tr>
+      <tr><td>M5 — Optimisation</td><td>Not started (blocked)</td></tr>
+    </tbody>
+  </table>
+
+  <p class="footer">Prepared for internal status reporting.</p>
+</body>
+</html>

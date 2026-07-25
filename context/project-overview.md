@@ -14,7 +14,7 @@ the Figma **WebApp** page (`1:2`) using mock data. Backend services and the publ
 
 1. Deliver all **WebApp** screens from Figma (page `1:2`) per the MVP roadmap (M1–M5)
 2. Match Figma with pixel-faithful layout and interaction patterns
-3. Use mock data for v1; wire to external APIs only when contracts are provided
+3. Use mock data for modules without API contracts; auth and tenant settings are live via BFF
 4. Enforce role-based navigation and action gating in the UI
 
 ## User Roles (RBAC)
@@ -45,7 +45,7 @@ Navigation and actions must respect the role model defined in `mvp-roadmap.md`.
 | Overview | OVERVIEW PAGE | M1 | `/overview` |
 | KYC | KYC COMPLIANCE | M2 | `/kyc`, `/kyc/[id]`, `/customers`, … |
 | KYB | KYB COMPLIANCE | M2 | `/kyb`, `/businesses`, … |
-| Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis` |
+| Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/[id]` |
 | AML Screening | AML SCREENING | M2 | `/aml-screening` |
 | Transaction Monitoring | Transaction Monitoring | M3 | `/transaction-monitoring`, `/transactions`, … |
 | Compliance / SAR | Sidebar: SAR Report, PND Watchlist, Rules, Risk Score | M4 | `/sar`, `/cases`, … |
@@ -93,4 +93,11 @@ See `context/mvp-roadmap.md` for frontend scope. Summary:
 - **Landing Page** (Figma page `1:3`) — built in another repository
 - **M3–M5 features** until the active milestone in `lib/constants/milestones.ts` reaches that milestone (currently **M2**)
 - Backend implementation (separate repository / team)
-- API integration until OpenAPI contracts are provided
+- KYC / KYB / AML / bank-analysis API integration until those OpenAPI routes exist
+
+## Backend (consumed by this frontend)
+
+- **Docs:** https://unifycomply.svr.monolith.ng/v1/docs
+- **Integration style:** Next.js BFF (`app/api/`) + httpOnly JWT cookies
+- **Live:** authentication, tenant settings, user profile, domain switch
+- **Mock:** KYC, KYB, AML, bank analysis, overview, audit logs

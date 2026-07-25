@@ -3,12 +3,15 @@
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { useRbac } from "@/lib/hooks/use-rbac";
 
 export function RbacRouteGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { role, canAccessPath, getDefaultSettingsPath } = useRbac();
+
+  const allowed = Boolean(role) && canAccessPath(pathname);
 
   useEffect(() => {
     if (!role) {
@@ -29,12 +32,12 @@ export function RbacRouteGuard({ children }: { children: ReactNode }) {
     router.replace("/overview");
   }, [canAccessPath, getDefaultSettingsPath, pathname, role, router]);
 
-  if (!role) {
-    return null;
-  }
-
-  if (!canAccessPath(pathname)) {
-    return null;
+  if (!allowed) {
+    return (
+      <PageLoadingSkeleton
+        variant={pathname.startsWith("/settings") ? "settings" : "dashboard"}
+      />
+    );
   }
 
   return children;

@@ -1,14 +1,21 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { ChangePasswordModal } from "@/components/settings/ChangePasswordModal";
+import { DisableMfaModal } from "@/components/settings/DisableMfaModal";
+import { EnableMfaModal } from "@/components/settings/EnableMfaModal";
 import { SettingsToggle } from "@/components/settings/SettingsToggle";
+import type { ApiMfaSetup } from "@/lib/api/types";
 import type { SettingsSecurity } from "@/types/settings";
 import { cn } from "@/lib/utils";
 
 type SecurityPanelProps = {
   security: SettingsSecurity;
+  onChangePassword?: (password: string) => Promise<void>;
+  onSetupMfa: () => Promise<ApiMfaSetup>;
+  onEnableMfa: (token: string) => Promise<void>;
+  onDisableMfa: (token: string) => Promise<void>;
 };
 
 type SecuritySectionProps = {
@@ -29,9 +36,29 @@ function SecuritySection({ title, action, children }: SecuritySectionProps) {
   );
 }
 
-export function SecurityPanel({ security }: SecurityPanelProps) {
+export function SecurityPanel({
+  security,
+  onChangePassword,
+  onSetupMfa,
+  onEnableMfa,
+  onDisableMfa,
+}: SecurityPanelProps) {
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [enableMfaOpen, setEnableMfaOpen] = useState(false);
+  const [disableMfaOpen, setDisableMfaOpen] = useState(false);
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(security.twoFactorEnabled);
+
+  useEffect(() => {
+    setTwoFactorEnabled(security.twoFactorEnabled);
+  }, [security.twoFactorEnabled]);
+
+  const handleToggleMfa = (checked: boolean) => {
+    if (checked) {
+      setEnableMfaOpen(true);
+      return;
+    }
+    setDisableMfaOpen(true);
+  };
 
   return (
     <>
@@ -72,7 +99,7 @@ export function SecurityPanel({ security }: SecurityPanelProps) {
           action={
             <SettingsToggle
               checked={twoFactorEnabled}
-              onChange={setTwoFactorEnabled}
+              onChange={handleToggleMfa}
               label="Two-factor authentication"
             />
           }
@@ -101,13 +128,15 @@ export function SecurityPanel({ security }: SecurityPanelProps) {
               <div className="flex flex-col gap-4 sm:flex-row">
                 <button
                   type="button"
-                  className="flex-1 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--bg-muted)]"
+                  disabled
+                  title="Backup codes are not available from the API yet"
+                  className="flex-1 cursor-not-allowed rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-light)]"
                 >
                   View backup codes
                 </button>
                 <button
                   type="button"
-                  onClick={() => setTwoFactorEnabled(false)}
+                  onClick={() => setDisableMfaOpen(true)}
                   className="flex-1 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--bg-muted)]"
                 >
                   Disable 2FA
@@ -123,45 +152,53 @@ export function SecurityPanel({ security }: SecurityPanelProps) {
 
         <SecuritySection title="Active Sessions">
           <div className="space-y-6">
-            {security.sessions.map((session) => (
-              <div
-                key={session.id}
-                className="rounded-lg border border-[color:var(--border-default)] px-6 py-4"
-              >
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-[color:var(--text-primary)]">
-                      {session.device}
-                    </p>
-                    <p className="mt-1 text-xs text-[color:var(--text-light)]">
-                      {session.location} • {session.ipAddress}
-                    </p>
-                    <p className="mt-1 text-xs text-[color:var(--text-light)]">
-                      Last active: {session.lastActive}
-                    </p>
+            {security.sessions.length === 0 ? (
+              <p className="text-sm text-[color:var(--text-muted)]">
+                Active session details are not available from the API yet.
+              </p>
+            ) : (
+              security.sessions.map((session) => (
+                <div
+                  key={session.id}
+                  className="rounded-lg border border-[color:var(--border-default)] px-6 py-4"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-[color:var(--text-primary)]">
+                        {session.device}
+                      </p>
+                      <p className="mt-1 text-xs text-[color:var(--text-light)]">
+                        {session.location} • {session.ipAddress}
+                      </p>
+                      <p className="mt-1 text-xs text-[color:var(--text-light)]">
+                        Last active: {session.lastActive}
+                      </p>
+                    </div>
+                    {session.isCurrent ? (
+                      <span className="inline-flex items-center rounded-full bg-[color:var(--state-success-soft)] px-2 py-0.5 text-xs font-medium text-[color:var(--state-success)]">
+                        This device
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        className={cn(
+                          "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
+                          "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
+                        )}
+                      >
+                        Sign out
+                      </button>
+                    )}
                   </div>
-                  {session.isCurrent ? (
-                    <span className="inline-flex items-center rounded-full bg-[color:var(--state-success-soft)] px-2 py-0.5 text-xs font-medium text-[color:var(--state-success)]">
-                      This device
-                    </span>
-                  ) : (
-                    <button
-                      type="button"
-                      className={cn(
-                        "inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium",
-                        "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
-                      )}
-                    >
-                      Sign out
-                    </button>
-                  )}
                 </div>
-              </div>
-            ))}
+              ))
+            )}
 
             <button
               type="button"
-              className="w-full rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--bg-muted)] sm:w-auto"
+              disabled
+              title="Session management is not available from the API yet"
+              className="w-full cursor-not-allowed rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-4 py-2.5 text-sm font-medium text-[color:var(--text-light)] sm:w-auto"
             >
               Sign out all other sessions
             </button>
@@ -172,6 +209,18 @@ export function SecurityPanel({ security }: SecurityPanelProps) {
       <ChangePasswordModal
         open={changePasswordOpen}
         onClose={() => setChangePasswordOpen(false)}
+        onSubmitPassword={onChangePassword}
+      />
+      <EnableMfaModal
+        open={enableMfaOpen}
+        onClose={() => setEnableMfaOpen(false)}
+        onSetup={onSetupMfa}
+        onEnable={onEnableMfa}
+      />
+      <DisableMfaModal
+        open={disableMfaOpen}
+        onClose={() => setDisableMfaOpen(false)}
+        onDisable={onDisableMfa}
       />
     </>
   );

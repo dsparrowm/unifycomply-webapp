@@ -46,6 +46,8 @@ deployment of the frontend.
 - [ ] Compliance queue — not a separate Figma screen; use KYC/KYB list status filters
 - [x] Risk score visualization completed
 - [x] Bank analysis list screen completed (`/bank-analysis`)
+- [x] Bank analysis Single Lookup entry completed (`/bank-analysis/lookup`)
+- [x] Bank analysis Bank Summary detail completed (`/bank-analysis/ba-run-1`, frame 41)
 - [ ] AML screening screens completed (placeholder at `/aml-screening`; list UI pending)
 
 ### Milestone 3 — Transaction Monitoring

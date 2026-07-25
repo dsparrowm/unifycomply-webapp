@@ -10,9 +10,14 @@ type ApprovalsTab = "risk-factors" | "approval-thresholds";
 
 type ApprovalsPanelProps = {
   approvals: SettingsApprovals;
+  onSave?: (input: {
+    factors: Array<{ id: string; impact: SettingsRiskFactorImpact }>;
+    warningThreshold: number;
+    blockThreshold: number;
+  }) => Promise<void>;
 };
 
-export function ApprovalsPanel({ approvals }: ApprovalsPanelProps) {
+export function ApprovalsPanel({ approvals, onSave }: ApprovalsPanelProps) {
   const [activeTab, setActiveTab] = useState<ApprovalsTab>("risk-factors");
   const [riskFactors, setRiskFactors] = useState<SettingsRiskFactor[]>(approvals.riskFactors);
   const [thresholds, setThresholds] = useState<SettingsApprovalThresholds>(approvals.thresholds);
@@ -38,9 +43,20 @@ export function ApprovalsPanel({ approvals }: ApprovalsPanelProps) {
 
   const handleSave = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsSubmitting(false);
-    setIsDirty(false);
+    try {
+      if (onSave) {
+        await onSave({
+          factors: riskFactors.map((factor) => ({ id: factor.id, impact: factor.impact })),
+          warningThreshold: thresholds.warningThreshold,
+          blockThreshold: thresholds.approvalBlockThreshold,
+        });
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      setIsDirty(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

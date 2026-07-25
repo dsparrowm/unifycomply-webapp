@@ -6,6 +6,7 @@
 - Fix root causes; do not layer conditional hacks or workarounds
 - Do not mix data-fetching logic and rendering logic in the same component
 - Prefer React Query hooks for server/API state when a backend exists
+- Browser never stores JWTs — use the Next.js BFF (`app/api/`) and httpOnly cookies
 - Prefer explicit over implicit — name things clearly, avoid abbreviations in identifiers
 - Delete dead code rather than commenting it out
 
@@ -68,12 +69,13 @@ components/
   [feature]/       ← one folder per feature area from Figma
 
 lib/
+  api/             ← BFF client helpers, types, server upstream
   utils.ts
   constants.ts
-  data/            ← mock fixtures (v1)
-  hooks/           ← React Query hooks (when APIs exist)
+  data/            ← mock fixtures (modules without APIs)
+  hooks/           ← React Query hooks + useRbac
 
-store/             ← Zustand slices (if needed)
+store/             ← Zustand slices (session metadata; no tokens)
 types/             ← shared TypeScript types
 ```
 

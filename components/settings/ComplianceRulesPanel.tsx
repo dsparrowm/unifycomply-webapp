@@ -22,6 +22,13 @@ import { cn } from "@/lib/utils";
 
 type ComplianceRulesPanelProps = {
   complianceRules: SettingsComplianceRules;
+  onSave?: (input: {
+    kycExpiryMonths: number;
+    kybExpiryMonths: number;
+    kycDocuments: string[];
+    kybDocuments: string[];
+    flaggedCountryCodes: string[];
+  }) => Promise<void>;
 };
 
 type PendingRemoval = {
@@ -85,7 +92,7 @@ function AddItemButton({ label }: { label: string }) {
   );
 }
 
-export function ComplianceRulesPanel({ complianceRules }: ComplianceRulesPanelProps) {
+export function ComplianceRulesPanel({ complianceRules, onSave }: ComplianceRulesPanelProps) {
   const [kycExpiryMonths, setKycExpiryMonths] = useState(
     complianceRules.verificationExpiry.kycExpiryMonths,
   );
@@ -103,9 +110,22 @@ export function ComplianceRulesPanel({ complianceRules }: ComplianceRulesPanelPr
 
   const handleSave = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsSubmitting(false);
-    setIsDirty(false);
+    try {
+      if (onSave) {
+        await onSave({
+          kycExpiryMonths: Number(kycExpiryMonths),
+          kybExpiryMonths: Number(kybExpiryMonths),
+          kycDocuments: kycDocuments.map((item) => item.id),
+          kybDocuments: kybDocuments.map((item) => item.id),
+          flaggedCountryCodes: flaggedCountries.map((item) => item.id),
+        });
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      setIsDirty(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleConfirmRemoval = () => {

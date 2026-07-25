@@ -1,4 +1,35 @@
-import type { BankAnalysisListData, BankAnalysisRun } from "@/types/bank-analysis";
+import type {
+  BankAnalysisDetail,
+  BankAnalysisListData,
+  BankAnalysisRun,
+} from "@/types/bank-analysis";
+
+const financialMonths = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+] as const;
+
+const incomeSeries = [
+  590, 610, 600, 620, 615, 625, 620, 640, 630, 650, 640, 660, 670, 700, 690, 700, 710,
+  690, 650, 660, 700, 720, 740, 750, 740, 730, 710, 730, 750, 720, 730, 740, 760, 780,
+  770, 820,
+] as const;
+
+const expenseSeries = [
+  380, 390, 385, 400, 395, 405, 400, 410, 405, 415, 410, 420, 425, 435, 440, 450, 455,
+  445, 420, 430, 445, 455, 465, 475, 480, 470, 465, 475, 470, 460, 465, 470, 480, 490,
+  500, 520,
+] as const;
 
 const bankAnalysisRunsMock: BankAnalysisRun[] = [
   {
@@ -15,6 +46,7 @@ const bankAnalysisRunsMock: BankAnalysisRun[] = [
     priority: "low",
     dateRun: "11 Jul 2026",
     submittedAt: "2026-07-11",
+    detailAvailable: true,
   },
   {
     id: "ba-run-2",
@@ -212,3 +244,296 @@ export const bankAnalysisListDataPopulated: BankAnalysisListData = {
   ],
   runs: bankAnalysisRunsMock,
 };
+
+const bankAnalysisDetails: BankAnalysisDetail[] = [
+  {
+    id: "ba-run-1",
+    customerName: "Favour Peter Soma",
+    accountPortfolio: 6,
+    linkedEntities: 2,
+    accounts: [
+      {
+        id: "first-bank",
+        bankName: "First Bank",
+        maskedAccountNumber: "****8821",
+        tier: 3,
+        type: "Current",
+        status: "active",
+        openedAt: "12 - 02 - 2020",
+        balance: "₦58,000,000.00",
+        transactions: 63,
+        lastActivity: "2 Hours ago",
+        risk: "-",
+        highlighted: true,
+      },
+      {
+        id: "access-bank",
+        bankName: "Access Bank",
+        maskedAccountNumber: "****8821",
+        tier: 3,
+        type: "Savings",
+        status: "active",
+        openedAt: "12 - 02 - 2020",
+        balance: "₦1,020,000.00",
+        transactions: 63,
+        lastActivity: "2 Hours ago",
+        risk: "-",
+      },
+      {
+        id: "gtbank",
+        bankName: "GTBank",
+        maskedAccountNumber: "****8821",
+        tier: 1,
+        type: "Domiciliary",
+        status: "active",
+        openedAt: "12 - 02 - 2020",
+        balance: "₦1,020,000.00",
+        transactions: 63,
+        lastActivity: "2 Hours ago",
+        risk: "-",
+      },
+      {
+        id: "uba",
+        bankName: "UBA",
+        maskedAccountNumber: "****8821",
+        tier: 1,
+        type: "Savings",
+        status: "dormant",
+        openedAt: "12 - 02 - 2020",
+        balance: "₦1,000.00",
+        transactions: 63,
+        lastActivity: "4 months ago",
+        risk: "-",
+      },
+      {
+        id: "zenith-bank",
+        bankName: "Zenith Bank",
+        maskedAccountNumber: "****8821",
+        tier: 3,
+        type: "Domiciliary",
+        status: "active",
+        openedAt: "12 - 02 - 2020",
+        balance: "₦1,020,000.00",
+        transactions: 63,
+        lastActivity: "2 Hours ago",
+        risk: "-",
+      },
+      {
+        id: "stanbic-ibtc",
+        bankName: "Stanbic IBTC",
+        maskedAccountNumber: "****8821",
+        tier: 3,
+        type: "Savings",
+        status: "dormant",
+        openedAt: "12 - 02 - 2020",
+        balance: "₦1,000.00",
+        transactions: 63,
+        lastActivity: "4 months ago",
+        risk: "-",
+      },
+    ],
+    linkedEntityAccounts: 4,
+    linkedEntityRecords: [
+      {
+        id: "charles-family-trust",
+        name: "Charles Family Trust",
+        relationship: "Legitimate business entity",
+        kind: "trust",
+        tier: 3,
+        sharedAccounts: 1,
+        bankName: "First Bank",
+        maskedAccountNumber: "****8821",
+        balance: "N20,000,000.00",
+        accountType: "Corporate",
+        lastActivity: "2 Hours ago",
+      },
+      {
+        id: "johnson-trading",
+        name: "Johnson Trading Ltd",
+        relationship: "Business partner",
+        kind: "business",
+        tier: 2,
+        sharedAccounts: 2,
+        bankName: "GTBank",
+        maskedAccountNumber: "****8821",
+        balance: "N20,000,000.00",
+        accountType: "Corporate",
+        lastActivity: "2 Hours ago",
+      },
+    ],
+    accountAnalysis: {
+      totalTransactions: 524,
+      totalCredits: "₦58,420,000.00",
+      creditTransactions: 312,
+      totalDebits: "₦42,775,000.00",
+      debitTransactions: 282,
+      netPosition: "₦42,775,000.00",
+      report: incomeSeries.map((income, index) => ({
+        month: financialMonths[Math.floor(index / 3)] ?? "Dec",
+        income,
+        expenses: expenseSeries[index] ?? 0,
+      })),
+    },
+    networkGraph: {
+      nodes: [
+        {
+          id: "customer",
+          label: "Customer",
+          subtitle: "Primary account",
+          kind: "customer",
+          x: 50,
+          y: 45,
+        },
+        { id: "uba", label: "UBA", subtitle: "Savings", kind: "bank", x: 50, y: 10 },
+        {
+          id: "stanbic",
+          label: "Stanbic IBTC",
+          subtitle: "Current",
+          kind: "bank",
+          x: 80,
+          y: 22,
+        },
+        {
+          id: "access",
+          label: "Access Bank",
+          subtitle: "Savings",
+          kind: "bank",
+          x: 8,
+          y: 45,
+        },
+        {
+          id: "gtbank",
+          label: "GTBank",
+          subtitle: "Current",
+          kind: "bank",
+          x: 92,
+          y: 45,
+        },
+        {
+          id: "zenith",
+          label: "Zenith Bank",
+          subtitle: "Savings",
+          kind: "bank",
+          x: 19,
+          y: 69,
+        },
+        {
+          id: "first-bank",
+          label: "First Bank",
+          subtitle: "Domiciliary",
+          kind: "bank",
+          x: 50,
+          y: 80,
+        },
+        {
+          id: "business-right",
+          label: "Business",
+          subtitle: "",
+          kind: "business",
+          x: 92,
+          y: 60,
+        },
+        {
+          id: "business-bottom",
+          label: "Business",
+          subtitle: "",
+          kind: "business",
+          x: 60,
+          y: 93,
+        },
+      ],
+      edges: [
+        { from: "customer", to: "uba" },
+        { from: "customer", to: "stanbic" },
+        { from: "customer", to: "access" },
+        { from: "customer", to: "gtbank" },
+        { from: "customer", to: "zenith" },
+        { from: "customer", to: "first-bank" },
+        { from: "gtbank", to: "business-right", dashed: true },
+        { from: "first-bank", to: "business-bottom", dashed: true },
+      ],
+    },
+    complianceSections: [
+      {
+        id: "transaction-threshold",
+        title: "Transaction Threshold Compliance",
+        checks: [
+          {
+            id: "transaction-threshold-check",
+            label: "Transaction Threshold",
+            description:
+              "Monitors transactions against regulatory limits and internal thresholds.",
+            status: "No Match",
+          },
+        ],
+      },
+      {
+        id: "pep",
+        title: "Politically Exposed Person (PEP) Check",
+        checks: [
+          {
+            id: "pep-match",
+            label: "PEP Match",
+            description: "Screens individuals against global PEP databases",
+            status: "No Match",
+          },
+        ],
+      },
+      {
+        id: "sanctions",
+        title: "Sanctions Screening (Screened Against 4 Global Sanctions Lists)",
+        checks: [
+          { id: "ofac", label: "OFAC", status: "No Match", verified: true },
+          { id: "un", label: "UN", status: "No Match", verified: true },
+          { id: "eu", label: "EU", status: "No Match", verified: true },
+          { id: "uk-hmt", label: "UK HMT", status: "No Match", verified: true },
+        ],
+      },
+      {
+        id: "warnings",
+        title: "Warning and Regulatory Enforcement",
+        checks: [
+          {
+            id: "warning-match",
+            label: "Warnings",
+            description:
+              "Checks for adverse media, regulatory actions, fines, penalties, or enforcement",
+            status: "No Match",
+          },
+        ],
+      },
+      {
+        id: "watchlist",
+        title: "Watchlist Screening",
+        checks: [
+          {
+            id: "watchlist-match",
+            label: "Watchlist Matches",
+            description:
+              "Screens against custom and proprietary watchlists including internal blacklists.",
+            status: "No Match",
+          },
+        ],
+      },
+    ],
+    profile: {
+      name: "Alimi Ayomikun",
+      reference: "#3066",
+      entityType: "Individual",
+      bvn: "22425685401",
+      email: "Mikun@gmail.com",
+      phone: "070123456789",
+      lastReviewed: "12 mins ago",
+    },
+    networkMetrics: {
+      alerts: 0,
+      sharedAccounts: 2,
+      totalTransactions: 5040,
+      networkDepth: 2,
+    },
+  },
+];
+
+export function getBankAnalysisDetailById(id: string): BankAnalysisDetail | undefined {
+  return bankAnalysisDetails.find((detail) => detail.id === id);
+}

@@ -1,0 +1,4321 @@
+{
+  "frames": [
+    {
+      "name": "Sign In // 3",
+      "id": "886:48672",
+      "x": 224.0,
+      "y": 454.0,
+      "w": 1728.0,
+      "h": 1117.0,
+      "section": "ONBOARDING - COMPLIANCE OFFICER"
+    },
+    {
+      "name": "Sign up // 3",
+      "id": "886:48929",
+      "x": 3760.0,
+      "y": 490.0,
+      "w": 1728.0,
+      "h": 1117.0,
+      "section": "ONBOARDING - COMPLIANCE OFFICER"
+    },
+    {
+      "name": "Sign up // 4",
+      "id": "886:48973",
+      "x": 5528.0,
+      "y": 454.0,
+      "w": 1728.0,
+      "h": 1117.0,
+      "section": "ONBOARDING - COMPLIANCE OFFICER"
+    },
+    {
+      "name": "Sign In // 4",
+      "id": "886:49017",
+      "x": 1992.0,
+      "y": 454.0,
+      "w": 1728.0,
+      "h": 1117.0,
+      "section": "ONBOARDING - COMPLIANCE OFFICER"
+    },
+    {
+      "name": "Overview",
+      "id": "886:49386",
+      "x": 285.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:49678",
+      "x": 3821.0,
+      "y": 643.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:50003",
+      "x": 5589.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:50340",
+      "x": 7357.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:50687",
+      "x": 9125.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:51034",
+      "x": 12661.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:51403",
+      "x": 10893.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview // billing // 3",
+      "id": "886:51750",
+      "x": 14429.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1410.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview // billing // 4",
+      "id": "886:51954",
+      "x": 16197.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1410.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Overview",
+      "id": "886:52269",
+      "x": 2053.0,
+      "y": 649.0,
+      "w": 1728.0,
+      "h": 1515.0,
+      "section": "OVERVIEW PAGE"
+    },
+    {
+      "name": "Customer // KYC // 79",
+      "id": "886:70409",
+      "x": 383.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1525.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 80",
+      "id": "886:70782",
+      "x": 3919.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 81",
+      "id": "886:71156",
+      "x": 5687.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 82",
+      "id": "886:71529",
+      "x": 7455.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 83",
+      "id": "886:71902",
+      "x": 9223.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 84",
+      "id": "886:72275",
+      "x": 10991.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 85",
+      "id": "886:72648",
+      "x": 12759.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 86",
+      "id": "886:73019",
+      "x": 14527.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 87",
+      "id": "886:73375",
+      "x": 16418.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1559.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 88",
+      "id": "886:73758",
+      "x": 18186.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1627.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 89",
+      "id": "886:74141",
+      "x": 19954.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 90",
+      "id": "886:74524",
+      "x": 23490.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 91",
+      "id": "886:74699",
+      "x": 34099.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1330.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 92",
+      "id": "886:74948",
+      "x": 48259.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1330.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 93",
+      "id": "886:75202",
+      "x": 50027.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1330.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 94",
+      "id": "886:75456",
+      "x": 35866.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 95",
+      "id": "886:75834",
+      "x": 35868.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 96",
+      "id": "886:76212",
+      "x": 37634.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 97",
+      "id": "886:76557",
+      "x": 37636.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 98",
+      "id": "886:76907",
+      "x": 48259.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 99",
+      "id": "886:77289",
+      "x": 39402.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1649.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 100",
+      "id": "886:77640",
+      "x": 39404.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 101",
+      "id": "886:77994",
+      "x": 41175.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 102",
+      "id": "886:78199",
+      "x": 41177.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 103",
+      "id": "886:78407",
+      "x": 42948.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 104",
+      "id": "886:78660",
+      "x": 42950.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 105",
+      "id": "886:78916",
+      "x": 44721.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 106",
+      "id": "886:79140",
+      "x": 44723.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 107",
+      "id": "886:79367",
+      "x": 46489.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 108",
+      "id": "886:79601",
+      "x": 46491.0,
+      "y": 3214.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 109",
+      "id": "886:79838",
+      "x": 32330.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 110",
+      "id": "886:80028",
+      "x": 25258.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 111",
+      "id": "886:80205",
+      "x": 28794.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 112",
+      "id": "886:80382",
+      "x": 30562.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 113",
+      "id": "886:80558",
+      "x": 27026.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 114",
+      "id": "886:80735",
+      "x": 21722.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 115",
+      "id": "886:81117",
+      "x": 2151.0,
+      "y": 771.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 116",
+      "id": "886:86959",
+      "x": 35871.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 117",
+      "id": "886:87342",
+      "x": 37639.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 118",
+      "id": "886:87691",
+      "x": 48285.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 119",
+      "id": "886:88150",
+      "x": 39407.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 120",
+      "id": "886:88507",
+      "x": 41180.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 121",
+      "id": "886:88716",
+      "x": 42976.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1489.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 122",
+      "id": "886:88973",
+      "x": 44749.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 123",
+      "id": "886:89201",
+      "x": 46517.0,
+      "y": 10558.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 124",
+      "id": "886:89439",
+      "x": 35872.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 125",
+      "id": "886:89996",
+      "x": 35894.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 126",
+      "id": "886:90553",
+      "x": 35868.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 127",
+      "id": "886:91110",
+      "x": 35894.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 128",
+      "id": "886:91667",
+      "x": 37637.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 129",
+      "id": "886:92012",
+      "x": 37662.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 130",
+      "id": "886:92365",
+      "x": 37636.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 2305.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 131",
+      "id": "886:92723",
+      "x": 37662.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 2305.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 132",
+      "id": "886:93088",
+      "x": 48263.0,
+      "y": 5666.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 133",
+      "id": "886:93470",
+      "x": 39405.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 134",
+      "id": "886:93819",
+      "x": 39430.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 135",
+      "id": "886:94176",
+      "x": 39404.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 136",
+      "id": "886:94538",
+      "x": 39430.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 2195.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 137",
+      "id": "886:94907",
+      "x": 41181.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 138",
+      "id": "886:95122",
+      "x": 41203.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 139",
+      "id": "886:95344",
+      "x": 41177.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 140",
+      "id": "886:95570",
+      "x": 41203.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 141",
+      "id": "886:95801",
+      "x": 42951.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 142",
+      "id": "886:96055",
+      "x": 42976.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1543.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 143",
+      "id": "886:96317",
+      "x": 44752.0,
+      "y": 7157.0,
+      "w": 1728.0,
+      "h": 3165.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 144",
+      "id": "886:96747",
+      "x": 42950.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1602.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 145",
+      "id": "886:97013",
+      "x": 44718.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1602.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 146",
+      "id": "886:97279",
+      "x": 42976.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 1578.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 147",
+      "id": "886:97545",
+      "x": 44744.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 1736.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 148",
+      "id": "886:97811",
+      "x": 44727.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 149",
+      "id": "886:98038",
+      "x": 46537.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 150",
+      "id": "886:98265",
+      "x": 46497.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 151",
+      "id": "886:98496",
+      "x": 46517.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 152",
+      "id": "886:98727",
+      "x": 46495.0,
+      "y": 5657.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 153",
+      "id": "886:98964",
+      "x": 48305.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 154",
+      "id": "886:99201",
+      "x": 50073.0,
+      "y": 8158.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 155",
+      "id": "886:99472",
+      "x": 48265.0,
+      "y": 13059.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 156",
+      "id": "886:99713",
+      "x": 48285.0,
+      "y": 15963.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Monitoring Levels",
+      "id": "392:21909",
+      "x": 4825.0,
+      "y": 9023.0,
+      "w": 3907.0,
+      "h": 5150.0,
+      "section": "KYC COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 84",
+      "id": "886:108206",
+      "x": 12954.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 77",
+      "id": "886:105538",
+      "x": 578.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 78",
+      "id": "886:105922",
+      "x": 2346.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 79",
+      "id": "886:106307",
+      "x": 4114.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 80",
+      "id": "886:106692",
+      "x": 5882.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 81",
+      "id": "886:107077",
+      "x": 7650.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 82",
+      "id": "886:107462",
+      "x": 9418.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 83",
+      "id": "886:107834",
+      "x": 11186.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 85",
+      "id": "886:108577",
+      "x": 18322.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 86",
+      "id": "886:108752",
+      "x": 20127.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 87",
+      "id": "886:108928",
+      "x": 21932.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 88",
+      "id": "886:109104",
+      "x": 23737.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 89",
+      "id": "886:109281",
+      "x": 25485.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 92",
+      "id": "886:110425",
+      "x": 25287.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 93",
+      "id": "886:110808",
+      "x": 27253.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1440.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 96",
+      "id": "886:111675",
+      "x": 27055.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 1969.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 97",
+      "id": "886:111970",
+      "x": 29021.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1294.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 100",
+      "id": "886:112647",
+      "x": 29001.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 1294.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 103",
+      "id": "886:113784",
+      "x": 30769.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 3025.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 106",
+      "id": "886:114737",
+      "x": 32537.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 1349.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 109",
+      "id": "886:115504",
+      "x": 34305.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 1349.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 112",
+      "id": "886:116506",
+      "x": 36073.0,
+      "y": 14037.0,
+      "w": 1728.0,
+      "h": 3192.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 113",
+      "id": "886:116883",
+      "x": 30912.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 2091.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 114",
+      "id": "886:117243",
+      "x": 37984.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1620.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 115",
+      "id": "886:117503",
+      "x": 41520.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1620.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 116",
+      "id": "886:117799",
+      "x": 39752.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 3298.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 117",
+      "id": "886:118227",
+      "x": 32680.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 118",
+      "id": "886:118469",
+      "x": 34448.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 119",
+      "id": "886:118725",
+      "x": 25505.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 120",
+      "id": "886:119108",
+      "x": 25566.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 121",
+      "id": "886:119491",
+      "x": 27301.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1294.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 122",
+      "id": "886:119772",
+      "x": 27362.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1294.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 123",
+      "id": "886:120058",
+      "x": 29077.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1294.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 124",
+      "id": "886:120266",
+      "x": 29138.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1294.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 125",
+      "id": "886:120479",
+      "x": 30853.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 2091.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 126",
+      "id": "886:120829",
+      "x": 30914.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 2091.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 127",
+      "id": "886:121184",
+      "x": 32629.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 128",
+      "id": "886:121421",
+      "x": 32690.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 129",
+      "id": "886:121663",
+      "x": 34405.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 130",
+      "id": "886:121914",
+      "x": 34466.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 131",
+      "id": "886:122170",
+      "x": 36181.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 132",
+      "id": "886:122794",
+      "x": 36242.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 133",
+      "id": "886:123418",
+      "x": 37957.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1620.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 134",
+      "id": "886:123667",
+      "x": 38018.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1620.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 135",
+      "id": "886:123919",
+      "x": 39794.0,
+      "y": 3438.0,
+      "w": 1728.0,
+      "h": 1620.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 136",
+      "id": "886:124207",
+      "x": 36216.0,
+      "y": 6528.0,
+      "w": 1728.0,
+      "h": 1491.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYB // 137",
+      "id": "886:124831",
+      "x": 14722.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "Customer // KYC // 157",
+      "id": "886:125190",
+      "x": 16514.0,
+      "y": 819.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "KYB COMPLIANCE"
+    },
+    {
+      "name": "AML Screening // 15",
+      "id": "886:134393",
+      "x": 320.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 16",
+      "id": "886:134780",
+      "x": 2147.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 17",
+      "id": "886:135163",
+      "x": 3979.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 18",
+      "id": "886:135546",
+      "x": 5747.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 19",
+      "id": "886:135929",
+      "x": 7515.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 20",
+      "id": "886:136312",
+      "x": 9283.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 21",
+      "id": "886:136693",
+      "x": 11051.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 22",
+      "id": "886:137074",
+      "x": 53507.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 23",
+      "id": "886:137455",
+      "x": 55275.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 24",
+      "id": "886:137836",
+      "x": 57043.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 25",
+      "id": "886:138220",
+      "x": 26987.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 26",
+      "id": "886:138601",
+      "x": 28755.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "AML Screening // 27",
+      "id": "886:139364",
+      "x": 49971.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 34",
+      "id": "886:140127",
+      "x": 12843.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 35",
+      "id": "886:140393",
+      "x": 35827.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 36",
+      "id": "886:140659",
+      "x": 12843.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 37",
+      "id": "886:140934",
+      "x": 16443.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 38",
+      "id": "886:141248",
+      "x": 25330.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 39",
+      "id": "886:141488",
+      "x": 34059.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 40",
+      "id": "886:141735",
+      "x": 18258.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 41",
+      "id": "886:142056",
+      "x": 20026.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 42",
+      "id": "886:142378",
+      "x": 21794.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 43",
+      "id": "886:142750",
+      "x": 23562.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 44",
+      "id": "886:143125",
+      "x": 30523.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 45",
+      "id": "886:143447",
+      "x": 51739.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 46",
+      "id": "886:143739",
+      "x": 32291.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 47",
+      "id": "886:144063",
+      "x": 14611.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 48",
+      "id": "886:144316",
+      "x": 37595.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 49",
+      "id": "886:144569",
+      "x": 14611.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 50",
+      "id": "886:144831",
+      "x": 16379.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 51",
+      "id": "886:145060",
+      "x": 39363.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 52",
+      "id": "886:145289",
+      "x": 16379.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:145527",
+      "x": 18147.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:145808",
+      "x": 41131.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:146089",
+      "x": 18147.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:146379",
+      "x": 19915.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:146602",
+      "x": 42899.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:146825",
+      "x": 19915.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:147057",
+      "x": 21683.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:147279",
+      "x": 44667.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:147501",
+      "x": 21683.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:147748",
+      "x": 26987.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:148008",
+      "x": 23451.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:148282",
+      "x": 46435.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:148556",
+      "x": 23451.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:148841",
+      "x": 25219.0,
+      "y": 3538.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:149152",
+      "x": 25219.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:149381",
+      "x": 48203.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 53",
+      "id": "886:149602",
+      "x": 12843.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 54",
+      "id": "886:149924",
+      "x": 14611.0,
+      "y": 6052.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 55",
+      "id": "886:150248",
+      "x": 58861.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 56",
+      "id": "886:150514",
+      "x": 58771.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 57",
+      "id": "886:150774",
+      "x": 60539.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 58",
+      "id": "886:151044",
+      "x": 62307.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 59",
+      "id": "886:151272",
+      "x": 64075.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 60",
+      "id": "886:151545",
+      "x": 65843.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 61",
+      "id": "886:151776",
+      "x": 67611.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 62",
+      "id": "886:151997",
+      "x": 69379.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 63",
+      "id": "886:152270",
+      "x": 71147.0,
+      "y": 3397.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 64",
+      "id": "886:152490",
+      "x": 60629.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // 65",
+      "id": "886:152743",
+      "x": 62397.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:152972",
+      "x": 64165.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:153253",
+      "x": 65933.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:153476",
+      "x": 67701.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:153698",
+      "x": 69469.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Customer // AML // verifications",
+      "id": "886:153972",
+      "x": 71237.0,
+      "y": 1024.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "AML SCREENING"
+    },
+    {
+      "name": "Bank Analysis // 11",
+      "id": "886:161366",
+      "x": 512.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 12",
+      "id": "886:161756",
+      "x": 2280.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 13",
+      "id": "886:162147",
+      "x": 4048.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 14",
+      "id": "886:162542",
+      "x": 5816.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 15",
+      "id": "886:162937",
+      "x": 7584.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 16",
+      "id": "886:163331",
+      "x": 21836.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 17",
+      "id": "886:163724",
+      "x": 36017.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 18",
+      "id": "886:164117",
+      "x": 37785.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank Analysis // 19",
+      "id": "886:164497",
+      "x": 23604.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 41",
+      "id": "886:165268",
+      "x": 9353.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 42",
+      "id": "886:165806",
+      "x": 39660.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 43",
+      "id": "886:166271",
+      "x": 39513.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 44",
+      "id": "886:166794",
+      "x": 39513.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 45",
+      "id": "886:167424",
+      "x": 41281.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 2476.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 46",
+      "id": "886:167990",
+      "x": 43049.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 47",
+      "id": "886:168370",
+      "x": 44817.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 48",
+      "id": "886:168798",
+      "x": 46585.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 49",
+      "id": "886:169250",
+      "x": 48353.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 50",
+      "id": "886:169664",
+      "x": 50121.0,
+      "y": 5079.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 51",
+      "id": "886:170060",
+      "x": 11121.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 52",
+      "id": "886:170397",
+      "x": 41428.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 53",
+      "id": "886:170785",
+      "x": 41281.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 54",
+      "id": "886:171231",
+      "x": 12889.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 55",
+      "id": "886:171521",
+      "x": 43196.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 56",
+      "id": "886:171827",
+      "x": 43103.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 57",
+      "id": "886:172191",
+      "x": 14764.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 58",
+      "id": "886:172507",
+      "x": 45071.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 59",
+      "id": "886:172839",
+      "x": 44924.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 60",
+      "id": "886:173229",
+      "x": 16532.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 61",
+      "id": "886:173482",
+      "x": 46839.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 62",
+      "id": "886:173814",
+      "x": 46692.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 63",
+      "id": "886:174204",
+      "x": 18300.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 64",
+      "id": "886:174512",
+      "x": 48607.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 65",
+      "id": "886:174844",
+      "x": 48460.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 66",
+      "id": "886:175234",
+      "x": 50375.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 67",
+      "id": "886:175581",
+      "x": 50228.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 68",
+      "id": "886:175986",
+      "x": 20068.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 69",
+      "id": "886:176238",
+      "x": 52143.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 70",
+      "id": "886:176555",
+      "x": 51996.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 71",
+      "id": "886:176930",
+      "x": 53911.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // 72",
+      "id": "886:177271",
+      "x": 53764.0,
+      "y": 2861.0,
+      "w": 1728.0,
+      "h": 1986.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // run // 7",
+      "id": "886:177612",
+      "x": 25409.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // run // 8",
+      "id": "886:177788",
+      "x": 27177.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // run // 9",
+      "id": "886:177965",
+      "x": 28945.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // run // 10",
+      "id": "886:178142",
+      "x": 30713.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // run // 11",
+      "id": "886:178319",
+      "x": 32481.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Bank analysis // run // 12",
+      "id": "886:178496",
+      "x": 34249.0,
+      "y": 448.0,
+      "w": 1728.0,
+      "h": 1397.0,
+      "section": "BANK ANALYSIS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:194137",
+      "x": 406.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:194380",
+      "x": 3944.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:194617",
+      "x": 5712.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:195170",
+      "x": 7480.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:195472",
+      "x": 11016.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:195801",
+      "x": 16320.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:196064",
+      "x": 19856.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:196391",
+      "x": 21624.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:196731",
+      "x": 23392.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:197071",
+      "x": 25160.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:197357",
+      "x": 26928.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:197652",
+      "x": 28696.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:197925",
+      "x": 34000.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1630.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:198149",
+      "x": 35768.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 2158.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:198518",
+      "x": 37536.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 2158.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:198908",
+      "x": 39315.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 2158.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:199308",
+      "x": 41083.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 2158.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:199710",
+      "x": 30464.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:200050",
+      "x": 32232.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1860.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:200464",
+      "x": 18088.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:200754",
+      "x": 12784.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:201152",
+      "x": 14552.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:201551",
+      "x": 9248.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Settings",
+      "id": "886:201861",
+      "x": 2176.0,
+      "y": 2347.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "SETTINGS"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:157044",
+      "x": 830.0,
+      "y": 1736.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:157453",
+      "x": 7902.0,
+      "y": 1736.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:157863",
+      "x": 804.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:158316",
+      "x": 804.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:158758",
+      "x": 804.0,
+      "y": 18634.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:159200",
+      "x": 804.0,
+      "y": 20859.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:159642",
+      "x": 804.0,
+      "y": 23268.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:160037",
+      "x": 2572.0,
+      "y": 23268.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:160433",
+      "x": 4340.0,
+      "y": 23268.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:160827",
+      "x": 2572.0,
+      "y": 20859.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:161270",
+      "x": 2572.0,
+      "y": 18634.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:161713",
+      "x": 4340.0,
+      "y": 18634.0,
+      "w": 1728.0,
+      "h": 1548.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:162154",
+      "x": 4380.0,
+      "y": 20907.0,
+      "w": 1728.0,
+      "h": 1548.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:162595",
+      "x": 6108.0,
+      "y": 18634.0,
+      "w": 1728.0,
+      "h": 1548.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:163036",
+      "x": 6148.0,
+      "y": 20907.0,
+      "w": 1728.0,
+      "h": 1548.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:163477",
+      "x": 2612.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:163867",
+      "x": 4380.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:164267",
+      "x": 2572.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:164719",
+      "x": 4340.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:165171",
+      "x": 6108.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:165623",
+      "x": 7876.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1497.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:166073",
+      "x": 7876.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1497.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:167423",
+      "x": 7876.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1497.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:167873",
+      "x": 2598.0,
+      "y": 1736.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:168307",
+      "x": 4366.0,
+      "y": 1736.0,
+      "w": 1728.0,
+      "h": 1771.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // TM Category",
+      "id": "1532:168742",
+      "x": 6134.0,
+      "y": 1736.0,
+      "w": 1728.0,
+      "h": 1604.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:169205",
+      "x": 9670.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1548.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:169631",
+      "x": 9670.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1820.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:171071",
+      "x": 7902.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1820.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:171544",
+      "x": 9670.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1820.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:172020",
+      "x": 6188.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1820.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:172496",
+      "x": 11438.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:172932",
+      "x": 11438.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1839.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:174402",
+      "x": 9670.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1839.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:174881",
+      "x": 11438.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1839.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:175360",
+      "x": 7956.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1839.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:175839",
+      "x": 23814.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:176400",
+      "x": 23814.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:176961",
+      "x": 23814.0,
+      "y": 8719.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:177522",
+      "x": 23814.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:178083",
+      "x": 20332.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:178644",
+      "x": 20278.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:179181",
+      "x": 20280.0,
+      "y": 6302.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:179718",
+      "x": 20278.0,
+      "y": 8719.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:180255",
+      "x": 20278.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:180792",
+      "x": 16796.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:181329",
+      "x": 22046.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:181867",
+      "x": 22046.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:182405",
+      "x": 22046.0,
+      "y": 8719.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:182943",
+      "x": 22046.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:183481",
+      "x": 18564.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:184019",
+      "x": 16742.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:184455",
+      "x": 16742.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:185925",
+      "x": 14974.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:186404",
+      "x": 18510.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:186883",
+      "x": 20278.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:187463",
+      "x": 23814.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:188067",
+      "x": 22046.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:188648",
+      "x": 16742.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:189127",
+      "x": 13260.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:189606",
+      "x": 18510.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:189915",
+      "x": 38038.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:190338",
+      "x": 38038.0,
+      "y": 6493.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:190761",
+      "x": 38058.0,
+      "y": 9035.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:191184",
+      "x": 38058.0,
+      "y": 11310.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:191607",
+      "x": 34663.0,
+      "y": 16621.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:192030",
+      "x": 38038.0,
+      "y": 19001.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:192453",
+      "x": 36386.0,
+      "y": 21294.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:192876",
+      "x": 34734.0,
+      "y": 23587.0,
+      "w": 1728.0,
+      "h": 1844.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:193298",
+      "x": 39806.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:193733",
+      "x": 39806.0,
+      "y": 6493.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:194168",
+      "x": 39826.0,
+      "y": 9035.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:194603",
+      "x": 39826.0,
+      "y": 11310.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:195038",
+      "x": 36431.0,
+      "y": 16621.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:195473",
+      "x": 39806.0,
+      "y": 19001.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:195908",
+      "x": 38154.0,
+      "y": 21294.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:196343",
+      "x": 36502.0,
+      "y": 23587.0,
+      "w": 1728.0,
+      "h": 1615.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:196777",
+      "x": 18510.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:197992",
+      "x": 16742.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:198397",
+      "x": 18510.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:198802",
+      "x": 15028.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:199207",
+      "x": 14974.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:199644",
+      "x": 14974.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:201117",
+      "x": 13206.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:201597",
+      "x": 14974.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:202077",
+      "x": 11492.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:202557",
+      "x": 13206.0,
+      "y": 3799.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:202866",
+      "x": 13206.0,
+      "y": 6329.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:204081",
+      "x": 11438.0,
+      "y": 18578.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:204486",
+      "x": 13206.0,
+      "y": 11099.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:204891",
+      "x": 9724.0,
+      "y": 23396.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:205296",
+      "x": 25582.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:205612",
+      "x": 25582.0,
+      "y": 6340.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:205928",
+      "x": 25582.0,
+      "y": 8730.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:206244",
+      "x": 25582.0,
+      "y": 11110.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:206560",
+      "x": 22100.0,
+      "y": 23407.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:206876",
+      "x": 27350.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:207228",
+      "x": 27350.0,
+      "y": 6340.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:207580",
+      "x": 27350.0,
+      "y": 8730.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:207932",
+      "x": 27350.0,
+      "y": 11110.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:208284",
+      "x": 23868.0,
+      "y": 23407.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:208636",
+      "x": 29116.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:208949",
+      "x": 29116.0,
+      "y": 6340.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:209262",
+      "x": 29116.0,
+      "y": 8730.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:209575",
+      "x": 29116.0,
+      "y": 11110.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:209888",
+      "x": 25634.0,
+      "y": 23407.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:210201",
+      "x": 30884.0,
+      "y": 3810.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:210511",
+      "x": 30884.0,
+      "y": 6340.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:210821",
+      "x": 30884.0,
+      "y": 8730.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:211131",
+      "x": 30884.0,
+      "y": 11110.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:211441",
+      "x": 27402.0,
+      "y": 23407.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:211751",
+      "x": 32734.0,
+      "y": 3841.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:212064",
+      "x": 32734.0,
+      "y": 6371.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:212377",
+      "x": 32734.0,
+      "y": 8761.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:212690",
+      "x": 32734.0,
+      "y": 11141.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:213003",
+      "x": 29252.0,
+      "y": 23438.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:213316",
+      "x": 34502.0,
+      "y": 3841.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:213694",
+      "x": 34502.0,
+      "y": 6371.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:214072",
+      "x": 34502.0,
+      "y": 8761.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:214450",
+      "x": 34502.0,
+      "y": 11141.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:214828",
+      "x": 36270.0,
+      "y": 3841.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:215218",
+      "x": 6188.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:215648",
+      "x": 7956.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:216084",
+      "x": 20332.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:216645",
+      "x": 16796.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:217182",
+      "x": 18564.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:217720",
+      "x": 13260.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:218156",
+      "x": 15028.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:218465",
+      "x": 11492.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:218902",
+      "x": 9724.0,
+      "y": 16409.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:219211",
+      "x": 22100.0,
+      "y": 16420.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:219527",
+      "x": 25582.0,
+      "y": 18800.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:219843",
+      "x": 23868.0,
+      "y": 16420.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:220195",
+      "x": 27350.0,
+      "y": 18800.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:220547",
+      "x": 25634.0,
+      "y": 16420.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:220860",
+      "x": 29116.0,
+      "y": 18800.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:221173",
+      "x": 27402.0,
+      "y": 16420.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:221483",
+      "x": 30884.0,
+      "y": 18800.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:221793",
+      "x": 29252.0,
+      "y": 16451.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:222106",
+      "x": 32734.0,
+      "y": 18831.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:222419",
+      "x": 31020.0,
+      "y": 16451.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:222797",
+      "x": 34502.0,
+      "y": 18831.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:223175",
+      "x": 32768.0,
+      "y": 21124.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:223553",
+      "x": 31040.0,
+      "y": 23473.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:223931",
+      "x": 32808.0,
+      "y": 23473.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:224321",
+      "x": 32788.0,
+      "y": 16451.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:224711",
+      "x": 36270.0,
+      "y": 18831.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:225101",
+      "x": 34536.0,
+      "y": 21124.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:225491",
+      "x": 36270.0,
+      "y": 6371.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:225881",
+      "x": 36270.0,
+      "y": 8761.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:226271",
+      "x": 36270.0,
+      "y": 11141.0,
+      "w": 1728.0,
+      "h": 2183.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:226661",
+      "x": 7913.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1820.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:227167",
+      "x": 9681.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1839.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:227679",
+      "x": 22057.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:228240",
+      "x": 18522.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // PND",
+      "id": "1532:228777",
+      "x": 20289.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1789.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:229315",
+      "x": 14985.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:229827",
+      "x": 16753.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:230232",
+      "x": 13217.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1882.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:230745",
+      "x": 11449.0,
+      "y": 20919.0,
+      "w": 1728.0,
+      "h": 1734.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:231150",
+      "x": 23825.0,
+      "y": 20930.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:231466",
+      "x": 25593.0,
+      "y": 20930.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:231818",
+      "x": 27359.0,
+      "y": 20930.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:232131",
+      "x": 29127.0,
+      "y": 20930.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Transaction monitoring // Real-time",
+      "id": "1532:232441",
+      "x": 30977.0,
+      "y": 20961.0,
+      "w": 1728.0,
+      "h": 1709.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 8",
+      "id": "1532:232754",
+      "x": 875.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 15",
+      "id": "1532:233174",
+      "x": 786.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:233585",
+      "x": 804.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:233902",
+      "x": 804.0,
+      "y": 30351.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:234205",
+      "x": 6108.0,
+      "y": 30351.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:234524",
+      "x": 7876.0,
+      "y": 30351.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:234844",
+      "x": 2572.0,
+      "y": 30351.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:235120",
+      "x": 4340.0,
+      "y": 30351.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:235396",
+      "x": 7876.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:235716",
+      "x": 9644.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:236037",
+      "x": 13180.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:236357",
+      "x": 11412.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:236685",
+      "x": 14948.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:237004",
+      "x": 16716.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:237323",
+      "x": 18484.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:237639",
+      "x": 2572.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1753.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:238152",
+      "x": 4340.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1753.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "TM rules setting",
+      "id": "1532:238665",
+      "x": 6108.0,
+      "y": 28512.0,
+      "w": 1728.0,
+      "h": 1753.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 9",
+      "id": "1532:239174",
+      "x": 2643.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 16",
+      "id": "1532:239595",
+      "x": 2554.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 10",
+      "id": "1532:240007",
+      "x": 4411.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 17",
+      "id": "1532:240428",
+      "x": 4322.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 11",
+      "id": "1532:240840",
+      "x": 6179.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "PND",
+      "id": "1532:241310",
+      "x": 6090.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1655.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 12",
+      "id": "1532:241771",
+      "x": 7965.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1992.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 19",
+      "id": "1532:242127",
+      "x": 7836.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1748.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 24",
+      "id": "1532:242454",
+      "x": 13140.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1748.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 22",
+      "id": "1532:242919",
+      "x": 9604.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1748.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 23",
+      "id": "1532:243735",
+      "x": 11372.0,
+      "y": 32307.0,
+      "w": 1728.0,
+      "h": 1748.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 13",
+      "id": "1532:244552",
+      "x": 11501.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1992.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "SAR Rationale // 14",
+      "id": "1532:244893",
+      "x": 9733.0,
+      "y": 26219.0,
+      "w": 1728.0,
+      "h": 1992.0,
+      "section": "Transaction Monitoring"
+    },
+    {
+      "name": "Frame",
+      "id": "1624:69182",
+      "x": 3808.0,
+      "y": 5712.0,
+      "w": 24.0,
+      "h": 24.0,
+      "section": "MVP FLowchart"
+    }
+  ],
+  "other": [
+    {
+      "type": "FRAME",
+      "name": "Module 5",
+      "id": "1532:157028"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 6",
+      "id": "1532:157031"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 7",
+      "id": "1532:157033"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 8",
+      "id": "1532:157035"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 9",
+      "id": "1532:157037"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 10",
+      "id": "1532:157039"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 11",
+      "id": "1532:157041"
+    },
+    {
+      "type": "FRAME",
+      "name": "Module 4",
+      "id": "1532:245371"
+    }
+  ]
+}

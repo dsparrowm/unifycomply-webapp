@@ -13,12 +13,19 @@ Landing Page (`1:3`) and Cover (`0:1`) are **out of scope** — landing is built
 | -------- | ----- |
 | File key | `gJgHsHV3Jt9wYKJfstVdWB` |
 | File URL | https://www.figma.com/design/gJgHsHV3Jt9wYKJfstVdWB/%F0%9F%AA%AAUnifycomply |
-| Entry node | `1:2` (from shared URL `node-id=1-2`) |
+| Entry node | `1:2` (WebApp page) |
 
 ## Inventory Status
 
-**Confirmed via Figma MCP** (edit access granted 2026-07-01). Node IDs recorded in
-`design/manifest.json`.
+**Refreshed 2026-07-23** via local Framelink MCP (`get_figma_data` depth 2 on `1:2`).
+
+| Metric | Count |
+| ------ | ----- |
+| Top-level frames under sections | **475** |
+| Curated for PNG capture | **324** |
+| Skipped as duplicates / non-screens | **158** |
+
+Raw + plan files: `design/figma/webapp/_inventory-raw.json`, `_capture-plan.json`.
 
 ### Pages
 
@@ -30,74 +37,63 @@ Landing Page (`1:3`) and Cover (`0:1`) are **out of scope** — landing is built
 
 ### WebApp sections
 
-| Section | Node ID | Proposed route |
-| ------- | ------- | -------------- |
-| ONBOARDING - COMPLIANCE OFFICER | `886:48671` | `/sign-in`, onboarding |
-| OVERVIEW PAGE | `886:49385` | `/overview` |
-| KYC COMPLIANCE | `886:53858` | `/kyc` |
-| KYB COMPLIANCE | `886:105537` | `/kyb` |
-| BANK ANALYSIS | `886:161365` | `/bank-analysis` |
-| AML SCREENING | `886:134392` | `/aml-screening` |
-| Transaction Monitoring | `1532:157043` | `/transaction-monitoring` |
-| SETTINGS | `886:184304` | `/settings` |
-| MVP FLowchart | `1624:69149` | Reference only |
+| Section | Node ID | Frames on page | Capture | Route |
+| ------- | ------- | -------------- | ------- | ----- |
+| ONBOARDING - COMPLIANCE OFFICER | `886:48671` | 4 | 4 | `/sign-in`, onboarding |
+| OVERVIEW PAGE | `886:49385` | 10 | 10 | `/overview` |
+| KYC COMPLIANCE | `886:53858` | 79 | 78 | `/kyc` |
+| KYB COMPLIANCE | `886:105537` | 48 | 48 | `/kyb` |
+| AML SCREENING | `886:134392` | 66 | 57 | `/aml-screening` |
+| BANK ANALYSIS | `886:161365` | 47 | 47 | `/bank-analysis` |
+| SETTINGS | `886:184304` | 24 | 24 | `/settings` |
+| Transaction Monitoring | `1532:157043` | 196 | 56 | `/transaction-monitoring` |
+| MVP FLowchart | `1624:69149` | 1 | 0 | Reference only |
 
-### Representative frames (verified with `get_design_context`)
+Also present (not screens): Module 4–11 label frames.
 
-| Frame | Node ID | Section |
-| ----- | ------- | ------- |
-| Customer // KYC // 79 | `886:70409` | KYC COMPLIANCE |
-| Sign In // 3 | `886:48672` | ONBOARDING |
+## Capture policy
 
-### How to refresh inventory
+**Keep (supporting states included):**
 
-**Option A — Figma MCP (preferred)**
+- Base screens (empty + populated)
+- Modals / confirm overlays (blur + centered dialog)
+- Drawers and header dropdowns / popovers
+- Filter and button open states
+- Distinct flow steps (lookup, detail, approve/reject)
 
-Use `get_metadata` on page node `1:2` or `1:3`, then `get_design_context` on individual frames.
+**Skip (duplicates / non-product):**
 
-**Option B — Export PNG cache**
+- Same UI cloned on another Y-row (sandbox vs production layout copies)
+- Excess identical-name TM frames beyond height/band representatives
+- Module 5–11 labels, MVP flowchart marker
+- Monitoring Levels reference diagram
 
-Export frames to `design/figma/` per `design/README.md` for offline persistence.
+### Overview states (same frame name, different UI)
 
-## Frame Inventory
+| Node ID | Role |
+| ------- | ---- |
+| `886:49386` | Base — Sandbox |
+| `886:49678` | Header dropdown / popover |
+| `886:50003` | Variant |
+| `886:50340` | Small popover |
+| `886:50687` | Bottom popover |
+| `886:51034` | Confirm modal (blur) |
+| `886:51403` | Base — Production |
+| `886:52269` | Large modal overlay |
+| `886:51750` / `886:51954` | Billing screens |
 
-_To be filled after Figma access is granted._
+### KYC note
 
-| # | Frame name | Node ID | Route (proposed) | Feature spec | Priority | Notes |
-| - | ---------- | ------- | ---------------- | ------------ | -------- | ----- |
-| | | | | | | |
+Frames `Customer // KYC // 79`…`156` are **state variants**, not separate routes. Primary row is `y≈771`. Other Y bands (`3214`, `5657`, `8158`, …) are mostly sandbox/production duplicates of decision flows — captured only when the number or height is unique.
 
-## Design Tokens to Extract
+## Design tokens
 
-After inventory, copy values into `context/ui-context.md` and `app/globals.css`:
-
-- [ ] Primary / secondary / accent colors
-- [ ] Background and surface colors
-- [ ] Text colors (primary, muted, on-dark)
-- [ ] Border and divider colors
-- [ ] State colors (success, warning, error, info)
-- [ ] Font families and weights
-- [ ] Type scale (display, heading, body, label, caption)
-- [ ] Spacing scale (page padding, section gaps, card padding)
-- [ ] Border radius scale
-- [ ] Shadows / elevation (if any)
-- [ ] Icon set and default sizes
-
-## Proposed Build Order
-
-_To be defined after inventory. Typical order:_
-
-1. Project scaffold (Next.js, Tailwind, shadcn/ui, tokens in `globals.css`)
-2. Layout shell (if a shared chrome frame exists)
-3. Public / marketing pages (if any)
-4. Auth flows (if any)
-5. Core app screens (by user journey)
+See `context/ui-context.md` / `app/globals.css` (Onest, Primary/11 `#007984`, Grey/04 `#E4E7EC`, Sandbox/Production banners).
 
 ## Acceptance
 
-- [ ] All in-scope frames listed with node IDs
-- [ ] Build order agreed and recorded
-- [ ] `context/project-overview.md` updated with routes and features
-- [ ] `context/ui-context.md` populated with tokens from Figma
-- [ ] Individual feature specs `01+` created for the first milestone
-- [ ] `context/progress-tracker.md` updated — Phase 0 complete, Phase 1 started
+- [x] All in-scope sections listed with node IDs
+- [x] Capture vs skip policy recorded
+- [ ] PNG cache complete for curated 324 (`design/figma/webapp/`)
+- [ ] `design/manifest.json` synced to exported files
+- [x] `context/project-overview.md` routes exist for M1–M2 modules

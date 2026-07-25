@@ -13,13 +13,16 @@
   --accent-primary: #00454c;
   --accent-primary-hover: #007984;
   --accent-primary-soft: #eefcfe;
+  --accent-primary-subtle: #f7ffff;
   --chart-api-success: #007984;
   --chart-api-failed: #8ecfd6;
+  --network-secondary: #2bb7c3;
   --text-primary: #101928;
   --text-muted: #475367;
   --text-light: #667185;
   --border-default: #e4e7ec;
   --border-subtle: #f0f2f5;
+  --bg-skeleton: #e4e7ec;
   --sandbox-bg: #fffce6;
   --sandbox-border: #cfb10b;
   --sandbox-text: #443c1b;

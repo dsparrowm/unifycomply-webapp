@@ -3,18 +3,21 @@
 import { useState } from "react";
 import { EditPepTierModal } from "@/components/settings/EditPepTierModal";
 import { PepTierCard } from "@/components/settings/PepTierCard";
+import { runAction } from "@/lib/toast";
 import type { SettingsPepSettings, SettingsPepTier } from "@/types/settings";
 import { cn } from "@/lib/utils";
 
 type PepSettingsPanelProps = {
   pepSettings: SettingsPepSettings;
+  onSaveTier?: (tier: SettingsPepTier) => Promise<void>;
 };
 
-export function PepSettingsPanel({ pepSettings }: PepSettingsPanelProps) {
+export function PepSettingsPanel({ pepSettings, onSaveTier }: PepSettingsPanelProps) {
   const [tiers, setTiers] = useState<SettingsPepTier[]>(pepSettings.tiers);
   const [editingTierId, setEditingTierId] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pendingTiers, setPendingTiers] = useState<SettingsPepTier[]>([]);
 
   const editingTier = tiers.find((tier) => tier.id === editingTierId) ?? null;
 
@@ -22,14 +25,38 @@ export function PepSettingsPanel({ pepSettings }: PepSettingsPanelProps) {
     setTiers((current) =>
       current.map((tier) => (tier.id === updatedTier.id ? updatedTier : tier)),
     );
+    setPendingTiers((current) => {
+      const without = current.filter((tier) => tier.id !== updatedTier.id);
+      return [...without, updatedTier];
+    });
     setIsDirty(true);
   };
 
   const handleSave = async () => {
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    setIsSubmitting(false);
-    setIsDirty(false);
+    try {
+      if (onSaveTier) {
+        await runAction(
+          async () => {
+            for (const tier of pendingTiers) {
+              await onSaveTier(tier);
+            }
+          },
+          {
+            success: "PEP settings saved",
+            error: "Could not save PEP settings",
+          },
+        );
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 400));
+      }
+      setPendingTiers([]);
+      setIsDirty(false);
+    } catch {
+      // Toast already shown by runAction
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

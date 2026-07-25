@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { BankAnalysisRun } from "@/types/bank-analysis";
 import {
   BankAnalysisPriorityBadge,
@@ -55,12 +56,32 @@ export function BankAnalysisTable({
               runs.map((run) => (
                 <tr
                   key={run.id}
-                  className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] last:border-b-0"
+                  className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] transition-colors last:border-b-0 hover:bg-[color:var(--bg-muted)]"
                 >
                   <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
-                    {run.analysisId}
+                    {run.detailAvailable ? (
+                      <Link
+                        href={`/bank-analysis/${run.id}`}
+                        className="hover:text-[color:var(--accent-primary-hover)] hover:underline"
+                      >
+                        {run.analysisId}
+                      </Link>
+                    ) : (
+                      run.analysisId
+                    )}
                   </td>
-                  <td className="px-4 py-4 text-[color:var(--text-primary)]">{run.entityName}</td>
+                  <td className="px-4 py-4 text-[color:var(--text-primary)]">
+                    {run.detailAvailable ? (
+                      <Link
+                        href={`/bank-analysis/${run.id}`}
+                        className="hover:text-[color:var(--accent-primary-hover)] hover:underline"
+                      >
+                        {run.entityName}
+                      </Link>
+                    ) : (
+                      run.entityName
+                    )}
+                  </td>
                   <td className="px-4 py-4 text-[color:var(--text-primary)]">
                     {run.accountNumber}
                   </td>
