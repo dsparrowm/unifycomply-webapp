@@ -12,13 +12,13 @@ type KybDetailHeaderProps = {
 
 export function KybDetailHeader({ detail, status }: KybDetailHeaderProps) {
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-      <div className="space-y-4">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="space-y-3">
         <Link
           href="/kyb"
           className="inline-flex items-center gap-1.5 text-sm text-[color:var(--text-muted)] transition-colors hover:text-[color:var(--text-primary)]"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           Back
         </Link>
 
@@ -27,21 +27,16 @@ export function KybDetailHeader({ detail, status }: KybDetailHeaderProps) {
             <span className="text-[color:var(--text-muted)]">KYB / </span>
             <span className="text-[color:var(--text-primary)]">{detail.businessName}</span>
           </p>
-          <KycStatusBadge status={status} uppercase />
+          <KycStatusBadge status={status} />
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <span className="inline-flex items-center rounded-full bg-[color:var(--state-success-soft)] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[color:var(--state-success)]">
-          Risk Score: {detail.riskScore}
-        </span>
-        <button
-          type="button"
-          className="shrink-0 rounded-lg bg-[color:var(--accent-primary)] px-5 py-2.5 text-sm font-medium text-white hover:bg-[color:var(--accent-primary-hover)]"
-        >
-          Export Report
-        </button>
-      </div>
+      <button
+        type="button"
+        className="w-fit shrink-0 rounded-lg bg-[color:var(--accent-primary-hover)] px-5 py-2.5 text-sm font-medium text-white hover:bg-[color:var(--accent-primary)]"
+      >
+        Export Report
+      </button>
     </div>
   );
 }

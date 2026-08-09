@@ -39,7 +39,7 @@ export function KybFilters({
   };
 
   return (
-    <div className="flex flex-col gap-4 rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
       <div className="flex flex-wrap items-center gap-2">
         <KycFilterDropdown
           label="Date"
@@ -70,7 +70,7 @@ export function KybFilters({
         />
 
         <KycFilterDropdown
-          label="Single entity"
+          label="Batch search"
           options={kybSearchModeFilterOptions}
           value={filters.searchMode}
           onChange={(value) => updateFilter("searchMode", value)}
@@ -90,7 +90,7 @@ export function KybFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex min-w-[220px] flex-1 items-center gap-2 rounded-lg border border-[color:var(--border-default)] px-3 py-2 lg:flex-none">
+        <div className="flex min-w-[220px] flex-1 items-center gap-2 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3 py-2 lg:flex-none">
           <Search className="h-4 w-4 text-[color:var(--text-light)]" />
           <input
             type="search"
@@ -103,7 +103,7 @@ export function KybFilters({
 
         <button
           type="button"
-          className="rounded-lg bg-[color:var(--accent-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[color:var(--accent-primary-hover)]"
+          className="rounded-lg bg-[color:var(--accent-primary-hover)] px-4 py-2 text-sm font-medium text-white hover:bg-[color:var(--accent-primary)]"
         >
           Export Report
         </button>

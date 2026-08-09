@@ -35,9 +35,12 @@ export function KybListPanel({ data }: KybListPanelProps) {
         record.kybId,
         record.businessName,
         record.businessType,
+        record.verificationType,
         record.country,
+        record.countryCode,
         record.status,
         record.priority,
+        record.assignedTo ?? "unassigned",
         String(record.riskScore),
       ].some((value) => value.toLowerCase().includes(query)),
     );

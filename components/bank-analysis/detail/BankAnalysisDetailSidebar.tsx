@@ -12,7 +12,7 @@ export function BankAnalysisDetailSidebar({
 
   const profileRows = [
     ["Entity Type", profile.entityType],
-    ["BVN", profile.bvn],
+    [profile.entityType === "Business" ? "Registration ID" : "BVN", profile.bvn],
     ["Email", profile.email],
     ["Phone", profile.phone],
   ] as const;
@@ -35,7 +35,9 @@ export function BankAnalysisDetailSidebar({
             Alerts: {networkMetrics.alerts}
           </p>
           <p className="mt-5 text-sm text-[color:var(--text-light)]">
-            No active alerts or suspicious activity detected
+            {networkMetrics.alerts === 0
+              ? "No active alerts or suspicious activity detected"
+              : `${networkMetrics.alerts} active alerts require compliance review`}
           </p>
         </div>
       </section>

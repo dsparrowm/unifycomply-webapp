@@ -8,7 +8,7 @@
 
 | Route | Frame reference | Purpose |
 | ----- | --------------- | ------- |
-| `/sign-in` | Sign In // 3 (`886:48672`) | Email/password sign-in, Google SSO, link to register |
+| `/sign-in` | Sign In // 3 (`886:48672`), error Sign In // 4 (`886:49017`) | Email/password sign-in, Google SSO, link to register; field error = red border + in-field alert icon |
 | `/register` | Sign up // 3 (`886:48929`) | Registration (API: email, name, country, password) |
 | `/forgot-password` | — | Request password reset email |
 | `/reset-password` | — | Set new password after reset link |

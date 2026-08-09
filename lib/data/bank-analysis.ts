@@ -1,4 +1,5 @@
 import type {
+  BankAnalysisBatchResult,
   BankAnalysisDetail,
   BankAnalysisListData,
   BankAnalysisRun,
@@ -62,6 +63,7 @@ const bankAnalysisRunsMock: BankAnalysisRun[] = [
     priority: "high",
     dateRun: "11 Jul 2026",
     submittedAt: "2026-07-11",
+    detailAvailable: true,
   },
   {
     id: "ba-run-3",
@@ -453,6 +455,7 @@ const bankAnalysisDetails: BankAnalysisDetail[] = [
         { from: "first-bank", to: "business-bottom", dashed: true },
       ],
     },
+    alerts: [],
     complianceSections: [
       {
         id: "transaction-threshold",
@@ -516,6 +519,17 @@ const bankAnalysisDetails: BankAnalysisDetail[] = [
         ],
       },
     ],
+    decisionHistory: [
+      {
+        id: "ba-run-1-completed",
+        type: "analysis-completed",
+        title: "Bank analysis completed",
+        description:
+          "Account activity, linked entities, network relationships, and compliance checks were reviewed.",
+        actor: "UnifyComply Analysis Engine",
+        timestamp: "11 Jul 2026, 09:42",
+      },
+    ],
     profile: {
       name: "Alimi Ayomikun",
       reference: "#3066",
@@ -534,6 +548,177 @@ const bankAnalysisDetails: BankAnalysisDetail[] = [
   },
 ];
 
+const bankAnalysisAlertDetail: BankAnalysisDetail = {
+  ...bankAnalysisDetails[0],
+  id: "ba-run-2",
+  customerName: "TechVentures Nigeria Limited",
+  accountPortfolio: 2,
+  linkedEntities: 1,
+  accounts: bankAnalysisDetails[0].accounts.slice(0, 2).map((account, index) => ({
+    ...account,
+    id: `techventures-${account.id}`,
+    maskedAccountNumber: index === 0 ? "****5761" : "****1048",
+    highlighted: index === 0,
+  })),
+  linkedEntityAccounts: 1,
+  linkedEntityRecords: [
+    {
+      id: "techventures-director",
+      name: "Chinedu Okafor",
+      relationship: "Director and authorised signatory",
+      kind: "business",
+      tier: 3,
+      sharedAccounts: 1,
+      bankName: "GTBank",
+      maskedAccountNumber: "****5761",
+      balance: "₦12,450,000.00",
+      accountType: "Corporate",
+      lastActivity: "34 mins ago",
+    },
+  ],
+  alerts: [
+    {
+      id: "alert-velocity-1",
+      title: "Unusual transaction velocity",
+      description:
+        "Eight high-value transfers were initiated within 47 minutes, exceeding the expected account activity.",
+      severity: "high",
+      status: "Under Review",
+      accountNumber: "****5761",
+      amount: "₦18,750,000.00",
+      detectedAt: "11 Jul 2026, 10:18",
+    },
+    {
+      id: "alert-counterparty-1",
+      title: "New high-risk counterparty",
+      description:
+        "A first-time counterparty associated with a monitored jurisdiction received a large transfer.",
+      severity: "critical",
+      status: "Open",
+      accountNumber: "****5761",
+      amount: "₦7,250,000.00",
+      detectedAt: "11 Jul 2026, 10:24",
+    },
+  ],
+  decisionHistory: [
+    {
+      id: "ba-run-2-review",
+      type: "review-started",
+      title: "Compliance review started",
+      description:
+        "The run was assigned for review after two transaction-monitoring alerts were generated.",
+      actor: "Adaeze Nwosu",
+      timestamp: "11 Jul 2026, 10:31",
+    },
+    {
+      id: "ba-run-2-completed",
+      type: "analysis-completed",
+      title: "Bank analysis completed",
+      description: "Two connected accounts and one linked entity were analysed.",
+      actor: "UnifyComply Analysis Engine",
+      timestamp: "11 Jul 2026, 10:26",
+    },
+  ],
+  profile: {
+    name: "TechVentures Nigeria Limited",
+    reference: "#BA-0040",
+    entityType: "Business",
+    bvn: "RC 2039485",
+    email: "compliance@techventures.ng",
+    phone: "0803 555 0192",
+    lastReviewed: "5 mins ago",
+  },
+  networkMetrics: {
+    alerts: 2,
+    sharedAccounts: 1,
+    totalTransactions: 1284,
+    networkDepth: 3,
+  },
+};
+
+const bankAnalysisDetailFixtures = [...bankAnalysisDetails, bankAnalysisAlertDetail];
+
+export const bankAnalysisBatchResult = {
+  id: "BA-BATCH-2026-0018",
+  batchName: "Techventures",
+  fileName: "techventures-bank-accounts.xlsx",
+  submittedAt: "11 Jul 2026, 10:05",
+  totalRecords: 6,
+  completed: 3,
+  inReview: 2,
+  failed: 1,
+  records: [
+    {
+      id: "batch-record-1",
+      analysisId: "BA-2026-0041",
+      entityName: "Favour Peter Soma",
+      accountNumber: "0123456789",
+      bank: "Access Bank",
+      country: "Nigeria",
+      status: "completed",
+      alertsGenerated: 0,
+      riskScore: 0,
+      detailId: "ba-run-1",
+    },
+    {
+      id: "batch-record-2",
+      analysisId: "BA-2026-0040",
+      entityName: "TechVentures Nigeria Limited",
+      accountNumber: "2039485761",
+      bank: "GTBank",
+      country: "Nigeria",
+      status: "in-review",
+      alertsGenerated: 2,
+      riskScore: 3,
+      detailId: "ba-run-2",
+    },
+    {
+      id: "batch-record-3",
+      analysisId: "BA-2026-0039",
+      entityName: "Bluewave Technologies Ltd",
+      accountNumber: "3048572619",
+      bank: "Zenith Bank",
+      country: "Nigeria",
+      status: "completed",
+      alertsGenerated: 1,
+      riskScore: 1,
+    },
+    {
+      id: "batch-record-4",
+      analysisId: "BA-2026-0038",
+      entityName: "Acme Holdings Nigeria",
+      accountNumber: "1122334455",
+      bank: "First Bank",
+      country: "Nigeria",
+      status: "pending",
+      alertsGenerated: 0,
+      riskScore: 2,
+    },
+    {
+      id: "batch-record-5",
+      analysisId: "BA-2026-0037",
+      entityName: "Vertex Capital Partners",
+      accountNumber: "5566778899",
+      bank: "UBA",
+      country: "Kenya",
+      status: "failed",
+      alertsGenerated: 4,
+      riskScore: 4,
+    },
+    {
+      id: "batch-record-6",
+      analysisId: "BA-2026-0036",
+      entityName: "Sunrise Agro Exports",
+      accountNumber: "6677889900",
+      bank: "Access Bank",
+      country: "Ghana",
+      status: "completed",
+      alertsGenerated: 0,
+      riskScore: 0,
+    },
+  ],
+} satisfies BankAnalysisBatchResult;
+
 export function getBankAnalysisDetailById(id: string): BankAnalysisDetail | undefined {
-  return bankAnalysisDetails.find((detail) => detail.id === id);
+  return bankAnalysisDetailFixtures.find((detail) => detail.id === id);
 }

@@ -49,7 +49,10 @@ export function BankAnalysisChooseActionModal({
       id: "batch",
       label: "Batch Lookup",
       icon: Layers,
-      onClick: onClose,
+      onClick: () => {
+        onClose();
+        router.push("/bank-analysis/lookup?mode=batch");
+      },
     },
   ];
 
@@ -58,7 +61,7 @@ export function BankAnalysisChooseActionModal({
       <button
         type="button"
         aria-label="Close choose action dialog"
-        className="absolute inset-0 bg-black/40"
+        className="absolute inset-0 bg-[color:var(--text-primary)]/30 backdrop-blur-[2px]"
         onClick={onClose}
       />
 

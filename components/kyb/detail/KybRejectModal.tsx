@@ -5,9 +5,9 @@ import { X } from "lucide-react";
 import type { KybDetail } from "@/types/kyb";
 
 const rejectReasons = [
-  "Registry mismatch",
-  "Incomplete documentation",
-  "Beneficial ownership unclear",
+  "Registry data mismatch",
+  "Incomplete ownership disclosure",
+  "Failed compliance screening",
   "Suspected fraud",
   "Other",
 ] as const;

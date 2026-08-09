@@ -4,9 +4,10 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-**Milestone 2 — KYC Orchestration (in progress)**
+**Milestone 2 — KYC Orchestration (complete; M3 not yet activated)**
 
-M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
+M1 and the design-defined M2 scope are complete. M2 routes remain enabled;
+M3+ remain disabled until `CURRENT_MILESTONE` is explicitly advanced.
 
 ## Scope Decisions
 
@@ -30,13 +31,32 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 | 5 | Overview dashboard (`886:49385`) | Done |
 | 6 | M1 hardening (responsive, loading/error, billing/api-keys placeholders) | Done |
 
-**M1 feature development is complete.** Run UAT against `go-live-checklist.md` before advancing `CURRENT_MILESTONE`.
+**M1 feature development is complete.** `CURRENT_MILESTONE` advanced to M2 on
+2026-07-11. M1 remains subject to the shared QA/UAT gates in `go-live-checklist.md`.
 
-## Current Goal (M2)
+## Current Goal
 
-1. AML screening UI (full section — list, modals, lookup, detail)
-2. Bank analysis supporting flows (lookup entry, batch, detail, wire choose-action CTAs)
-3. KYB Batch Lookup + Validate Document decision (or defer with design)
+M2 implementation is closed. Preserve milestone gating and complete product
+QA/UAT before activating M3.
+
+## M2 Completion Checklist
+
+- [x] KYC list, lookup, detail, decisions, risk visualization, and customer onboarding
+- [x] KYB list, lookup, detail, and core decisions
+- [x] Standalone AML list, Single/Batch lookup, detail, case, and escalation
+- [x] Bank Analysis Batch Lookup, decision history, and escalation
+- [x] Remaining design-defined KYB actions and states
+- [x] Lint, TypeScript, production build, and browser smoke checks
+- [x] M2 feature specs, go-live checklist, architecture, and tracker reconciled
+
+Visual parity was checked against available metadata and existing project patterns.
+PNG-level comparison remains unavailable because Figma returned HTTP 429 on
+2026-08-06 (`Retry-After: 9146` seconds); no design behavior was invented.
+
+**Approved deferrals for M2 exit:** KYB Validate Document/business onboarding and
+Packages/Request remain deferred because the WebApp page has no dedicated designs.
+Duplicate sandbox/production frames do not require separate implementations; each
+distinct workflow and meaningful state does.
 
 ## Design cache (2026-07-23 / 2026-07-24)
 
@@ -49,7 +69,10 @@ WebApp page (`1:2`) re-inventoried via local Framelink MCP:
 | Skipped duplicates / non-screens | 158 |
 | PNGs exported so far | ~25 (mostly onboarding + partial KYC) |
 
-**Blocked (2026-07-24):** Figma Images API returns **429** with `Retry-After ≈ 3.8 days`. Message: seat is Viewer/Collaborator on a **Starter** plan with limited API access. `get_figma_data` still works; PNG export does not until plan/seat upgrade or quota resets.
+**Blocked (reconfirmed 2026-08-06):** Figma API returns **429** with
+`Retry-After: 9146` seconds. The Viewer/Collaborator seat on a Starter plan has
+limited API access. Continue using the persisted inventory/cache until quota resets
+or the seat/plan is upgraded.
 
 Resume order when unblocked (M2 → up): **KYC → KYB → AML → Bank → Overview/Settings → TM**.
 
@@ -76,9 +99,9 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 | Area | Figma top-level frames | App coverage | Gaps (screens + supporting UI) |
 | ---- | ---------------------- | ------------ | ------------------------------ |
 | **KYC** | 79–156 (~78 screens) | Strong — list, filters, lookup, detail, decision modals | Minor state variants; choose-action ref = frame 114; no wizard frames |
-| **KYB** | 77–137 (~61 screens) | Strong — list, lookup, detail tabs, decision modals | **Validate Document** dead; **Batch Lookup** (`886:124831`); Confirm Approval variants |
-| **Bank Analysis** | 11–19, 41–72, run 7–12 (~48) | Partial — list, lookup entry, all five detail tabs | Dedicated batch result (18), remaining run-state variants, escalate flow |
-| **AML Screening** | 15–27 + AML 34–66 + verifications (~67) | Placeholder route only | **Entire section:** list, Batch Screening CTA, choose-action Single/Batch, batch results (24), detail (`AML Screening/ FAVOUR…`), matching config / Create Case (44+), Escalate |
+| **KYB** | 77–137 (~61 screens) | Complete for design-defined scope — list, lookup, detail tabs, decisions | Validate Document/business onboarding deferred: no dedicated frames; frame 137 is a Production Mode list state |
+| **Bank Analysis** | 11–19, 41–72, run 7–12 (~48) | Complete for distinct workflows — list, Single/Batch lookup, detail tabs, decisions, escalation | Duplicate visual states and mock Export Report deferred |
+| **AML Screening** | 15–27 + AML 34–66 + verifications (~67) | List aligned to Figma 15–21; detail chrome (tabs + Search Information rail) aligned to frame 34; Single/Batch lookup, batch results, Create Case, escalation | Sources / Warning / Risk Analysis tab bodies still placeholders; Create Case still modal vs Figma full-page frame 44; Export Report UI-only |
 | **Packages / Request** | No section frames | Placeholder routes | No Figma screens to implement |
 | **Onboarding wizard** | None in WebApp | Implemented from roadmap | Needs Figma alignment when frames exist |
 
@@ -89,10 +112,11 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 | KYC Choose action (Perform Lookup / Validate Document) | `886:80735` (114) | Done |
 | KYC Confirm Approval | `886:76907`, `886:93088`, `886:99201` | Done (`KycApproveModal`) |
 | KYC Request Document Re-submission | `886:87691`, `886:88150` | Done |
-| KYC/KYB Reject / Escalate | Detail decision frames (footer + modals) | Done |
-| Bank Choose action (Single / Batch Lookup) | `886:164497` (19) | Single Lookup → `/bank-analysis/lookup`; Batch result deferred |
-| AML Choose action (Single / Batch Lookup) | `886:138601`, `886:139364` | Not started |
-| AML / Bank Escalate to Senior Officer | AML verifications; Bank `71`–`72` | Not started |
+| KYC Reject / Escalate | KYC detail decision frames (footer + modals) | Done |
+| KYB Approve / Reject / Resubmission | Detail frame 93 footer + modals (also lookup result) | Done |
+| Bank Choose action (Single / Batch Lookup) | `886:164497` (19) | Done — `/bank-analysis/lookup` + `/bank-analysis/batch` |
+| AML Choose action (Single / Batch Lookup) | `886:138601`, `886:139364` | Done |
+| AML / Bank Escalate to Senior Officer | AML verifications; Bank `71`–`72` | Done |
 | Priority SLA reference panel | `886:81487` (276×612) | Not started (optional helper) |
 
 ## Milestone Status
@@ -100,7 +124,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 | Milestone | Status |
 | --------- | ------ |
 | **M1 — Foundation** | **Complete** |
-| **M2 — KYC Orchestration** | **In progress (active)** |
+| **M2 — KYC Orchestration** | **Complete (active milestone remains M2)** |
 | M3 — Transaction Monitoring | Blocked |
 | M4 — SAR & Case Management | Blocked |
 | M5 — Optimisation | Blocked |
@@ -128,12 +152,11 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 
 - Transaction monitoring (M3)
 
-## Next Up (M2)
+## Next Up
 
-1. AML screening list + choose-action modal (`886:134393` … `886:139364`)
-2. AML detail + escalate (`Customer // AML // 34+`)
-3. Bank analysis Perform Lookup / Batch Lookup / detail (wire Single/Batch CTAs)
-4. KYB Batch Lookup (`886:124831`) if still in M2 scope
+1. Product QA/UAT for M1–M2 against `go-live-checklist.md`
+2. Restore PNG-level Figma parity checks when API quota permits
+3. Activate M3 only after explicit milestone advancement
 
 ## Feature Unit Queue (through M2)
 
@@ -155,12 +178,12 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 | 14 | Customer onboarding wizard | MVP flowchart `1532:157029` | Done — `/kyc/onboarding` |
 | 15 | KYB Perform Lookup flow | `886:108577`–`886:109104` | Done — `/kyb/lookup` |
 | 16 | Bank analysis list | `886:161366`, `886:163331` | Done — `/bank-analysis` |
-| 17 | KYB detail page (frame 93) | `886:110808` | Done — all secondary tabs |
+| 17 | KYB detail page (frame 93) | `886:110808` | Done — cleared + high-risk (95/112) |
 | 18 | M2 placeholder routes | — | Done — `/aml-screening`, `/packages`, `/request` |
-| 19 | AML screening list UI | `886:134393`–`886:139364` | Not started |
-| 20 | AML screening detail + escalate | `886:140127`+ | Not started |
-| 21 | Bank analysis lookup + detail | `886:177612`, `886:164117`, `886:165268`+ | In progress — Single Lookup entry and all five detail tabs done; Batch Lookup result and escalation pending |
-| 22 | KYB Batch Lookup | `886:124831` | Not started |
+| 19 | AML screening list UI | `886:134393`–`886:139364` | Done — list, filters, choose action, Single/Batch entry and results |
+| 20 | AML screening detail + escalate | `886:140127`+ | Done — matching, Create Case, escalation, decision history |
+| 21 | Bank analysis lookup + detail | `886:177612`, `886:164117`, `886:165268`+ | Done — Single/Batch entry, batch result, detail tabs, populated decisions, escalation |
+| 22 | KYB frame 137 classification + remaining actions | `886:124831` | Done — Production Mode list state; lookup approval wired |
 
 ## Architecture Decisions
 
@@ -169,23 +192,53 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - `CURRENT_MILESTONE = 2` in `lib/constants/milestones.ts` — M2 routes enabled through KYC/KYB/AML/bank analysis
 - `/kyc` uses populated list (frame 86) for M2 development; `kycListDataEmpty` reserved for post–Add Customer flow
 - `/kyc/onboarding` — five-step customer wizard (personal → business → documents → review → consent); entry via Validate Document modal
-- `/kyb` — KYB list (frame 79 empty default, frame 84 populated fixture); mock via `lib/data/kyb.ts`; filters reuse KYC dropdown pattern
+- `/kyb` — KYB list (frame 79 empty default, frame 84 populated fixture); mock via `lib/data/kyb.ts`; columns match Figma (Verification Type, Assigned To, View); filters use Batch search
 - `/kyb/lookup` — Perform Lookup entry (frames 85–88) with country/app/lookup-type form, single + bulk modes
 - `/kyb/lookup/result` — business registry lookup results with tabs, summary panel, footer actions; mock via `lib/data/kyb-lookup.ts`
-- `/kyb/[id]` — KYB detail (frame 93) with Business Overview tab, risk/verification/business-size sidebar, decision modals; mock via `lib/data/kyb-detail.ts`; table rows link from `/kyb`
+- `/kyb/[id]` — KYB detail: cleared baseline `kyb-record-5` (frame 93/134); high-risk `kyb-record-1` (frames 95/112) with tier risk cards, OFAC sanctions expand, escalate footer; mock via `lib/data/kyb-detail.ts`
 - KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`
 - `/bank-analysis` — list (frame 11 empty, frame 16 populated); metrics Total screening / Total Alerts Generated / Completed / high risk alerts; **New Lookup** choose-action modal (Single / Batch Lookup)
-- `/bank-analysis/lookup` — KYB-pattern single verification UI with Country, App, Bank, and Account Number; successful mock submission opens `/bank-analysis/ba-run-1`; Bulk Verification remains disabled pending its result design
-- `/bank-analysis/[id]` — Key Summary, Linked Entity, Account Analysis, Network Intelligence, Alerts, Compliance, Decision history, date-range menu, and persistent sidebar; Favour Peter Soma row links to `/bank-analysis/ba-run-1`; report export and escalation are deferred
+- `/bank-analysis/lookup` — KYB-pattern Single/Batch verification UI with Country, App, Bank, Account Number, and bulk upload; mock submissions open detail or `/bank-analysis/batch`
+- `/bank-analysis/batch` — frame-18 typed batch result with completed, review, and failed records
+- `/bank-analysis/[id]` — Key Summary, Linked Entity, Account Analysis, Network Intelligence, Alerts, Compliance, Decision history, escalation, date-range menu, and persistent sidebar; report export remains deferred
 - `/kyc/[id]` detail page — frame 96 baseline with document viewer, extracted fields, risk/biometric/timeline panels; mock via `lib/data/kyc-detail.ts`; **0–4 risk score** drives per-tab UI variants via `lib/kyc/risk-score.ts` (no separate tier enum)
 - `/kyc/lookup` — Perform Lookup entry (frame 90) with lookup type/country/identifier form, sandbox/production toggle
 - `/kyc/lookup/result` — BVN lookup results (frames 91–94) with tabs, summary panel, address tab, footer actions
 - KYC list **Add Customer** opens choose-action modal (frame 115) — Perform Lookup → `/kyc/lookup`
-- `/aml-screening`, `/packages`, `/request` — placeholder routes via `RoutePlaceholderPanel`; milestone + RBAC gating enforced in `canAccessPath`
+- `/aml-screening` — Figma list (15–21): Create a Case CTA → `/aml-screening/create-case`, TOTAL SCREENING / ACTIVE MONITORING / CLEAR STATUS / BLOCKED metrics, Date/Status/Monitoring/Assignee/More filters + Export Report, table columns AML ID → Active Monitoring
+- `/aml-screening/create-case` — Figma Create a New Case form (frame 44) with Search By rail; Search → `/aml-screening/search-results`
+- `/aml-screening/search-results` — Figma Search Results (records, match status actions, Search Information rail); name → detail
+- `/aml-screening/lookup`, `/aml-screening/batch`, `/aml-screening/[id]` — screening entry/results, matching configuration, Create Case, escalation, and decision history
+- `/packages`, `/request` — placeholder routes because no dedicated WebApp frames exist; milestone + RBAC gating enforced in `canAccessPath`
 - `canAccessPath` combines RBAC permissions with `isPathEnabledForCurrentMilestone` for deep-link protection
 
 ## Session Notes
 
+- 2026-08-09: Frame 95 risk cards — full Figma copy (tier label, title, body, metadata, action strips); removed Standard chip when tier cards shown
+- 2026-08-09: KYB PNG visual QA — live DOM vs `design/figma/webapp/kyb/`; frames 84/93/112/115/135/8336 match; 95 updated to match; report canvas `kyb-png-visual-qa`
+- 2026-08-09: KYB Directors + Approve modal — `frame-1618868336` PEP Match/Verified card polish (red pill, teal AML icons); score 2 directors filled; Confirm Approval frames 115/135 (circular risk badge, verification type subtitle, grant-access copy); frame 122 classified as cleared overview duplicate of 93
+- 2026-08-09: KYB high-risk detail parity — frames 95 (Overview tier risk cards + Urgent/escalate) and 112 (Compliance Checks OFAC View Details expand + PEP/Warning flagged); fixtures on `kyb-record-1` (risk 4); cleared baseline remains `kyb-record-5`
+- 2026-08-09: Extracted Figma zip 22 into `design/figma/webapp/kyb/` — new frames 95, 119, 134 + components `frame-1618868278` / `frame-1618868336`; dropped exact dups and `8336-1/2/3` / KYC `9-1/9-2` variants
+- 2026-08-09: Reorganized design cache under `design/figma/webapp/{onboarding,overview,kyc,kyb,aml,bank-analysis,settings,shared}/`
+- 2026-08-09: Extracted Figma zips 18–20 into `design/figma/webapp/kyb/` — KYB frames 88, 91, 112, 115, 122, 133, 135; kept `kyc/customer-kyc-9.png` and dropped `9-1`/`9-2` export variants
+- 2026-08-09: KYB list Figma parity (frame 84 screenshot) — Batch search filter, table columns (Verification Type, Country ISO, Assigned To, View), Verified/Failed status labels, Urgent/Standard priorities, colorized risk scores, refreshed `#3066`-style fixture; cached `kyb/customer-kyb-84.png`
+- 2026-08-09: KYB detail Figma parity from user screenshot (`kyb/customer-kyb-93.png`) — underline tabs, remove header Risk Score chip, single overview card, risk-0 sidebar callout, decision footer (Request Resubmission / Reject / Approve); fixture `kyb-record-5` → TechVentures Limited / risk 0 / Standard; Pending badge uses warning tone
+- 2026-08-09: Frame 95 risk cards use category + action-line mock (tier tones); fuller nested Figma body copy deferred until PNG text is transcribed line-by-line
+- 2026-08-09: List row `kyb-record-1` keeps "TechVentures LTD" (frame 84); detail breadcrumb overrides to "TechVentures Limited" for frames 95/112
+- 2026-08-06: AML Search Results — `/aml-screening/search-results` after Create Case Search; result cards + match-status Save + Search Information/Filters rail; cached `aml-search-results.png`
+- 2026-08-06: AML Create Case Entity Type — multi-select dropdown (Select All, Person, Organization, Aircraft, Vessel) with soft selected row + trailing check; cached `aml-create-case-entity-type.png`
+- 2026-08-06: AML Create a New Case alignment — true left/right form columns (Risk Engine bottoms with Country), Exact Match flush (no extra card), Search By Relevance/Entity Type 2×2 grids
+- 2026-08-06: AML Create a New Case UI (frame 44) — full-page form + Search By rail at `/aml-screening/create-case`; list Create a Case CTA links there; Search mock-navigates to detail
+- 2026-08-06: AML Additional information tab — Twitter source + Joe Biden external link from user Figma export (`aml-additional-information.png`); summary tab active style soft teal
+- 2026-08-06: AML Linked Entities tab — implemented from user Figma export (`aml-linked-entities.png`); stacked relationship/name rows; summary tab active state teal fill; Additional Information still awaiting frame
+- 2026-08-06: AML detail chrome Figma alignment (frame 34) — breadcrumb + Export, primary/summary tabs, Active Monitoring toggle, Key Summary + Verifications content, Search Information rail; Sources/Warning/Risk Analysis placeholders; decision actions footer retained
+- 2026-08-06: AML list Figma alignment (frames 15–21) — header/subtitle/CTA, metrics, KYC-style filters + Export, table schema (AML ID, Full Name, Date & Time, Type, Initiated By, Risk Score, Assigned To, Status, Active Monitoring); statuses Flagged/Clear/In Review/Blocked; **Create a Case** still opens Single/Batch choose-action (label vs workflow mismatch noted). Detail parity deferred.
+- 2026-08-06: AML Figma cross-check — pulled 9 PNGs to `design/figma/webapp/aml/`; list + detail diverge from frames 15–21 / 34 (metrics, filters, table, tabbed profile + Search Information rail). Choose-action/lookup/case/escalate closer. Report: canvas `aml-figma-parity`.
+- 2026-08-06: Fixed KYC/KYB lookup footers for mobile — stack full-width below `sm` (match Bank Analysis); Cancel no longer off-screen at 390px
+- 2026-08-06: M2 mobile smoke at 390×844 — shell/lists/details mostly OK; **critical**: KYC+KYB lookup footers (`min-w-[240px]`×2) push Cancel off-screen; medium: detail tab horizontal scroll, crowded header. Report: canvas `m2-mobile-responsiveness`. Bank/AML lookups already stack correctly.
+- 2026-08-06: Sign-in Figma parity (`886:48672` / `886:49017`) — in-field `CircleAlert` on auth input errors, eye-slash when password masked, primary/secondary auth buttons `54px`, brand panel logo `size="auth"`; compared against `design/figma/webapp/onboarding/`
+- 2026-08-06: Completed design-defined M2 scope — standalone AML list/Single/Batch/detail/case/escalation; Bank Batch Lookup/result and Senior Officer decision history; KYB lookup approval; documented no-design deferrals
+- 2026-08-06: Verification passed — `pnpm run lint`, `pnpm exec tsc --noEmit`, clean `pnpm run build` (52 static pages), and browser smoke of AML, Bank Analysis, and KYB mock workflows; Figma parity API still 429
 - 2026-07-26: MFA enable modal shows authenticator QR from `keyUri` (vendored Nayuki qrcodegen) plus copyable secret
 - 2026-07-26: Added global toast system (`ToastViewport` + `runAction`) for settings mutations, password change, MFA enable/disable, domain switch, and API key rotate
 - 2026-07-26: Auth polish — Google OAuth BFF (`/api/auth/google` + intent exchange), MFA challenge detection hardened, MFA paste + copy polish, auth redirect guard hydration skeletons
@@ -222,7 +275,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - 2026-07-12: KYC Request Document Re-submission modal — checkbox issue list, wired to detail and lookup footer actions
 - 2026-07-12: KYC AML PEP match detail panel — flagged screening view with bio analysis, sources, timeline, risk factors
 - 2026-07-12: Bank analysis list (`/bank-analysis`, frames `886:161366` / `886:163331`) — metrics, filters, search, table, pagination, New Lookup choose-action modal; mock via `lib/data/bank-analysis.ts`
-- 2026-07-12: KYB detail page (`/kyb/[id]`, frame `886:110808`) — Business Overview tab, risk/verification/business-size sidebar, approve/reject/resubmission/escalate modals; mock via `lib/data/kyb-detail.ts`; canonical fixture `kyb-record-5` (TechVentures Nigeria Limited)
+- 2026-07-12: KYB detail page (`/kyb/[id]`, frame `886:110808`) — Business Overview tab, risk/verification/business-size sidebar; mock via `lib/data/kyb-detail.ts`; canonical fixture `kyb-record-5` (TechVentures Nigeria Limited)
 - 2026-07-12: KYB detail Risk Score Analysis tab — reuses `KycRiskAnalysisPanel` with shared `lib/compliance/risk-analysis.ts` builder for all risk levels 0–4
 - 2026-07-12: KYB detail Directors & Officers tab — score 0/1/3/4 layouts with director cards and AML screening rows; mock via `lib/data/kyb-directors.ts`
 - 2026-07-12: KYB detail Shareholders tab — Share Capital Structure table with type badges and percentage bars; mock via `lib/data/kyb-shareholders.ts`

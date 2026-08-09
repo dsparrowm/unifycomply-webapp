@@ -34,7 +34,7 @@ export function AuthBrandPanel({
       />
 
       <div className="relative z-10 flex shrink-0 flex-col">
-        <UnifycomplyLogo variant="light" />
+        <UnifycomplyLogo variant="light" size="auth" />
 
         <div className="mt-[74px] w-full max-w-[562px]">
           <h1 className="text-[56px] font-semibold leading-[1.29] tracking-[-0.02em] text-white">

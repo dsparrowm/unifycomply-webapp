@@ -1,12 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import { KybDetailSectionHeader } from "@/components/kyb/detail/KybDetailSectionHeader";
-import { AlertTriangle, Check } from "lucide-react";
+import { KybSanctionsMatchDetailPanel } from "@/components/kyb/detail/KybSanctionsMatchDetailPanel";
+import { AlertTriangle, Check, ChevronDown, ChevronUp } from "lucide-react";
 import type {
   KybComplianceChecksData,
   KybComplianceRegistryCheck,
   KybComplianceRegistryStatus,
+  KybComplianceSanctionsCheck,
   KybComplianceScreeningCheck,
   KybComplianceScreeningStatus,
 } from "@/types/kyb";
+import { cn } from "@/lib/utils";
 
 type KybComplianceChecksTabProps = {
   complianceChecks: KybComplianceChecksData;
@@ -54,7 +60,7 @@ function ScreeningStatusLabel({ status }: { status: KybComplianceScreeningStatus
   }
 
   return (
-    <span className="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--state-error)]">
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[color:var(--state-error-soft)] px-2.5 py-0.5 text-sm font-medium text-[color:var(--state-error)]">
       <AlertTriangle className="h-4 w-4" />
       Flagged
     </span>
@@ -84,45 +90,96 @@ function RegistryCheckRow({ check }: { check: KybComplianceRegistryCheck }) {
 function ScreeningSection({
   title,
   children,
+  className,
 }: {
   title: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <div>
       <h3 className="text-xs font-semibold uppercase tracking-wide text-[color:var(--text-muted)]">
         {title}
       </h3>
-      <div className="mt-3 rounded-xl bg-[color:var(--bg-muted)] px-5 py-2">{children}</div>
+      <div className={cn("mt-3 rounded-xl bg-[color:var(--bg-muted)] px-5 py-2", className)}>
+        {children}
+      </div>
     </div>
   );
 }
 
-function SanctionsRow({ label, status }: { label: string; status: KybComplianceScreeningStatus }) {
+function SanctionsRow({ entry }: { entry: KybComplianceSanctionsCheck }) {
+  if (entry.matchDetail) {
+    return <KybSanctionsMatchDetailPanel listLabel={entry.label} detail={entry.matchDetail} />;
+  }
+
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="flex items-center gap-3">
-        <TealCheckIcon />
-        <p className="text-sm font-semibold text-[color:var(--text-primary)]">{label}</p>
+        {entry.status === "no-match" ? (
+          <TealCheckIcon />
+        ) : (
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]">
+            <AlertTriangle className="h-3.5 w-3.5" />
+          </span>
+        )}
+        <p className="text-sm font-semibold text-[color:var(--text-primary)]">{entry.label}</p>
       </div>
-      <ScreeningStatusLabel status={status} />
+      <ScreeningStatusLabel status={entry.status} />
     </div>
   );
 }
 
-function ScreeningCheckRow({ check }: { check: KybComplianceScreeningCheck }) {
-  return (
-    <div className="flex items-center justify-between gap-4 py-3">
-      <div>
-        <p className="text-sm font-semibold text-[color:var(--text-primary)]">{check.label}</p>
-        <p className="mt-1 text-sm text-[color:var(--text-muted)]">{check.description}</p>
+function ExpandableScreeningCheck({ check }: { check: KybComplianceScreeningCheck }) {
+  const [expanded, setExpanded] = useState(check.defaultExpanded ?? false);
+  const canExpand = Boolean(check.detailSummary) && check.status !== "no-match";
+
+  if (!canExpand) {
+    return (
+      <div className="flex items-center justify-between gap-4 py-3">
+        <div>
+          <p className="text-sm font-semibold text-[color:var(--text-primary)]">{check.label}</p>
+          <p className="mt-1 text-sm text-[color:var(--text-muted)]">{check.description}</p>
+        </div>
+        <ScreeningStatusLabel status={check.status} />
       </div>
-      <ScreeningStatusLabel status={check.status} />
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)]">
+      <div className="flex items-center justify-between gap-4 px-5 py-4">
+        <div>
+          <p className="text-sm font-semibold text-[color:var(--text-primary)]">{check.label}</p>
+          <p className="mt-1 text-sm text-[color:var(--text-muted)]">{check.description}</p>
+        </div>
+        <ScreeningStatusLabel status={check.status} />
+      </div>
+
+      <div className="mx-5 mb-5 overflow-hidden rounded-xl border border-[color:var(--state-error)]/30">
+        <button
+          type="button"
+          onClick={() => setExpanded((value) => !value)}
+          className="flex w-full items-center justify-between bg-[color:var(--bg-muted)] px-5 py-3 text-left text-sm font-semibold text-[color:var(--text-primary)]"
+        >
+          View Details
+          {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+        </button>
+        {expanded ? (
+          <div className="border-t border-[color:var(--border-default)] px-5 py-4">
+            <p className="text-sm leading-6 text-[color:var(--text-primary)]">{check.detailSummary}</p>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
 
 export function KybComplianceChecksTab({ complianceChecks }: KybComplianceChecksTabProps) {
+  const hasExpandedSanctions = complianceChecks.sanctionsLists.some((entry) => entry.matchDetail);
+  const adverseTitle =
+    complianceChecks.adverseMediaSectionTitle ?? "Adverse Media Screening";
+
   return (
     <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
       <KybDetailSectionHeader
@@ -138,20 +195,62 @@ export function KybComplianceChecksTab({ complianceChecks }: KybComplianceChecks
           ))}
         </div>
 
-        <ScreeningSection title="Sanctions Screening (Screened against 4 global sanctions lists)">
-          <div className="divide-y divide-[color:var(--border-subtle)]">
-            {complianceChecks.sanctionsLists.map((entry) => (
-              <SanctionsRow key={entry.id} label={entry.label} status={entry.status} />
-            ))}
-          </div>
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-[color:var(--text-muted)]">
+            Sanctions Screening (Screened against 4 global sanctions lists)
+          </h3>
+          {hasExpandedSanctions ? (
+            <div className="mt-3 space-y-3">
+              {complianceChecks.sanctionsLists.map((entry) =>
+                entry.matchDetail ? (
+                  <KybSanctionsMatchDetailPanel
+                    key={entry.id}
+                    listLabel={entry.label}
+                    detail={entry.matchDetail}
+                  />
+                ) : (
+                  <div
+                    key={entry.id}
+                    className="rounded-xl bg-[color:var(--bg-muted)] px-5"
+                  >
+                    <SanctionsRow entry={entry} />
+                  </div>
+                ),
+              )}
+            </div>
+          ) : (
+            <div className="mt-3 rounded-xl bg-[color:var(--bg-muted)] px-5 py-2">
+              <div className="divide-y divide-[color:var(--border-subtle)]">
+                {complianceChecks.sanctionsLists.map((entry) => (
+                  <SanctionsRow key={entry.id} entry={entry} />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <ScreeningSection
+          title="Politically Exposed Person"
+          className={
+            complianceChecks.pepCheck.detailSummary &&
+            complianceChecks.pepCheck.status !== "no-match"
+              ? "bg-transparent px-0 py-0"
+              : undefined
+          }
+        >
+          <ExpandableScreeningCheck check={complianceChecks.pepCheck} />
         </ScreeningSection>
 
-        <ScreeningSection title="Politically Exposed Person">
-          <ScreeningCheckRow check={complianceChecks.pepCheck} />
-        </ScreeningSection>
-
-        <ScreeningSection title="Adverse Media Screening">
-          <ScreeningCheckRow check={complianceChecks.adverseMediaCheck} />
+        <ScreeningSection
+          title={adverseTitle}
+          className={
+            complianceChecks.adverseMediaCheck.detailSummary &&
+            complianceChecks.adverseMediaCheck.status !== "no-match"
+              ? "bg-transparent px-0 py-0"
+              : undefined
+          }
+        >
+          <ExpandableScreeningCheck check={complianceChecks.adverseMediaCheck} />
         </ScreeningSection>
       </div>
     </div>

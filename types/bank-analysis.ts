@@ -36,6 +36,7 @@ export type BankAnalysisBankFilter =
 
 export type BankAnalysisMoreFilter = "all" | "high-risk";
 export type BankAnalysisLookupBank = Exclude<BankAnalysisBankFilter, "all">;
+export type BankAnalysisLookupMode = "single" | "batch";
 
 export type BankAnalysisListFilters = {
   date: BankAnalysisDateFilter;
@@ -69,6 +70,31 @@ export type BankAnalysisListData = {
   runs: BankAnalysisRun[];
 };
 
+export type BankAnalysisBatchRecord = {
+  id: string;
+  analysisId: string;
+  entityName: string;
+  accountNumber: string;
+  bank: string;
+  country: string;
+  status: BankAnalysisRunStatus;
+  alertsGenerated: number;
+  riskScore: number;
+  detailId?: string;
+};
+
+export type BankAnalysisBatchResult = {
+  id: string;
+  batchName: string;
+  fileName: string;
+  submittedAt: string;
+  totalRecords: number;
+  completed: number;
+  inReview: number;
+  failed: number;
+  records: BankAnalysisBatchRecord[];
+};
+
 export type BankAnalysisAccountStatus = "active" | "dormant";
 
 export type BankAnalysisAccount = {
@@ -89,7 +115,7 @@ export type BankAnalysisAccount = {
 export type BankAnalysisProfile = {
   name: string;
   reference: string;
-  entityType: "Individual";
+  entityType: "Individual" | "Business";
   bvn: string;
   email: string;
   phone: string;
@@ -167,6 +193,30 @@ export type BankAnalysisComplianceSection = {
   checks: BankAnalysisComplianceCheck[];
 };
 
+export type BankAnalysisAlertSeverity = "medium" | "high" | "critical";
+
+export type BankAnalysisAlert = {
+  id: string;
+  title: string;
+  description: string;
+  severity: BankAnalysisAlertSeverity;
+  status: "Open" | "Under Review";
+  accountNumber: string;
+  amount: string;
+  detectedAt: string;
+};
+
+export type BankAnalysisDecisionType = "analysis-completed" | "review-started" | "escalated";
+
+export type BankAnalysisDecisionHistoryEntry = {
+  id: string;
+  type: BankAnalysisDecisionType;
+  title: string;
+  description: string;
+  actor: string;
+  timestamp: string;
+};
+
 export type BankAnalysisDetail = {
   id: string;
   customerName: string;
@@ -177,7 +227,9 @@ export type BankAnalysisDetail = {
   linkedEntityRecords: BankAnalysisLinkedEntity[];
   accountAnalysis: BankAnalysisAccountAnalysis;
   networkGraph: BankAnalysisNetworkGraph;
+  alerts: BankAnalysisAlert[];
   complianceSections: BankAnalysisComplianceSection[];
+  decisionHistory: BankAnalysisDecisionHistoryEntry[];
   profile: BankAnalysisProfile;
   networkMetrics: BankAnalysisNetworkMetrics;
 };

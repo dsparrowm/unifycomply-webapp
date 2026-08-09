@@ -17,16 +17,25 @@ export type KybListFilters = KycListFilters;
 
 export type KybFilterOption<T extends string = string> = KycFilterOption<T>;
 
+/** Registry / diligence check shown in the KYB list Verification Type column. */
+export type KybVerificationType = "CAC" | "Memart" | "TIN" | "Due Diligence" | "RC";
+
 export type KybRecord = {
   id: string;
+  /** Display id in the list, e.g. `#3066`. */
   kybId: string;
   businessName: string;
   businessType: string;
+  verificationType: KybVerificationType;
+  /** ISO country code shown in the list, e.g. `NG`. */
+  countryCode: string;
   country: string;
   status: KybVerificationStatus;
   priority: KybPriority;
   /** Composite risk score on the 0–4 scale (Settings → Approvals). */
   riskScore: number;
+  /** Assignee display name, or `null` for Unassigned. */
+  assignedTo: string | null;
   timeInQueue: string;
   submittedAt: string;
 };
@@ -55,11 +64,20 @@ export type KybDetailTab =
   | "document"
   | "compliance-checks";
 
+export type KybRiskFactorTone = "critical" | "high" | "medium" | "low";
+
 export type KybRiskFactor = {
   id: string;
+  /** Tier / severity label shown above the title, e.g. `TIER 1`, `SANCTIONED`. */
   category: string;
   title: string;
   description: string;
+  /** Optional detail line under the body (e.g. PEP office / role). */
+  metadata?: string;
+  /** Action callout strip at the bottom of the card (frame 95). */
+  action?: string;
+  /** Sidebar card tone — frame 95 tier styling. */
+  tone?: KybRiskFactorTone;
 };
 
 export type KybDirectorAmlCheckStatus = "no-match" | "match" | "flagged";
@@ -137,10 +155,45 @@ export type KybComplianceRegistryCheck = {
 
 export type KybComplianceScreeningStatus = "no-match" | "match" | "flagged";
 
+export type KybSanctionsMatchCriterionResult = "yes" | "no" | "percent";
+
+export type KybSanctionsMatchCriterion = {
+  id: string;
+  label: string;
+  value: string;
+  result: KybSanctionsMatchCriterionResult;
+  percent?: number;
+};
+
+/** Expandable OFAC (and similar) sanctions hit — Figma frame 112. */
+export type KybSanctionsMatchDetail = {
+  summaryTitle: string;
+  summary: string;
+  screeningDate: string;
+  matchType: string;
+  riskLevel: string;
+  entity: {
+    name: string;
+    country: string;
+    reason: string;
+  };
+  listSource: {
+    name: string;
+    dateListed: string;
+    program: string;
+  };
+  matchAnalysis: KybSanctionsMatchCriterion[];
+  analysisNotes: string;
+  primaryActionLabel: string;
+  secondaryActionLabel: string;
+  defaultExpanded?: boolean;
+};
+
 export type KybComplianceSanctionsCheck = {
   id: string;
   label: string;
   status: KybComplianceScreeningStatus;
+  matchDetail?: KybSanctionsMatchDetail;
 };
 
 export type KybComplianceScreeningCheck = {
@@ -148,6 +201,9 @@ export type KybComplianceScreeningCheck = {
   label: string;
   description: string;
   status: KybComplianceScreeningStatus;
+  /** When set, row shows a View Details accordion (frame 112 PEP / Warning). */
+  detailSummary?: string;
+  defaultExpanded?: boolean;
 };
 
 export type KybComplianceChecksData = {
@@ -156,6 +212,8 @@ export type KybComplianceChecksData = {
   sanctionsLists: KybComplianceSanctionsCheck[];
   pepCheck: KybComplianceScreeningCheck;
   adverseMediaCheck: KybComplianceScreeningCheck;
+  /** Section heading override — e.g. Warning and Regulatory Enforcement when flagged. */
+  adverseMediaSectionTitle?: string;
 };
 
 export type KybDetail = {
@@ -163,6 +221,7 @@ export type KybDetail = {
   kybId: string;
   businessName: string;
   businessType: string;
+  verificationType: KybVerificationType;
   country: string;
   status: KybVerificationStatus;
   priority: KybPriority;

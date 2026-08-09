@@ -1,6 +1,36 @@
 # WebApp design cache
 
-PNG exports from the Figma **WebApp** page (`1:2`).
+PNG exports from the Figma **WebApp** page (`1:2`), organized by module.
+
+## Folder layout
+
+```
+design/figma/webapp/
+  README.md
+  _inventory-raw.json      ← inventory / capture meta (stays at root)
+  _capture-plan.json
+  _export-results.json
+  _remaining-m2-upward.md
+  onboarding/              ← auth / sign-in / sign-up
+  overview/                ← dashboard
+  kyc/                     ← KYC COMPLIANCE frames
+  kyb/                     ← KYB COMPLIANCE frames
+  aml/                     ← AML SCREENING frames
+  bank-analysis/           ← BANK ANALYSIS frames
+  settings/                ← SETTINGS frames
+  shared/                  ← app-shell overlays (search modal, etc.)
+```
+
+## Naming
+
+Save exports as **PNG @ 2x** into the matching module folder:
+
+| Figma | Path |
+| ----- | ---- |
+| `Customer // KYB // 84` | `kyb/customer-kyb-84.png` |
+| `Customer // KYC // 96` | `kyc/customer-kyc-96.png` |
+| AML list frame 15 | `aml/list-15.png` |
+| Sign In // 3 | `onboarding/sign-in-3.png` |
 
 ## Capture policy
 
@@ -27,13 +57,13 @@ PNG exports from the Figma **WebApp** page (`1:2`).
 
 ### By section (capture count)
 
-| Section | Capture |
-| ------- | ------- |
-| Onboarding | 4 |
-| Overview | 10 |
-| KYC | 78 |
-| KYB | 48 |
-| AML | 57 |
-| Bank Analysis | 47 |
-| Settings | 24 |
-| Transaction Monitoring | 56 |
+| Section | Capture | Folder |
+| ------- | ------- | ------ |
+| Onboarding | 4 | `onboarding/` |
+| Overview | 10 | `overview/` |
+| KYC | 78 | `kyc/` |
+| KYB | 48 | `kyb/` |
+| AML | 57 | `aml/` |
+| Bank Analysis | 47 | `bank-analysis/` |
+| Settings | 24 | `settings/` |
+| Transaction Monitoring | 56 | _(add `transaction-monitoring/` when exporting)_ |

@@ -18,9 +18,9 @@ export function AuthButton({
       className={cn(
         "inline-flex w-full items-center justify-center rounded-lg text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60",
         variant === "primary" &&
-          "h-11 bg-[color:var(--accent-primary)] text-sm font-semibold text-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] hover:bg-[color:var(--accent-primary-hover)]",
+          "h-[54px] bg-[color:var(--accent-primary)] text-base font-semibold text-white shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)] hover:bg-[color:var(--accent-primary-hover)]",
         variant === "secondary" &&
-          "h-auto border-[1.5px] border-[color:var(--auth-input-border)] bg-white px-4 py-3.5 text-base font-semibold text-[color:var(--auth-label)] hover:bg-[color:var(--bg-muted)]",
+          "h-[54px] border-[1.5px] border-[color:var(--auth-input-border)] bg-white px-4 text-base font-semibold text-[color:var(--auth-label)] hover:bg-[color:var(--bg-muted)]",
         className,
       )}
       {...props}

@@ -32,7 +32,7 @@
       "section": "ONBOARDING - COMPLIANCE OFFICER",
       "role": "screen",
       "reason": "auth flow screen",
-      "file": "onboarding-sign-in-3.png"
+      "file": "onboarding/sign-in-3.png"
     },
     {
       "name": "Sign up // 3",
@@ -44,7 +44,7 @@
       "section": "ONBOARDING - COMPLIANCE OFFICER",
       "role": "screen",
       "reason": "auth flow screen",
-      "file": "onboarding-sign-up-3.png"
+      "file": "onboarding/sign-up-3.png"
     },
     {
       "name": "Sign up // 4",
@@ -56,7 +56,7 @@
       "section": "ONBOARDING - COMPLIANCE OFFICER",
       "role": "screen",
       "reason": "auth flow screen",
-      "file": "onboarding-sign-up-4.png"
+      "file": "onboarding/sign-up-4.png"
     },
     {
       "name": "Sign In // 4",
@@ -68,7 +68,7 @@
       "section": "ONBOARDING - COMPLIANCE OFFICER",
       "role": "screen",
       "reason": "auth flow screen",
-      "file": "onboarding-sign-in-4.png"
+      "file": "onboarding/sign-in-4.png"
     },
     {
       "name": "Overview",
@@ -80,7 +80,7 @@
       "section": "OVERVIEW PAGE",
       "role": "screen",
       "reason": "base-sandbox",
-      "file": "overview-overview-886-49386.png"
+      "file": "overview/overview-overview-886-49386.png"
     },
     {
       "name": "Overview",
@@ -92,7 +92,7 @@
       "section": "OVERVIEW PAGE",
       "role": "popover",
       "reason": "header-dropdown",
-      "file": "overview-overview-886-49678.png"
+      "file": "overview/overview-overview-886-49678.png"
     },
     {
       "name": "Overview",
@@ -104,7 +104,7 @@
       "section": "OVERVIEW PAGE",
       "role": "state",
       "reason": "overview-variant",
-      "file": "overview-overview-886-50003.png"
+      "file": "overview/overview-overview-886-50003.png"
     },
     {
       "name": "Overview",
@@ -116,7 +116,7 @@
       "section": "OVERVIEW PAGE",
       "role": "popover",
       "reason": "chart-or-menu-popover",
-      "file": "overview-overview-886-50340.png"
+      "file": "overview/overview-overview-886-50340.png"
     },
     {
       "name": "Overview",
@@ -128,7 +128,7 @@
       "section": "OVERVIEW PAGE",
       "role": "popover",
       "reason": "bottom-popover",
-      "file": "overview-overview-886-50687.png"
+      "file": "overview/overview-overview-886-50687.png"
     },
     {
       "name": "Overview",
@@ -140,7 +140,7 @@
       "section": "OVERVIEW PAGE",
       "role": "modal",
       "reason": "confirm-modal-blur",
-      "file": "overview-overview-886-51034.png"
+      "file": "overview/overview-overview-886-51034.png"
     },
     {
       "name": "Overview",
@@ -152,7 +152,7 @@
       "section": "OVERVIEW PAGE",
       "role": "screen",
       "reason": "base-production",
-      "file": "overview-overview-886-51403.png"
+      "file": "overview/overview-overview-886-51403.png"
     },
     {
       "name": "Overview // billing // 3",
@@ -164,7 +164,7 @@
       "section": "OVERVIEW PAGE",
       "role": "screen",
       "reason": "billing-3",
-      "file": "overview-overview-billing-3-886-51750.png"
+      "file": "overview/overview-overview-billing-3-886-51750.png"
     },
     {
       "name": "Overview // billing // 4",
@@ -176,7 +176,7 @@
       "section": "OVERVIEW PAGE",
       "role": "screen",
       "reason": "billing-4",
-      "file": "overview-overview-billing-4-886-51954.png"
+      "file": "overview/overview-overview-billing-4-886-51954.png"
     },
     {
       "name": "Overview",
@@ -188,7 +188,7 @@
       "section": "OVERVIEW PAGE",
       "role": "modal",
       "reason": "search-or-switch-modal-overlay",
-      "file": "overview-overview-886-52269.png"
+      "file": "overview/overview-overview-886-52269.png"
     },
     {
       "name": "Customer // KYC // 79",
@@ -200,7 +200,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-79.png"
+      "file": "kyc/customer-kyc-79.png"
     },
     {
       "name": "Customer // KYC // 80",
@@ -212,7 +212,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-80.png"
+      "file": "kyc/customer-kyc-80.png"
     },
     {
       "name": "Customer // KYC // 81",
@@ -224,7 +224,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-81.png"
+      "file": "kyc/customer-kyc-81.png"
     },
     {
       "name": "Customer // KYC // 82",
@@ -236,7 +236,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-82.png"
+      "file": "kyc/customer-kyc-82.png"
     },
     {
       "name": "Customer // KYC // 83",
@@ -248,7 +248,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-83.png"
+      "file": "kyc/customer-kyc-83.png"
     },
     {
       "name": "Customer // KYC // 84",
@@ -260,7 +260,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-84.png"
+      "file": "kyc/customer-kyc-84.png"
     },
     {
       "name": "Customer // KYC // 85",
@@ -272,7 +272,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-85.png"
+      "file": "kyc/customer-kyc-85.png"
     },
     {
       "name": "Customer // KYC // 86",
@@ -284,7 +284,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-86.png"
+      "file": "kyc/customer-kyc-86.png"
     },
     {
       "name": "Customer // KYC // 87",
@@ -296,7 +296,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-87.png"
+      "file": "kyc/customer-kyc-87.png"
     },
     {
       "name": "Customer // KYC // 88",
@@ -308,7 +308,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-88.png"
+      "file": "kyc/customer-kyc-88.png"
     },
     {
       "name": "Customer // KYC // 89",
@@ -320,7 +320,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-89.png"
+      "file": "kyc/customer-kyc-89.png"
     },
     {
       "name": "Customer // KYC // 90",
@@ -332,7 +332,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-90.png"
+      "file": "kyc/customer-kyc-90.png"
     },
     {
       "name": "Customer // KYC // 91",
@@ -344,7 +344,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-91.png"
+      "file": "kyc/customer-kyc-91.png"
     },
     {
       "name": "Customer // KYC // 92",
@@ -356,7 +356,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-92.png"
+      "file": "kyc/customer-kyc-92.png"
     },
     {
       "name": "Customer // KYC // 94",
@@ -368,7 +368,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-94.png"
+      "file": "kyc/customer-kyc-94.png"
     },
     {
       "name": "Customer // KYC // 96",
@@ -380,7 +380,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-96.png"
+      "file": "kyc/customer-kyc-96.png"
     },
     {
       "name": "Customer // KYC // 99",
@@ -392,7 +392,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-99.png"
+      "file": "kyc/customer-kyc-99.png"
     },
     {
       "name": "Customer // KYC // 101",
@@ -404,7 +404,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-101.png"
+      "file": "kyc/customer-kyc-101.png"
     },
     {
       "name": "Customer // KYC // 103",
@@ -416,7 +416,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-103.png"
+      "file": "kyc/customer-kyc-103.png"
     },
     {
       "name": "Customer // KYC // 105",
@@ -428,7 +428,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-105.png"
+      "file": "kyc/customer-kyc-105.png"
     },
     {
       "name": "Customer // KYC // 107",
@@ -440,7 +440,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-107.png"
+      "file": "kyc/customer-kyc-107.png"
     },
     {
       "name": "Customer // KYC // 109",
@@ -452,7 +452,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-109.png"
+      "file": "kyc/customer-kyc-109.png"
     },
     {
       "name": "Customer // KYC // 110",
@@ -464,7 +464,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-110.png"
+      "file": "kyc/customer-kyc-110.png"
     },
     {
       "name": "Customer // KYC // 111",
@@ -476,7 +476,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-111.png"
+      "file": "kyc/customer-kyc-111.png"
     },
     {
       "name": "Customer // KYC // 112",
@@ -488,7 +488,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-112.png"
+      "file": "kyc/customer-kyc-112.png"
     },
     {
       "name": "Customer // KYC // 113",
@@ -500,7 +500,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-113.png"
+      "file": "kyc/customer-kyc-113.png"
     },
     {
       "name": "Customer // KYC // 114",
@@ -512,7 +512,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-114.png"
+      "file": "kyc/customer-kyc-114.png"
     },
     {
       "name": "Customer // KYC // 115",
@@ -524,7 +524,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-115.png"
+      "file": "kyc/customer-kyc-115.png"
     },
     {
       "name": "Customer // KYC // 95",
@@ -536,7 +536,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-95.png"
+      "file": "kyc/customer-kyc-95.png"
     },
     {
       "name": "Customer // KYC // 97",
@@ -548,7 +548,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-97.png"
+      "file": "kyc/customer-kyc-97.png"
     },
     {
       "name": "Customer // KYC // 100",
@@ -560,7 +560,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-100.png"
+      "file": "kyc/customer-kyc-100.png"
     },
     {
       "name": "Customer // KYC // 102",
@@ -572,7 +572,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-102.png"
+      "file": "kyc/customer-kyc-102.png"
     },
     {
       "name": "Customer // KYC // 104",
@@ -584,7 +584,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-104.png"
+      "file": "kyc/customer-kyc-104.png"
     },
     {
       "name": "Customer // KYC // 106",
@@ -596,7 +596,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-106.png"
+      "file": "kyc/customer-kyc-106.png"
     },
     {
       "name": "Customer // KYC // 108",
@@ -608,7 +608,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-108.png"
+      "file": "kyc/customer-kyc-108.png"
     },
     {
       "name": "Customer // KYC // 98",
@@ -620,7 +620,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-98.png"
+      "file": "kyc/customer-kyc-98.png"
     },
     {
       "name": "Customer // KYC // 93",
@@ -632,7 +632,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-93.png"
+      "file": "kyc/customer-kyc-93.png"
     },
     {
       "name": "Customer // KYC // 124",
@@ -644,7 +644,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-124.png"
+      "file": "kyc/customer-kyc-124.png"
     },
     {
       "name": "Customer // KYC // 128",
@@ -656,7 +656,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-128.png"
+      "file": "kyc/customer-kyc-128.png"
     },
     {
       "name": "Customer // KYC // 133",
@@ -668,7 +668,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-133.png"
+      "file": "kyc/customer-kyc-133.png"
     },
     {
       "name": "Customer // KYC // 137",
@@ -680,7 +680,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-137.png"
+      "file": "kyc/customer-kyc-137.png"
     },
     {
       "name": "Customer // KYC // 141",
@@ -692,7 +692,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-141.png"
+      "file": "kyc/customer-kyc-141.png"
     },
     {
       "name": "Customer // KYC // 148",
@@ -704,7 +704,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-148.png"
+      "file": "kyc/customer-kyc-148.png"
     },
     {
       "name": "Customer // KYC // 152",
@@ -716,7 +716,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-152.png"
+      "file": "kyc/customer-kyc-152.png"
     },
     {
       "name": "Customer // KYC // 132",
@@ -728,7 +728,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-132.png"
+      "file": "kyc/customer-kyc-132.png"
     },
     {
       "name": "Customer // KYC // 143",
@@ -740,7 +740,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen-scroll",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-143.png"
+      "file": "kyc/customer-kyc-143.png"
     },
     {
       "name": "Customer // KYC // 125",
@@ -752,7 +752,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-125.png"
+      "file": "kyc/customer-kyc-125.png"
     },
     {
       "name": "Customer // KYC // 129",
@@ -764,7 +764,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-129.png"
+      "file": "kyc/customer-kyc-129.png"
     },
     {
       "name": "Customer // KYC // 134",
@@ -776,7 +776,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-134.png"
+      "file": "kyc/customer-kyc-134.png"
     },
     {
       "name": "Customer // KYC // 138",
@@ -788,7 +788,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-138.png"
+      "file": "kyc/customer-kyc-138.png"
     },
     {
       "name": "Customer // KYC // 142",
@@ -800,7 +800,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-142.png"
+      "file": "kyc/customer-kyc-142.png"
     },
     {
       "name": "Customer // KYC // 149",
@@ -812,7 +812,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-149.png"
+      "file": "kyc/customer-kyc-149.png"
     },
     {
       "name": "Customer // KYC // 153",
@@ -824,7 +824,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-153.png"
+      "file": "kyc/customer-kyc-153.png"
     },
     {
       "name": "Customer // KYC // 154",
@@ -836,7 +836,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-154.png"
+      "file": "kyc/customer-kyc-154.png"
     },
     {
       "name": "Customer // KYC // 116",
@@ -848,7 +848,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-116.png"
+      "file": "kyc/customer-kyc-116.png"
     },
     {
       "name": "Customer // KYC // 117",
@@ -860,7 +860,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-117.png"
+      "file": "kyc/customer-kyc-117.png"
     },
     {
       "name": "Customer // KYC // 119",
@@ -872,7 +872,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-119.png"
+      "file": "kyc/customer-kyc-119.png"
     },
     {
       "name": "Customer // KYC // 120",
@@ -884,7 +884,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-120.png"
+      "file": "kyc/customer-kyc-120.png"
     },
     {
       "name": "Customer // KYC // 121",
@@ -896,7 +896,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-121.png"
+      "file": "kyc/customer-kyc-121.png"
     },
     {
       "name": "Customer // KYC // 122",
@@ -908,7 +908,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-122.png"
+      "file": "kyc/customer-kyc-122.png"
     },
     {
       "name": "Customer // KYC // 123",
@@ -920,7 +920,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-123.png"
+      "file": "kyc/customer-kyc-123.png"
     },
     {
       "name": "Customer // KYC // 118",
@@ -932,7 +932,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-118.png"
+      "file": "kyc/customer-kyc-118.png"
     },
     {
       "name": "Customer // KYC // 126",
@@ -944,7 +944,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-126.png"
+      "file": "kyc/customer-kyc-126.png"
     },
     {
       "name": "Customer // KYC // 130",
@@ -956,7 +956,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen-scroll",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-130.png"
+      "file": "kyc/customer-kyc-130.png"
     },
     {
       "name": "Customer // KYC // 135",
@@ -968,7 +968,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-135.png"
+      "file": "kyc/customer-kyc-135.png"
     },
     {
       "name": "Customer // KYC // 139",
@@ -980,7 +980,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-139.png"
+      "file": "kyc/customer-kyc-139.png"
     },
     {
       "name": "Customer // KYC // 144",
@@ -992,7 +992,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-144.png"
+      "file": "kyc/customer-kyc-144.png"
     },
     {
       "name": "Customer // KYC // 145",
@@ -1004,7 +1004,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-145.png"
+      "file": "kyc/customer-kyc-145.png"
     },
     {
       "name": "Customer // KYC // 150",
@@ -1016,7 +1016,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-150.png"
+      "file": "kyc/customer-kyc-150.png"
     },
     {
       "name": "Customer // KYC // 155",
@@ -1028,7 +1028,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-155.png"
+      "file": "kyc/customer-kyc-155.png"
     },
     {
       "name": "Customer // KYC // 127",
@@ -1040,7 +1040,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-127.png"
+      "file": "kyc/customer-kyc-127.png"
     },
     {
       "name": "Customer // KYC // 131",
@@ -1052,7 +1052,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen-scroll",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-131.png"
+      "file": "kyc/customer-kyc-131.png"
     },
     {
       "name": "Customer // KYC // 136",
@@ -1064,7 +1064,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen-scroll",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-136.png"
+      "file": "kyc/customer-kyc-136.png"
     },
     {
       "name": "Customer // KYC // 140",
@@ -1076,7 +1076,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-140.png"
+      "file": "kyc/customer-kyc-140.png"
     },
     {
       "name": "Customer // KYC // 146",
@@ -1088,7 +1088,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-146.png"
+      "file": "kyc/customer-kyc-146.png"
     },
     {
       "name": "Customer // KYC // 147",
@@ -1100,7 +1100,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-147.png"
+      "file": "kyc/customer-kyc-147.png"
     },
     {
       "name": "Customer // KYC // 151",
@@ -1112,7 +1112,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-151.png"
+      "file": "kyc/customer-kyc-151.png"
     },
     {
       "name": "Customer // KYC // 156",
@@ -1124,7 +1124,7 @@
       "section": "KYC COMPLIANCE",
       "role": "screen",
       "reason": "kyc flow state",
-      "file": "kyc-customer-kyc-156.png"
+      "file": "kyc/customer-kyc-156.png"
     },
     {
       "name": "Customer // KYB // 84",
@@ -1136,7 +1136,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-84.png"
+      "file": "kyb/customer-kyb-84.png"
     },
     {
       "name": "Customer // KYB // 77",
@@ -1148,7 +1148,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-77.png"
+      "file": "kyb/customer-kyb-77.png"
     },
     {
       "name": "Customer // KYB // 78",
@@ -1160,7 +1160,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-78.png"
+      "file": "kyb/customer-kyb-78.png"
     },
     {
       "name": "Customer // KYB // 79",
@@ -1172,7 +1172,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-79.png"
+      "file": "kyb/customer-kyb-79.png"
     },
     {
       "name": "Customer // KYB // 80",
@@ -1184,7 +1184,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-80.png"
+      "file": "kyb/customer-kyb-80.png"
     },
     {
       "name": "Customer // KYB // 81",
@@ -1196,7 +1196,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-81.png"
+      "file": "kyb/customer-kyb-81.png"
     },
     {
       "name": "Customer // KYB // 82",
@@ -1208,7 +1208,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-82.png"
+      "file": "kyb/customer-kyb-82.png"
     },
     {
       "name": "Customer // KYB // 83",
@@ -1220,7 +1220,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-83.png"
+      "file": "kyb/customer-kyb-83.png"
     },
     {
       "name": "Customer // KYB // 85",
@@ -1232,7 +1232,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-85.png"
+      "file": "kyb/customer-kyb-85.png"
     },
     {
       "name": "Customer // KYB // 86",
@@ -1244,7 +1244,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-86.png"
+      "file": "kyb/customer-kyb-86.png"
     },
     {
       "name": "Customer // KYB // 87",
@@ -1256,7 +1256,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-87.png"
+      "file": "kyb/customer-kyb-87.png"
     },
     {
       "name": "Customer // KYB // 88",
@@ -1268,7 +1268,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-88.png"
+      "file": "kyb/customer-kyb-88.png"
     },
     {
       "name": "Customer // KYB // 119",
@@ -1280,7 +1280,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-119.png"
+      "file": "kyb/customer-kyb-119.png"
     },
     {
       "name": "Customer // KYB // 121",
@@ -1292,7 +1292,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-121.png"
+      "file": "kyb/customer-kyb-121.png"
     },
     {
       "name": "Customer // KYB // 123",
@@ -1304,7 +1304,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-123.png"
+      "file": "kyb/customer-kyb-123.png"
     },
     {
       "name": "Customer // KYB // 125",
@@ -1316,7 +1316,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-125.png"
+      "file": "kyb/customer-kyb-125.png"
     },
     {
       "name": "Customer // KYB // 127",
@@ -1328,7 +1328,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-127.png"
+      "file": "kyb/customer-kyb-127.png"
     },
     {
       "name": "Customer // KYB // 129",
@@ -1340,7 +1340,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-129.png"
+      "file": "kyb/customer-kyb-129.png"
     },
     {
       "name": "Customer // KYB // 131",
@@ -1352,7 +1352,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-131.png"
+      "file": "kyb/customer-kyb-131.png"
     },
     {
       "name": "Customer // KYB // 133",
@@ -1364,7 +1364,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-133.png"
+      "file": "kyb/customer-kyb-133.png"
     },
     {
       "name": "Customer // KYB // 137",
@@ -1376,7 +1376,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-137.png"
+      "file": "kyb/customer-kyb-137.png"
     },
     {
       "name": "Customer // KYC // 157",
@@ -1388,7 +1388,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyc-157.png"
+      "file": "kyb/customer-kyc-157.png"
     },
     {
       "name": "Customer // KYB // 120",
@@ -1400,7 +1400,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-120.png"
+      "file": "kyb/customer-kyb-120.png"
     },
     {
       "name": "Customer // KYB // 122",
@@ -1412,7 +1412,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-122.png"
+      "file": "kyb/customer-kyb-122.png"
     },
     {
       "name": "Customer // KYB // 124",
@@ -1424,7 +1424,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-124.png"
+      "file": "kyb/customer-kyb-124.png"
     },
     {
       "name": "Customer // KYB // 126",
@@ -1436,7 +1436,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-126.png"
+      "file": "kyb/customer-kyb-126.png"
     },
     {
       "name": "Customer // KYB // 128",
@@ -1448,7 +1448,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-128.png"
+      "file": "kyb/customer-kyb-128.png"
     },
     {
       "name": "Customer // KYB // 130",
@@ -1460,7 +1460,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-130.png"
+      "file": "kyb/customer-kyb-130.png"
     },
     {
       "name": "Customer // KYB // 132",
@@ -1472,7 +1472,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-132.png"
+      "file": "kyb/customer-kyb-132.png"
     },
     {
       "name": "Customer // KYB // 134",
@@ -1484,7 +1484,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-134.png"
+      "file": "kyb/customer-kyb-134.png"
     },
     {
       "name": "Customer // KYB // 135",
@@ -1496,7 +1496,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-135.png"
+      "file": "kyb/customer-kyb-135.png"
     },
     {
       "name": "Customer // KYB // 89",
@@ -1508,7 +1508,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-89.png"
+      "file": "kyb/customer-kyb-89.png"
     },
     {
       "name": "Customer // KYB // 93",
@@ -1520,7 +1520,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-93.png"
+      "file": "kyb/customer-kyb-93.png"
     },
     {
       "name": "Customer // KYB // 97",
@@ -1532,7 +1532,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-97.png"
+      "file": "kyb/customer-kyb-97.png"
     },
     {
       "name": "Customer // KYB // 113",
@@ -1544,7 +1544,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-113.png"
+      "file": "kyb/customer-kyb-113.png"
     },
     {
       "name": "Customer // KYB // 117",
@@ -1556,7 +1556,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-117.png"
+      "file": "kyb/customer-kyb-117.png"
     },
     {
       "name": "Customer // KYB // 118",
@@ -1568,7 +1568,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-118.png"
+      "file": "kyb/customer-kyb-118.png"
     },
     {
       "name": "Customer // KYB // 136",
@@ -1580,7 +1580,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-136.png"
+      "file": "kyb/customer-kyb-136.png"
     },
     {
       "name": "Customer // KYB // 114",
@@ -1592,7 +1592,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-114.png"
+      "file": "kyb/customer-kyb-114.png"
     },
     {
       "name": "Customer // KYB // 116",
@@ -1604,7 +1604,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-116.png"
+      "file": "kyb/customer-kyb-116.png"
     },
     {
       "name": "Customer // KYB // 115",
@@ -1616,7 +1616,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-115.png"
+      "file": "kyb/customer-kyb-115.png"
     },
     {
       "name": "Customer // KYB // 92",
@@ -1628,7 +1628,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-92.png"
+      "file": "kyb/customer-kyb-92.png"
     },
     {
       "name": "Customer // KYB // 96",
@@ -1640,7 +1640,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-96.png"
+      "file": "kyb/customer-kyb-96.png"
     },
     {
       "name": "Customer // KYB // 100",
@@ -1652,7 +1652,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-100.png"
+      "file": "kyb/customer-kyb-100.png"
     },
     {
       "name": "Customer // KYB // 103",
@@ -1664,7 +1664,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-103.png"
+      "file": "kyb/customer-kyb-103.png"
     },
     {
       "name": "Customer // KYB // 106",
@@ -1676,7 +1676,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-106.png"
+      "file": "kyb/customer-kyb-106.png"
     },
     {
       "name": "Customer // KYB // 109",
@@ -1688,7 +1688,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-109.png"
+      "file": "kyb/customer-kyb-109.png"
     },
     {
       "name": "Customer // KYB // 112",
@@ -1700,7 +1700,7 @@
       "section": "KYB COMPLIANCE",
       "role": "screen",
       "reason": "kyb flow state",
-      "file": "kyb-customer-kyb-112.png"
+      "file": "kyb/customer-kyb-112.png"
     },
     {
       "name": "AML Screening // 15",
@@ -1712,7 +1712,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-15.png"
+      "file": "aml/aml-screening-15.png"
     },
     {
       "name": "AML Screening // 16",
@@ -1724,7 +1724,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-16.png"
+      "file": "aml/aml-screening-16.png"
     },
     {
       "name": "AML Screening // 17",
@@ -1736,7 +1736,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-17.png"
+      "file": "aml/aml-screening-17.png"
     },
     {
       "name": "AML Screening // 18",
@@ -1748,7 +1748,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-18.png"
+      "file": "aml/aml-screening-18.png"
     },
     {
       "name": "AML Screening // 19",
@@ -1760,7 +1760,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-19.png"
+      "file": "aml/aml-screening-19.png"
     },
     {
       "name": "AML Screening // 20",
@@ -1772,7 +1772,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-20.png"
+      "file": "aml/aml-screening-20.png"
     },
     {
       "name": "AML Screening // 21",
@@ -1784,7 +1784,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-21.png"
+      "file": "aml/aml-screening-21.png"
     },
     {
       "name": "AML Screening // 22",
@@ -1796,7 +1796,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-22.png"
+      "file": "aml/aml-screening-22.png"
     },
     {
       "name": "AML Screening // 23",
@@ -1808,7 +1808,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-23.png"
+      "file": "aml/aml-screening-23.png"
     },
     {
       "name": "AML Screening // 24",
@@ -1820,7 +1820,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-24.png"
+      "file": "aml/aml-screening-24.png"
     },
     {
       "name": "AML Screening // 25",
@@ -1832,7 +1832,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-25.png"
+      "file": "aml/aml-screening-25.png"
     },
     {
       "name": "AML Screening // 26",
@@ -1844,7 +1844,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-26.png"
+      "file": "aml/aml-screening-26.png"
     },
     {
       "name": "AML Screening // 27",
@@ -1856,7 +1856,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-aml-screening-27.png"
+      "file": "aml/aml-screening-27.png"
     },
     {
       "name": "Customer // AML // 34",
@@ -1868,7 +1868,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-34.png"
+      "file": "aml/customer-aml-34.png"
     },
     {
       "name": "Customer // AML // 35",
@@ -1880,7 +1880,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-35.png"
+      "file": "aml/customer-aml-35.png"
     },
     {
       "name": "Customer // AML // 36",
@@ -1892,7 +1892,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-36.png"
+      "file": "aml/customer-aml-36.png"
     },
     {
       "name": "Customer // AML // 37",
@@ -1904,7 +1904,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-37.png"
+      "file": "aml/customer-aml-37.png"
     },
     {
       "name": "Customer // AML // 38",
@@ -1916,7 +1916,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-38.png"
+      "file": "aml/customer-aml-38.png"
     },
     {
       "name": "Customer // AML // 39",
@@ -1928,7 +1928,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-39.png"
+      "file": "aml/customer-aml-39.png"
     },
     {
       "name": "Customer // AML // 40",
@@ -1940,7 +1940,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-40.png"
+      "file": "aml/customer-aml-40.png"
     },
     {
       "name": "Customer // AML // 41",
@@ -1952,7 +1952,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-41.png"
+      "file": "aml/customer-aml-41.png"
     },
     {
       "name": "Customer // AML // 42",
@@ -1964,7 +1964,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-42.png"
+      "file": "aml/customer-aml-42.png"
     },
     {
       "name": "Customer // AML // 43",
@@ -1976,7 +1976,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-43.png"
+      "file": "aml/customer-aml-43.png"
     },
     {
       "name": "Customer // AML // 44",
@@ -1988,7 +1988,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-44.png"
+      "file": "aml/customer-aml-44.png"
     },
     {
       "name": "Customer // AML // 45",
@@ -2000,7 +2000,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-45.png"
+      "file": "aml/customer-aml-45.png"
     },
     {
       "name": "Customer // AML // 46",
@@ -2012,7 +2012,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-46.png"
+      "file": "aml/customer-aml-46.png"
     },
     {
       "name": "Customer // AML // 47",
@@ -2024,7 +2024,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-47.png"
+      "file": "aml/customer-aml-47.png"
     },
     {
       "name": "Customer // AML // 48",
@@ -2036,7 +2036,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-48.png"
+      "file": "aml/customer-aml-48.png"
     },
     {
       "name": "Customer // AML // 49",
@@ -2048,7 +2048,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-49.png"
+      "file": "aml/customer-aml-49.png"
     },
     {
       "name": "Customer // AML // 50",
@@ -2060,7 +2060,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-50.png"
+      "file": "aml/customer-aml-50.png"
     },
     {
       "name": "Customer // AML // 51",
@@ -2072,7 +2072,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-51.png"
+      "file": "aml/customer-aml-51.png"
     },
     {
       "name": "Customer // AML // 52",
@@ -2084,7 +2084,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-52.png"
+      "file": "aml/customer-aml-52.png"
     },
     {
       "name": "Customer // AML // 53",
@@ -2096,7 +2096,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-53.png"
+      "file": "aml/customer-aml-53.png"
     },
     {
       "name": "Customer // AML // 54",
@@ -2108,7 +2108,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-54.png"
+      "file": "aml/customer-aml-54.png"
     },
     {
       "name": "Customer // AML // 55",
@@ -2120,7 +2120,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-55.png"
+      "file": "aml/customer-aml-55.png"
     },
     {
       "name": "Customer // AML // 56",
@@ -2132,7 +2132,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-56.png"
+      "file": "aml/customer-aml-56.png"
     },
     {
       "name": "Customer // AML // 57",
@@ -2144,7 +2144,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-57.png"
+      "file": "aml/customer-aml-57.png"
     },
     {
       "name": "Customer // AML // 58",
@@ -2156,7 +2156,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-58.png"
+      "file": "aml/customer-aml-58.png"
     },
     {
       "name": "Customer // AML // 59",
@@ -2168,7 +2168,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-59.png"
+      "file": "aml/customer-aml-59.png"
     },
     {
       "name": "Customer // AML // 60",
@@ -2180,7 +2180,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-60.png"
+      "file": "aml/customer-aml-60.png"
     },
     {
       "name": "Customer // AML // 61",
@@ -2192,7 +2192,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-61.png"
+      "file": "aml/customer-aml-61.png"
     },
     {
       "name": "Customer // AML // 62",
@@ -2204,7 +2204,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-62.png"
+      "file": "aml/customer-aml-62.png"
     },
     {
       "name": "Customer // AML // 63",
@@ -2216,7 +2216,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-63.png"
+      "file": "aml/customer-aml-63.png"
     },
     {
       "name": "Customer // AML // 64",
@@ -2228,7 +2228,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-64.png"
+      "file": "aml/customer-aml-64.png"
     },
     {
       "name": "Customer // AML // 65",
@@ -2240,7 +2240,7 @@
       "section": "AML SCREENING",
       "role": "screen",
       "reason": "aml flow state",
-      "file": "aml-customer-aml-65.png"
+      "file": "aml/customer-aml-65.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2252,7 +2252,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-01-886-145527.png"
+      "file": "aml/verifications-01-886-145527.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2264,7 +2264,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-02-886-146379.png"
+      "file": "aml/verifications-02-886-146379.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2276,7 +2276,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-03-886-147057.png"
+      "file": "aml/verifications-03-886-147057.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2288,7 +2288,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-04-886-148008.png"
+      "file": "aml/verifications-04-886-148008.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2300,7 +2300,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-05-886-149152.png"
+      "file": "aml/verifications-05-886-149152.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2312,7 +2312,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-06-886-145808.png"
+      "file": "aml/verifications-06-886-145808.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2324,7 +2324,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-07-886-146602.png"
+      "file": "aml/verifications-07-886-146602.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2336,7 +2336,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-08-886-147279.png"
+      "file": "aml/verifications-08-886-147279.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2348,7 +2348,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-09-886-148282.png"
+      "file": "aml/verifications-09-886-148282.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2360,7 +2360,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-10-886-149381.png"
+      "file": "aml/verifications-10-886-149381.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2372,7 +2372,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-11-886-152972.png"
+      "file": "aml/verifications-11-886-152972.png"
     },
     {
       "name": "Customer // AML // verifications",
@@ -2384,7 +2384,7 @@
       "section": "AML SCREENING",
       "role": "state",
       "reason": "aml-verifications-variant",
-      "file": "aml-verifications-12-886-153253.png"
+      "file": "aml/verifications-12-886-153253.png"
     },
     {
       "name": "Bank Analysis // 11",

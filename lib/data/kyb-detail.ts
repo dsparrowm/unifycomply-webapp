@@ -10,7 +10,7 @@ import type { KybDetail, KybRecord, KybRiskFactor } from "@/types/kyb";
 const techVenturesTemplate = {
   registryStatus: "Active",
   legalBusinessName: "TechVentures Nigeria Limited",
-  registrationNumber: "RC-23456789",
+  registrationNumber: "RC- 23456789",
   dateRegistered: "2018-03-15",
   tin: "12345678-0001",
   industry: "Technology and Software Development",
@@ -22,40 +22,82 @@ const techVenturesTemplate = {
   submittedAt: "10/1/2026 | 10:30AM",
   lastUpdatedAt: "10/1/2026 | 10:30AM",
   employeeCount: "10-20",
-  annualRevenue: ">$5M",
+  annualRevenue: "< $500K",
   businessPermit: "Yes",
+  operatingCountries: "One",
+};
+
+/** Frame 95 high-risk Overview — same registry as cleared baseline, elevated size + risk cards. */
+const techVenturesHighRiskTemplate = {
+  ...techVenturesTemplate,
+  annualRevenue: ">$5M",
   operatingCountries: "Multi",
 };
 
 const riskSummaries: Record<RiskScore, string> = {
-  0: "No risk factors identified. Registry and screening checks passed.",
+  0: "No risk factors. All checks passed. You can proceed to approve this user verification.",
   1: "Low-risk profile with minor monitoring flags. Standard review recommended.",
   2: "Moderate risk indicators detected. Additional verification may be required.",
   3: "Elevated risk profile. Enhanced due diligence recommended before approval.",
   4: "Very high risk profile. Approval blocked pending senior compliance review.",
 };
 
+/** Frame 95 risk analysis cards — tier label, title, body, optional metadata/action. */
+const highRiskOverviewFactors: KybRiskFactor[] = [
+  {
+    id: "tier1-pep",
+    category: "TIER 1",
+    title: "PEP (Political Exposed Person)",
+    description:
+      "Holds the highest offices of state, operates in high-corruption jurisdictions, or has adverse media or sanctions screening associations. Includes cases where name similarity to known PEPs requires manual verification. Executive-level approval, comprehensive enhanced due diligence, source of wealth verification, and continuous monitoring required.",
+    metadata: "Permanent Secretary, Federal Ministry of Finance",
+    action: "Decline - Management Approval Required",
+    tone: "critical",
+  },
+  {
+    id: "tier1-embargo",
+    category: "TIER 1",
+    title: "Sanctioned/Embargoed Location",
+    description:
+      "Customer accessing from sanctioned countries (Iran, North Korea, Syria, Crimea) or embargoed regions. Immediate compliance violation risk.",
+    action: "Block access + legal review",
+    tone: "critical",
+  },
+  {
+    id: "sanctions-match",
+    category: "SANCTIONED",
+    title: "Sanctions Screening Match",
+    description:
+      "Customer name shows potential match with sanctioned entities list. Match score indicates possible connection to individuals or organizations under financial sanctions by OFAC, EU, or UN",
+    tone: "high",
+  },
+  {
+    id: "tier3-adverse",
+    category: "TIER 3",
+    title: "Adverse Media - Low Risk",
+    description:
+      "Customer appears in adverse media for minor civil disputes, business disagreements, or resolved regulatory issues. No criminal proceedings or ongoing investigations",
+    action: "Document findings + periodic monitoring",
+    tone: "medium",
+  },
+];
+
 const riskFactorsByScore: Record<RiskScore, KybRiskFactor[]> = {
-  0: [
-    {
-      id: "sanctions",
-      category: "Sanctioned",
-      title: "Sanctions Screening Match",
-      description: "No risk factors. All checks passed. Approve immediately if registry data is confirmed.",
-    },
-  ],
+  0: [],
   1: [
     {
       id: "sanctions",
       category: "Sanctioned",
       title: "Sanctions Screening Match",
       description: "No sanctions matches found. Low-risk monitoring flags noted for cross-border activity.",
+      tone: "low",
     },
     {
       id: "pep",
       category: "PEP",
       title: "Politically Exposed Persons",
       description: "No PEP associations identified for directors or shareholders.",
+      tone: "low",
     },
   ],
   2: [
@@ -64,12 +106,14 @@ const riskFactorsByScore: Record<RiskScore, KybRiskFactor[]> = {
       category: "Sanctioned",
       title: "Sanctions Screening Match",
       description: "Potential partial match under review. Confirm entity ownership before approval.",
+      tone: "medium",
     },
     {
       id: "adverse-media",
       category: "Adverse Media",
       title: "Adverse Media Screening",
       description: "Minor adverse media references detected. Review recommended.",
+      tone: "medium",
     },
   ],
   3: [
@@ -78,28 +122,17 @@ const riskFactorsByScore: Record<RiskScore, KybRiskFactor[]> = {
       category: "Sanctioned",
       title: "Sanctions Screening Match",
       description: "No direct sanctions match. Enhanced screening recommended due to elevated risk score.",
+      tone: "high",
     },
     {
       id: "ownership",
       category: "Ownership",
       title: "Beneficial Ownership",
       description: "Complex ownership structure detected. Verify UBO details before approval.",
+      tone: "medium",
     },
   ],
-  4: [
-    {
-      id: "sanctions",
-      category: "Sanctioned",
-      title: "Sanctions Screening Match",
-      description: "Potential sanctions exposure identified. Escalate to senior reviewer immediately.",
-    },
-    {
-      id: "adverse-media",
-      category: "Adverse Media",
-      title: "Adverse Media Screening",
-      description: "Significant adverse media findings require compliance review.",
-    },
-  ],
+  4: highRiskOverviewFactors,
 };
 
 function slugifyBusinessName(name: string): string {
@@ -131,21 +164,30 @@ function buildBusinessContact(record: KybRecord) {
 
 function buildDetailFromRecord(record: KybRecord): KybDetail {
   const score = clampRiskScore(record.riskScore);
-  const isTechVentures = record.id === "kyb-record-5";
-  const contact = isTechVentures ? techVenturesTemplate : buildBusinessContact(record);
+  const isClearedTechVentures = record.id === "kyb-record-5";
+  const isHighRiskTechVentures = record.id === "kyb-record-1";
+  const isTechVentures = isClearedTechVentures || isHighRiskTechVentures;
+  const contact = isClearedTechVentures
+    ? techVenturesTemplate
+    : isHighRiskTechVentures
+      ? techVenturesHighRiskTemplate
+      : buildBusinessContact(record);
 
   return {
     id: record.id,
     kybId: record.kybId,
-    businessName: record.businessName,
+    businessName: isHighRiskTechVentures ? "TechVentures Limited" : record.businessName,
     businessType: record.businessType,
+    verificationType: record.verificationType,
     country: record.country,
     status: record.status,
     priority: record.priority,
     riskScore: score,
     riskSummary: riskSummaries[score],
     registryStatus: record.status === "rejected" ? "Inactive" : "Active",
-    legalBusinessName: record.businessName,
+    legalBusinessName: isTechVentures
+      ? techVenturesTemplate.legalBusinessName
+      : record.businessName,
     registrationNumber: contact.registrationNumber,
     dateRegistered: contact.dateRegistered,
     tin: contact.tin,
@@ -163,12 +205,10 @@ function buildDetailFromRecord(record: KybRecord): KybDetail {
     lastUpdatedAt: isTechVentures
       ? techVenturesTemplate.lastUpdatedAt
       : `${record.submittedAt} | 09:00AM`,
-    employeeCount: isTechVentures ? techVenturesTemplate.employeeCount : contact.employeeCount,
-    annualRevenue: isTechVentures ? techVenturesTemplate.annualRevenue : contact.annualRevenue,
-    businessPermit: isTechVentures ? techVenturesTemplate.businessPermit : contact.businessPermit,
-    operatingCountries: isTechVentures
-      ? techVenturesTemplate.operatingCountries
-      : contact.operatingCountries,
+    employeeCount: isTechVentures ? contact.employeeCount : contact.employeeCount,
+    annualRevenue: isTechVentures ? contact.annualRevenue : contact.annualRevenue,
+    businessPermit: isTechVentures ? contact.businessPermit : contact.businessPermit,
+    operatingCountries: isTechVentures ? contact.operatingCountries : contact.operatingCountries,
     riskFactors: riskFactorsByScore[score],
     riskAnalysis: buildRiskAnalysisData(score, "business"),
     directors: buildKybDirectorsData(score),

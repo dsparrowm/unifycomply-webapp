@@ -51,23 +51,11 @@ function AmlCheckRow({
   status: KybDirectorAmlCheckStatus;
   matchSeverity?: "warning" | "critical";
 }) {
-  const isMatch = status === "match";
-  const isCritical = isMatch && matchSeverity === "critical";
-
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="flex items-center gap-3">
-        <span
-          className={cn(
-            "flex h-6 w-6 items-center justify-center rounded-full text-white",
-            isMatch
-              ? isCritical
-                ? "bg-[color:var(--state-error)]"
-                : "bg-[color:var(--state-warning)]"
-              : "bg-[color:var(--accent-primary-hover)]",
-          )}
-        >
-          {isMatch ? <AlertTriangle className="h-3.5 w-3.5" /> : <Check className="h-3.5 w-3.5" />}
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[color:var(--accent-primary-hover)] text-white">
+          <Check className="h-3.5 w-3.5" />
         </span>
         <p className="text-sm font-semibold text-[color:var(--text-primary)]">{label}</p>
       </div>
@@ -76,7 +64,10 @@ function AmlCheckRow({
       ) : status === "match" ? (
         <MatchBadge severity={matchSeverity} />
       ) : (
-        <span className="text-sm font-medium text-[color:var(--state-warning)]">Flagged</span>
+        <span className="inline-flex items-center gap-1 text-sm font-medium text-[color:var(--state-warning)]">
+          <AlertTriangle className="h-4 w-4" />
+          Flagged
+        </span>
       )}
     </div>
   );
@@ -123,22 +114,19 @@ export function KybDirectorCard({ director }: KybDirectorCardProps) {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              {director.verificationStatus === "verified" ? (
+              {director.pepStatus === "pep" ? (
+                <span className="inline-flex items-center rounded-full bg-[color:var(--state-error-soft)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--state-error)]">
+                  PEP Match
+                </span>
+              ) : director.pepStatus === "possible-pep" ? (
+                <span className="inline-flex items-center rounded-full bg-[color:var(--state-warning-soft)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--state-warning)]">
+                  Possible PEP
+                </span>
+              ) : director.verificationStatus === "verified" ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-[color:var(--state-success-soft)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--state-success)]">
                   <Check className="h-3 w-3" />
                   Verified
                 </span>
-              ) : null}
-              {director.pepStatus === "non-pep" ? (
-                <span className="inline-flex items-center rounded-full bg-[color:var(--state-info-soft)] px-2.5 py-0.5 text-xs font-medium text-[color:var(--state-info)]">
-                  Non-PEP
-                </span>
-              ) : null}
-              {director.pepStatus === "pep" ? (
-                <span className="text-sm font-medium text-[color:var(--state-error)]">PEP Match</span>
-              ) : null}
-              {director.pepStatus === "possible-pep" ? (
-                <span className="text-sm font-medium text-[color:var(--state-warning)]">Possible PEP</span>
               ) : null}
             </div>
           </div>

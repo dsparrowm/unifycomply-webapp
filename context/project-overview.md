@@ -45,8 +45,8 @@ Navigation and actions must respect the role model defined in `mvp-roadmap.md`.
 | Overview | OVERVIEW PAGE | M1 | `/overview` |
 | KYC | KYC COMPLIANCE | M2 | `/kyc`, `/kyc/[id]`, `/customers`, … |
 | KYB | KYB COMPLIANCE | M2 | `/kyb`, `/businesses`, … |
-| Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/[id]` |
-| AML Screening | AML SCREENING | M2 | `/aml-screening` |
+| Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/batch`, `/bank-analysis/[id]` |
+| AML Screening | AML SCREENING | M2 | `/aml-screening`, `/aml-screening/create-case`, `/aml-screening/search-results`, `/aml-screening/lookup`, `/aml-screening/batch`, `/aml-screening/[id]` |
 | Transaction Monitoring | Transaction Monitoring | M3 | `/transaction-monitoring`, `/transactions`, … |
 | Compliance / SAR | Sidebar: SAR Report, PND Watchlist, Rules, Risk Score | M4 | `/sar`, `/cases`, … |
 | Settings | SETTINGS | M1 | `/settings`, `/users`, `/roles`, `/api-keys` |

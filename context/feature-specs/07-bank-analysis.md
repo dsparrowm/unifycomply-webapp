@@ -2,7 +2,8 @@
 
 **Milestone:** M2  
 **Figma section:** BANK ANALYSIS (`886:161365`)  
-**Status:** In progress — list and all five detail tabs implemented
+**Status:** Complete — list, Single/Batch Lookup, detail states, decision history,
+and escalation implemented
 
 Read `AGENTS.md` before starting.
 
@@ -20,7 +21,8 @@ Read `AGENTS.md` before starting.
 | ----- | ------- | ------ |
 | `/bank-analysis` | Account analysis runs list | Done — empty + populated fixtures |
 | `/bank-analysis/[id]` | Account analysis detail | Done — Bank Summary (frame 41) |
-| `/bank-analysis/lookup` | Single bank lookup entry | Done — KYB lookup UI pattern |
+| `/bank-analysis/lookup` | Single/Batch bank lookup entry | Done |
+| `/bank-analysis/batch` | Batch Lookup result | Done — frame 18 |
 
 App shell is provided by `app/(app)/layout.tsx`.
 
@@ -33,7 +35,10 @@ App shell is provided by `app/(app)/layout.tsx`.
 | 11 | `886:161366` | **Default empty list** — metrics `0`, table **No User Activity** | Done — `bankAnalysisListDataEmpty` |
 | 12–15 | `886:161756` … | Filter dropdown overlays | Done — Date, Status, Priorities, Banks, More filters |
 | 16 | `886:163331` | **Populated list** — metrics `20` / `8` / `12` / `3`, table rows + pagination | Done — `bankAnalysisListDataPopulated` |
-| 40+ | `886:165268` … | Choose action modal, detail, batch lookup | Single lookup entry and detail tabs done; batch deferred |
+| 17–18 | `886:163724`, `886:164117` | Batch Lookup entry/result | Done |
+| 19 | `886:164497` | Single/Batch choose action | Done |
+| 41–70 | `886:165268`–`886:176555` | Detail and meaningful alert/decision variants | Done |
+| 71–72 | `886:176930`, `886:177271` | Senior Officer escalation | Done |
 
 **List UI elements:**
 
@@ -61,13 +66,13 @@ App shell is provided by `app/(app)/layout.tsx`.
 - Network Intelligence: responsive customer-to-bank/entity relationship graph
 - Alerts: no-warning/no-risk empty state with date-range control
 - Compliance: transaction threshold, PEP, sanctions, enforcement, and watchlist checks
-- Decision history: empty state for entities without escalated review or supplementary data
+- Decision history: empty and populated states, including escalated review
 - Sidebar: Risk Analysis, User Profile, Network Metrics
 
 ### Deferred
 
-- Batch lookup sub-route (`Bank Analysis / Batch Lookup / Techventures`, frame 18)
 - Export Report download (rendered disabled in mock-data detail)
+- Duplicate sandbox/production visual frames
 
 ## Default data policy (v1 mock)
 
@@ -89,7 +94,9 @@ App shell is provided by `app/(app)/layout.tsx`.
 | `BankAnalysisDetailPanel` | Composes frame 41 detail view |
 | `BankAnalysisAccountCard` | Bank account portfolio card |
 | `BankAnalysisDetailSidebar` | Risk, profile, and network cards |
-| `BankAnalysisLookupEntryPanel` | Single verification entry using KYB lookup layout |
+| `BankAnalysisLookupEntryPanel` | Single/Batch verification entry using KYB lookup layout |
+| `BankAnalysisBatchPanel` | Frame-18 batch result |
+| `BankAnalysisEscalateModal` | Senior Officer escalation and decision recording |
 
 ## Acceptance — List (frames 11 + 16)
 
@@ -114,7 +121,9 @@ App shell is provided by `app/(app)/layout.tsx`.
 - [x] Decision history tab renders the no-history empty state
 - [x] Single Lookup modal action navigates to `/bank-analysis/lookup`
 - [x] Lookup form validates bank-analysis fields and resolves to mock detail
-- [x] Bulk Verification remains visibly disabled until its result design is implemented
+- [x] Batch Lookup action routes to a working bulk entry and result
+- [x] Decision history renders an escalated review entry
+- [x] Senior Officer escalation records a decision-history entry
 - [x] Date-range menu opens and updates its selected option
 - [x] Risk, profile, and network metric sidebar cards render
 

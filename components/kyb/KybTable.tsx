@@ -1,15 +1,22 @@
 import Link from "next/link";
+import { ChevronDown, Eye } from "lucide-react";
+import {
+  KybListPriorityBadge,
+  KybListStatusBadge,
+  kybRiskScoreClassName,
+} from "@/components/kyb/KybListBadges";
 import type { KybRecord } from "@/types/kyb";
-import { KycPriorityBadge, KycStatusBadge } from "@/components/kyc/KycStatusBadge";
+import { cn } from "@/lib/utils";
 
 const columns = [
   "KYB ID",
   "Business Name",
-  "Business Type",
-  "Country",
+  "Verification Type",
   "Status",
+  "Country",
   "Priority",
   "Risk Score",
+  "Assigned To",
   "Time in Queue",
 ] as const;
 
@@ -38,17 +45,21 @@ export function KybTable({
               {columns.map((column) => (
                 <th
                   key={column}
-                  className="px-4 py-3 text-xs font-medium text-[color:var(--text-muted)]"
+                  scope="col"
+                  className="whitespace-nowrap px-4 py-3 text-xs font-medium text-[color:var(--text-muted)]"
                 >
                   {column}
                 </th>
               ))}
+              <th className="px-4 py-3">
+                <span className="sr-only">View</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             {records.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} className="px-4 py-24 text-center">
+                <td colSpan={columns.length + 2} className="px-4 py-24 text-center">
                   <p className="text-2xl font-medium text-[color:var(--text-light)]">
                     {emptyMessage}
                   </p>
@@ -58,7 +69,7 @@ export function KybTable({
               records.map((record) => (
                 <tr
                   key={record.id}
-                  className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] last:border-b-0"
+                  className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] transition-colors last:border-b-0 hover:bg-[color:var(--bg-muted)]"
                 >
                   <td className="px-4 py-4">
                     <input
@@ -67,37 +78,64 @@ export function KybTable({
                       className="rounded border-[color:var(--border-default)]"
                     />
                   </td>
-                  <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
-                    <Link
-                      href={`/kyb/${record.id}`}
-                      className="hover:text-[color:var(--accent-primary-hover)]"
-                    >
-                      {record.kybId}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-4 text-[color:var(--text-primary)]">
-                    <Link
-                      href={`/kyb/${record.id}`}
-                      className="hover:text-[color:var(--accent-primary-hover)]"
-                    >
-                      {record.businessName}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-4 text-[color:var(--text-primary)]">
-                    {record.businessType}
-                  </td>
-                  <td className="px-4 py-4 text-[color:var(--text-primary)]">{record.country}</td>
-                  <td className="px-4 py-4">
-                    <KycStatusBadge status={record.status} />
+                  <td className="whitespace-nowrap px-4 py-4 font-medium text-[color:var(--text-primary)]">
+                    {record.kybId}
                   </td>
                   <td className="px-4 py-4">
-                    <KycPriorityBadge priority={record.priority} />
+                    <Link href={`/kyb/${record.id}`} className="block hover:opacity-80">
+                      <p className="font-medium text-[color:var(--text-primary)]">
+                        {record.businessName}
+                      </p>
+                      <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">
+                        {record.businessType}
+                      </p>
+                    </Link>
                   </td>
-                  <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
+                  <td className="whitespace-nowrap px-4 py-4 text-[color:var(--text-primary)]">
+                    {record.verificationType}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-4">
+                    <KybListStatusBadge status={record.status} />
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-4 font-medium text-[color:var(--text-primary)]">
+                    {record.countryCode}
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-4">
+                    <KybListPriorityBadge priority={record.priority} />
+                  </td>
+                  <td
+                    className={cn(
+                      "whitespace-nowrap px-4 py-4 text-center font-semibold",
+                      kybRiskScoreClassName(record.riskScore),
+                    )}
+                  >
                     {record.riskScore}
                   </td>
-                  <td className="px-4 py-4 text-[color:var(--text-muted)]">
+                  <td className="whitespace-nowrap px-4 py-4">
+                    <button
+                      type="button"
+                      className={cn(
+                        "inline-flex items-center gap-1.5 text-sm font-medium",
+                        record.assignedTo
+                          ? "text-[color:var(--accent-primary-hover)]"
+                          : "text-[color:var(--state-warning)]",
+                      )}
+                    >
+                      {record.assignedTo ?? "Unassigned"}
+                      <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                    </button>
+                  </td>
+                  <td className="whitespace-nowrap px-4 py-4 text-[color:var(--text-muted)]">
                     {record.timeInQueue}
+                  </td>
+                  <td className="px-4 py-4">
+                    <Link
+                      href={`/kyb/${record.id}`}
+                      aria-label={`View ${record.businessName}`}
+                      className="inline-flex rounded-md p-1.5 text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--bg-muted)] hover:text-[color:var(--text-primary)]"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Link>
                   </td>
                 </tr>
               ))

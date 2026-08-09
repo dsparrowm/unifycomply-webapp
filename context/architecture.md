@@ -85,7 +85,7 @@ types/                 ← shared TypeScript types
 | Milestone | Routes under `app/(app)/` | Status |
 | --------- | ------------------------- | ------ |
 | **M1** | `/overview`, `/settings`, `/billing`, auth routes | Complete (settings live via API) |
-| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding` | In progress — AML list UI remaining; data still mock |
+| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding` | Complete for design-defined scope; compliance data remains mock |
 | M3 | `/transaction-monitoring`, … | Blocked until M3 |
 | M4 | `/sar`, `/pnd-watchlist`, … | Blocked until M4 |
 
@@ -104,7 +104,19 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
   tab navigation, account portfolio cards, and a risk/profile/network sidebar from
   typed mock data under `components/bank-analysis/detail/`.
 - **Bank Analysis lookup** — `/bank-analysis/lookup` reuses the KYB lookup layout
-  pattern with bank-specific single-verification fields under `components/bank-analysis/lookup/`.
+  pattern with bank-specific Single/Batch fields under `components/bank-analysis/lookup/`;
+  `/bank-analysis/batch` renders typed batch results.
+- **KYB detail** — `/kyb/[id]` composes underline tabs, overview card, risk sidebar,
+  and Compliance Checks under `components/kyb/detail/`; `KybSanctionsMatchDetailPanel`
+  handles OFAC View Details expand (frame 112); risk score drives cleared vs escalate
+  footer via shared `isApprovalBlocked`.
+- **AML Screening** — `/aml-screening` composes typed list filters and results;
+  `/aml-screening/create-case` is the Figma Create a New Case form with Search By rail;
+  `/aml-screening/search-results` is the post-Search results list + Search Information rail;
+  `/aml-screening/lookup` and `/batch` cover Single/Batch entry and results;
+  `/aml-screening/[id]` uses a Figma-aligned detail chrome (breadcrumb + Export,
+  primary/summary tabs, Active Monitoring, Search Information rail) under
+  `components/aml-screening/detail/`, plus Create Case / escalation actions.
 - **Placeholders** — Routes enabled in nav but not yet fully implemented use
   `RoutePlaceholderPanel` until the feature spec unit is built.
 

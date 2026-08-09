@@ -113,7 +113,7 @@ const score1Directors: KybDirectorsData = {
       idType: "International Passport",
       idNumber: "12/01/2025",
       phone: "08052345678",
-      email: "AyomiX@gmail.com",
+      email: "TejuX@gmail.com",
       address: "8 banana Island Lagos",
       amlClearanceStatus: "clear",
       amlRiskLevel: "Low Risk",
@@ -125,6 +125,9 @@ const score1Directors: KybDirectorsData = {
     },
   ],
 };
+
+/** Score 2 reuses the PEP Match / Verified pair from frame-1618868336. */
+const score2Directors: KybDirectorsData = score1Directors;
 
 const score3Directors: KybDirectorsData = {
   sectionStatus: "Active",
@@ -209,6 +212,10 @@ export function buildKybDirectorsData(score: RiskScore): KybDirectorsData | null
 
   if (score === 1) {
     return score1Directors;
+  }
+
+  if (score === 2) {
+    return score2Directors;
   }
 
   if (score === 3) {

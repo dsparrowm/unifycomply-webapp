@@ -51,7 +51,7 @@ export function KybEscalateModal({ open, detail, onClose, onConfirm }: KybEscala
         role="dialog"
         aria-modal="true"
         aria-labelledby="kyb-escalate-title"
-        className="relative z-10 w-full max-w-[640px] overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-xl"
+        className="relative z-10 w-full max-w-[560px] overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-xl"
       >
         <div className="flex items-center justify-between border-b border-[color:var(--border-default)] px-6 py-5">
           <h2 id="kyb-escalate-title" className="text-lg font-semibold text-[color:var(--text-primary)]">
@@ -77,26 +77,18 @@ export function KybEscalateModal({ open, detail, onClose, onConfirm }: KybEscala
         >
           <p className="text-sm text-[color:var(--text-primary)]">
             Escalate <span className="font-medium">{detail.businessName}</span> ({detail.kybId}) to a
-            senior compliance reviewer for further assessment.
+            senior reviewer. Approval remains blocked until the escalation is resolved.
           </p>
-
-          <div className="rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-muted)] px-4 py-4">
-            <p className="text-sm leading-relaxed text-[color:var(--text-muted)]">
-              Risk score: {detail.riskScore} • Priority: {detail.priority} • Current status:{" "}
-              {detail.status}
-            </p>
-          </div>
 
           <div className="space-y-2">
             <label htmlFor="kyb-escalate-notes" className="text-sm font-medium text-[color:var(--text-primary)]">
-              Escalation notes
+              Escalation notes (optional)
             </label>
             <textarea
               id="kyb-escalate-notes"
               name="notes"
               rows={3}
-              required
-              placeholder="Describe why this case needs senior review"
+              placeholder="Add context for the senior reviewer"
               className="w-full rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3.5 py-3 text-sm text-[color:var(--text-primary)] outline-none placeholder:text-[color:var(--text-light)] focus:border-[color:var(--accent-primary-hover)]"
             />
           </div>
@@ -111,7 +103,7 @@ export function KybEscalateModal({ open, detail, onClose, onConfirm }: KybEscala
             </button>
             <button
               type="submit"
-              className="h-11 rounded-lg bg-[color:var(--accent-primary)] px-5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary-hover)]"
+              className="h-11 rounded-lg border border-[color:var(--state-warning)] bg-[color:var(--bg-surface)] px-5 text-sm font-medium text-[color:var(--state-warning)] transition-colors hover:bg-[color:var(--state-warning-soft)]"
             >
               Escalate
             </button>

@@ -18,7 +18,15 @@ design/
   figma/
     cover/            ← Cover page frames
     landing-page/     ← Landing Page frames
-    webapp/           ← WebApp frames (primary build target)
+    webapp/           ← WebApp frames (primary build target), by module:
+      onboarding/     ← auth / sign-in / sign-up
+      overview/
+      kyc/
+      kyb/
+      aml/
+      bank-analysis/
+      settings/
+      shared/         ← app-shell overlays (search modal, etc.)
     assets/           ← logos, icons, illustrations (optional SVG/PNG)
 ```
 
@@ -30,18 +38,17 @@ design/
    - **Format:** PNG
    - **Scale:** 2x (preferred for readable text and spacing)
    - **Contents only:** off (include frame background)
-4. Save into the matching page folder using **kebab-case** filenames:
+4. Save into the matching **module folder** using **kebab-case** filenames:
 
 | Figma frame | Save as |
 | ----------- | ------- |
-| KYC | `design/figma/webapp/kyc.png` |
-| AML SCREENING | `design/figma/webapp/aml-screening.png` |
-| BANK ANALYSIS | `design/figma/webapp/bank-analysis.png` |
-| SETTINGS | `design/figma/webapp/settings.png` |
-| Module 4 — Transaction Monitoring | `design/figma/webapp/module-04-transaction-monitoring.png` |
-| Module 5 | `design/figma/webapp/module-05.png` |
-| … | `design/figma/webapp/module-NN.png` |
-| MVP Flowchart | `design/figma/webapp/mvp-flowchart.png` |
+| Customer // KYC // 79 | `design/figma/webapp/kyc/customer-kyc-79.png` |
+| Customer // KYB // 84 | `design/figma/webapp/kyb/customer-kyb-84.png` |
+| AML list / detail | `design/figma/webapp/aml/…` |
+| Bank Analysis | `design/figma/webapp/bank-analysis/…` |
+| SETTINGS | `design/figma/webapp/settings/…` |
+| Sign In / Sign Up | `design/figma/webapp/onboarding/…` |
+| Overview | `design/figma/webapp/overview/…` |
 
 5. Update `design/manifest.json` — add or update the entry for each export
 6. Commit the exports to git so future sessions retain them

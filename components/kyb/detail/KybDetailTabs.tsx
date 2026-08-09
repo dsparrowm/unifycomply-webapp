@@ -19,7 +19,11 @@ type KybDetailTabsProps = {
 
 export function KybDetailTabs({ activeTab, onTabChange }: KybDetailTabsProps) {
   return (
-    <div className="inline-flex max-w-full flex-wrap gap-1 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-muted)] p-1">
+    <div
+      className="flex max-w-full gap-1 overflow-x-auto border-b border-[color:var(--border-default)]"
+      role="tablist"
+      aria-label="KYB detail sections"
+    >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
 
@@ -27,12 +31,14 @@ export function KybDetailTabs({ activeTab, onTabChange }: KybDetailTabsProps) {
           <button
             key={tab.id}
             type="button"
+            role="tab"
+            aria-selected={isActive}
             onClick={() => onTabChange(tab.id)}
             className={cn(
-              "rounded-md px-3 py-1.5 text-sm transition-colors",
+              "shrink-0 border-b-2 px-3 py-2.5 text-sm transition-colors",
               isActive
-                ? "bg-[color:var(--bg-surface)] font-medium text-[color:var(--accent-primary-hover)] shadow-sm"
-                : "text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)]",
+                ? "border-[color:var(--accent-primary-hover)] font-medium text-[color:var(--accent-primary-hover)]"
+                : "border-transparent text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)]",
             )}
           >
             {tab.label}

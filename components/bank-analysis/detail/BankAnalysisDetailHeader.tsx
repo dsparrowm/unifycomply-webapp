@@ -30,7 +30,7 @@ export function BankAnalysisDetailHeader({
         type="button"
         disabled
         title="Report export is not connected in the mock-data build"
-        className="w-fit cursor-default rounded-lg bg-[color:var(--accent-primary-hover)] px-5 py-2.5 text-sm font-medium text-white"
+        className="w-fit cursor-not-allowed rounded-lg bg-[color:var(--accent-primary-hover)] px-5 py-2.5 text-sm font-medium text-white opacity-60"
       >
         Export Report
       </button>
