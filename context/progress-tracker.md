@@ -214,6 +214,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 
 ## Session Notes
 
+- 2026-08-12: Frontend status update refreshed from the 20 July PDF working brief — M2 marked **complete** in `docs/status-update-screens-and-endpoints.{md,html}` (AML/Bank no longer placeholders; hybrid BFF called out; approved deferrals + residuals listed). Canvas: `frontend-status-update-m2`. Re-export PDF via browser print of the HTML.
 - 2026-08-09: Frame 95 risk cards — full Figma copy (tier label, title, body, metadata, action strips); removed Standard chip when tier cards shown
 - 2026-08-09: KYB PNG visual QA — live DOM vs `design/figma/webapp/kyb/`; frames 84/93/112/115/135/8336 match; 95 updated to match; report canvas `kyb-png-visual-qa`
 - 2026-08-09: KYB Directors + Approve modal — `frame-1618868336` PEP Match/Verified card polish (red pill, teal AML icons); score 2 directors filled; Confirm Approval frames 115/135 (circular risk badge, verification type subtitle, grant-access copy); frame 122 classified as cleared overview duplicate of 93

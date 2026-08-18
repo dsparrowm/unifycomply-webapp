@@ -48,6 +48,11 @@
       margin: 1.25rem 0 0.5rem;
     }
     p { margin: 0.5rem 0 0.75rem; }
+    ul {
+      margin: 0.35rem 0 0.85rem;
+      padding-left: 1.25rem;
+    }
+    li { margin: 0.25rem 0; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -79,6 +84,7 @@
     }
     @media print {
       body { padding: 0; max-width: none; }
+      a { color: inherit; text-decoration: none; }
     }
   </style>
 </head>
@@ -86,7 +92,7 @@
   <h1>Unifycomply — Frontend Status Update</h1>
   <div class="meta">
     <p><strong>Author:</strong> Davies Aniefiok</p>
-    <p><strong>Date:</strong> 20 July 2026</p>
+    <p><strong>Date:</strong> 12 August 2026</p>
     <p><strong>Scope:</strong> WebApp frontend (Next.js) — screens/modules completed and API usage</p>
     <p><strong>Live site:</strong> <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a></p>
   </div>
@@ -95,13 +101,19 @@
 
   <h2>Summary</h2>
   <p>
-    Milestone 1 (Foundation) is complete. Milestone 2 (KYC Orchestration) is in progress,
-    with most KYC/KYB and bank analysis screens delivered. No live backend endpoints have
-    been consumed yet — the UI runs on typed mock data until API contracts are provided.
+    M1 is done. M2 frontend work for the WebApp designs we have is also done — KYC, KYB, bank analysis, and AML screening are built and running on mock data.
   </p>
   <p>
-    You can view the deployed WebApp here:
-    <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a>
+    Login and tenant settings talk to the real API through our BFF. The compliance screens stay on mocks until those contracts land.
+  </p>
+  <p>
+    What’s changed since the last update (20 July): AML is no longer a placeholder, bank analysis now covers batch lookup and escalation, and auth/settings are live.
+  </p>
+  <p>
+    We’re still gated on M2 (<code>CURRENT_MILESTONE = 2</code>). M3 doesn’t start until QA/UAT signs off.
+  </p>
+  <p>
+    Live build: <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a>
   </p>
 
   <h2>Completed modules / screens</h2>
@@ -114,7 +126,7 @@
     <tbody>
       <tr>
         <td>Authentication</td>
-        <td>Sign-in, register, forgot/reset password, MFA, verify email, tenant selection</td>
+        <td>Sign-in, register, forgot/reset password, MFA, verify email, tenant selection, Google OAuth callback (live BFF)</td>
       </tr>
       <tr>
         <td>App shell</td>
@@ -135,7 +147,7 @@
     </tbody>
   </table>
 
-  <h3>Milestone 2 — KYC Orchestration (in progress)</h3>
+  <h3>Milestone 2 — KYC Orchestration (complete)</h3>
   <table>
     <thead>
       <tr><th>Area</th><th>Screens / modules</th><th>Routes</th></tr>
@@ -143,12 +155,12 @@
     <tbody>
       <tr>
         <td>KYC list</td>
-        <td>Metrics, filters, search, table, pagination</td>
+        <td>Metrics, filters, search, table, pagination, choose-action modal</td>
         <td><code>/kyc</code></td>
       </tr>
       <tr>
         <td>KYC detail</td>
-        <td>Document viewer, risk/biometric/timeline panels, AML tab, decision modals</td>
+        <td>Document viewer, risk/biometric/timeline panels, AML tab, decision modals (0–4 risk variants)</td>
         <td><code>/kyc/[id]</code></td>
       </tr>
       <tr>
@@ -163,52 +175,69 @@
       </tr>
       <tr>
         <td>KYB list</td>
-        <td>Metrics, filters, search, table, pagination</td>
+        <td>Metrics, Batch search filters, Verified/Failed statuses, Assigned To, risk colouring</td>
         <td><code>/kyb</code></td>
       </tr>
       <tr>
         <td>KYB detail</td>
-        <td>Business Overview, Risk Score, Directors &amp; Officers, Shareholders, Documents</td>
+        <td>Business Overview, Risk Score Analysis, Directors &amp; Officers, Shareholders, Documents, Compliance Checks (cleared + high-risk OFAC expand), escalate footer</td>
         <td><code>/kyb/[id]</code></td>
       </tr>
       <tr>
         <td>KYB Perform Lookup</td>
-        <td>Single + bulk lookup entry and result</td>
+        <td>Single + bulk lookup entry and result, Confirm Approval modal</td>
         <td><code>/kyb/lookup</code>, <code>/kyb/lookup/result</code></td>
       </tr>
       <tr>
         <td>Bank analysis</td>
-        <td>List with metrics, filters, New Lookup modal</td>
-        <td><code>/bank-analysis</code></td>
+        <td>List, Single/Batch lookup, batch results, detail tabs, decision history, Senior Officer escalation</td>
+        <td><code>/bank-analysis</code>, <code>/bank-analysis/lookup</code>, <code>/bank-analysis/batch</code>, <code>/bank-analysis/[id]</code></td>
+      </tr>
+      <tr>
+        <td>AML Screening</td>
+        <td>List, Create Case, Search Results, Single/Batch lookup, detail chrome, escalation, decision history</td>
+        <td><code>/aml-screening</code>, <code>/aml-screening/create-case</code>, <code>/aml-screening/search-results</code>, <code>/aml-screening/lookup</code>, <code>/aml-screening/batch</code>, <code>/aml-screening/[id]</code></td>
       </tr>
       <tr>
         <td>Placeholders</td>
-        <td>AML Screening, Packages, Request</td>
-        <td><code>/aml-screening</code>, <code>/packages</code>, <code>/request</code></td>
+        <td>Packages, Request (no dedicated WebApp frames)</td>
+        <td><code>/packages</code>, <code>/request</code></td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Outstanding (Milestone 2)</h2>
+  <h2>Approved deferrals (Milestone 2 exit)</h2>
   <table>
     <thead>
-      <tr><th>Item</th><th>Status</th></tr>
+      <tr><th>Item</th><th>Reason</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>AML Screening list UI</td>
-        <td>Not started</td>
+        <td>KYB Validate Document / business onboarding wizard</td>
+        <td>No dedicated WebApp Figma frames</td>
+      </tr>
+      <tr>
+        <td>Packages / Request full screens</td>
+        <td>Nav labels only — no section designs</td>
+      </tr>
+      <tr>
+        <td>Duplicate sandbox/production visual frames</td>
+        <td>Shared environment toggle; no separate implementations required</td>
       </tr>
     </tbody>
   </table>
 
+
   <h2>Endpoints consumed</h2>
-  <p><strong>None.</strong></p>
+  <p><strong>Hybrid data model</strong></p>
+  <ul>
+    <li><strong>Live (Next.js BFF → Core Platform):</strong> authentication, MFA, tenant settings / domain switch, and related settings reads/mutations where OpenAPI exists.</li>
+    <li><strong>Mock fixtures (<code>lib/data/</code>):</strong> KYC, KYB, AML Screening, Bank Analysis, Overview charts, audit logs.</li>
+  </ul>
   <p>
-    This repository is frontend-only. All screens use typed mock fixtures under
-    <code>lib/data/</code>. No live backend APIs have been integrated. API wiring is
-    deferred until OpenAPI contracts are provided.
+    Compliance module APIs remain deferred until OpenAPI contracts are provided.
   </p>
+
 
   <h2>Milestone status overview</h2>
   <table>
@@ -217,13 +246,13 @@
     </thead>
     <tbody>
       <tr><td>M1 — Foundation</td><td>Complete</td></tr>
-      <tr><td>M2 — KYC Orchestration</td><td>In progress (active)</td></tr>
+      <tr><td>M2 — KYC Orchestration</td><td><strong>Complete</strong> (active gate remains M2 until QA/UAT)</td></tr>
       <tr><td>M3 — Transaction Monitoring</td><td>Not started (blocked)</td></tr>
       <tr><td>M4 — SAR &amp; Case Management</td><td>Not started (blocked)</td></tr>
       <tr><td>M5 — Optimisation</td><td>Not started (blocked)</td></tr>
     </tbody>
   </table>
 
-  <p class="footer">Prepared for internal status reporting.</p>
+  <p class="footer">Internal status note — supersedes the 20 July update.</p>
 </body>
 </html>
