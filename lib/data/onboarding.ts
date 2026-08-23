@@ -48,6 +48,9 @@ export const onboardingDefaultData: OnboardingWizardData = {
     country: "",
   },
   documents: {
+    idNumber: "",
+    issueDate: "",
+    expiryDate: "",
     idFront: null,
     idBack: null,
     selfie: null,

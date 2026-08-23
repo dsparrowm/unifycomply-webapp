@@ -3,7 +3,9 @@
 import { useEffect } from "react";
 import { ChevronRight, FileSearch, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toastInfo } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { useUiStore } from "@/store/ui.store";
 
 type KybChooseActionModalProps = {
   open: boolean;
@@ -12,6 +14,7 @@ type KybChooseActionModalProps = {
 
 export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProps) {
   const router = useRouter();
+  const isSandbox = useUiStore((state) => state.environment) === "sandbox";
 
   useEffect(() => {
     if (!open) {

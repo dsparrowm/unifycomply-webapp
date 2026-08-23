@@ -5,6 +5,7 @@ import type {
   ApiComplianceRules,
   ApiEmployeeCount,
   ApiLabelValue,
+  ApiPublicOptionSet,
   ApiMfaSetup,
   ApiMfaStatus,
   ApiNotificationPreferences,
@@ -40,12 +41,24 @@ export function updateBusinessInformation(body: UpdateTenantBusinessInformationD
   });
 }
 
-export function getBusinessIndustries() {
-  return apiFetch<ApiLabelValue[]>("/api/v1/public/misc/business-industries");
+export async function getBusinessIndustries() {
+  const set = await apiFetch<ApiPublicOptionSet | null>(
+    "/api/v1/public/misc/options/business-industries",
+  );
+  return (set?.options ?? []).map((option): ApiLabelValue => ({
+    value: option.value,
+    label: option.label,
+  }));
 }
 
-export function getEmployeeCounts() {
-  return apiFetch<ApiEmployeeCount[]>("/api/v1/public/misc/employee-counts");
+export async function getEmployeeCounts() {
+  const set = await apiFetch<ApiPublicOptionSet | null>(
+    "/api/v1/public/misc/options/employee-counts",
+  );
+  return (set?.options ?? []).map((option): ApiEmployeeCount => ({
+    id: option.value,
+    label: option.label,
+  }));
 }
 
 export function getTeams() {

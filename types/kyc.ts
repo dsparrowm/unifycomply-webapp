@@ -84,7 +84,19 @@ export type KycExtractedField = {
   id: string;
   label: string;
   value: string;
-  confidence: number;
+  /** Omit or null when data is from the customer record, not OCR. */
+  confidence?: number | null;
+};
+
+/** Which detail panels have live API payloads (vs EmptyState). */
+export type KycDetailAvailability = {
+  documentPreview: boolean;
+  ocr: boolean;
+  biometric: boolean;
+  ipDevice: boolean;
+  liveness: boolean;
+  amlScreening: boolean;
+  riskAnalysis: boolean;
 };
 
 export type KycTimelineEventStatus = "completed" | "in-progress";
@@ -304,9 +316,13 @@ export type KycDetail = {
   extractedFields: KycExtractedField[];
   timeline: KycTimelineEvent[];
   riskAnalysis: KycRiskAnalysisData;
-  amlScreening: KycAmlScreeningData;
-  ipDevice: KycIpDeviceData;
-  liveness: KycLivenessData;
+  amlScreening: KycAmlScreeningData | null;
+  ipDevice: KycIpDeviceData | null;
+  liveness: KycLivenessData | null;
+  /** When false, footer falls back to score-based approval threshold. */
+  canApprove?: boolean;
+  requiresEscalation?: boolean;
+  availability: KycDetailAvailability;
   /** Document tab tier card — shown at elevated risk scores (e.g. score 2). */
   documentRiskTier?: KycDocumentRiskTier;
   /** Document tab alert panel — shown when verification warnings apply. */
@@ -356,5 +372,5 @@ export type KycBvnLookupResult = {
     lga: string;
   };
   notes: string;
-  status: "successful" | "failed";
+  status: "successful" | "failed" | "pending";
 };

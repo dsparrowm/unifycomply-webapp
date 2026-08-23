@@ -7,11 +7,11 @@ type KycLookupSummaryPanelProps = {
 
 export function KycLookupSummaryPanel({ result }: KycLookupSummaryPanelProps) {
   const rows = [
-    { label: "First Name", value: result.firstName },
-    { label: "Last Name", value: result.lastName },
-    { label: "Middle Name", value: result.middleName },
-    { label: "Gender", value: result.gender },
-    { label: "Phone Number", value: result.phoneNumber },
+    { label: "First Name", value: result.firstName || "—" },
+    { label: "Last Name", value: result.lastName || "—" },
+    { label: "Middle Name", value: result.middleName || "—" },
+    { label: "Gender", value: result.gender || "—" },
+    { label: "Phone Number", value: result.phoneNumber || "—" },
   ];
 
   const fullName = `${result.firstName} ${result.lastName}`;

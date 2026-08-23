@@ -5,32 +5,34 @@ import { Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type KycLookupFileUploadProps = {
+  label?: string;
   hint: string;
   file: File | null;
   onFileChange: (file: File | null) => void;
   error?: string;
+  accept?: string;
+  formatHint?: string;
 };
 
-export function KycLookupFileUpload({ hint, file, onFileChange, error }: KycLookupFileUploadProps) {
+export function KycLookupFileUpload({
+  label = "Bulk Upload",
+  hint,
+  file,
+  onFileChange,
+  error,
+  accept = ".xlsx",
+  formatHint = "Accepted format: xlsx",
+}: KycLookupFileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
   const handleFile = (selectedFile: File | null) => {
-    if (!selectedFile) {
-      onFileChange(null);
-      return;
-    }
-
-    if (!selectedFile.name.toLowerCase().endsWith(".xlsx")) {
-      return;
-    }
-
     onFileChange(selectedFile);
   };
 
   return (
     <div className="space-y-1.5">
-      <p className="text-sm font-medium text-[color:var(--text-primary)]">Bulk Upload</p>
+      <p className="text-sm font-medium text-[color:var(--text-primary)]">{label}</p>
       <p className="text-sm text-[color:var(--text-muted)]">{hint}</p>
 
       <div
@@ -56,9 +58,12 @@ export function KycLookupFileUpload({ hint, file, onFileChange, error }: KycLook
         <input
           ref={inputRef}
           type="file"
-          accept=".xlsx"
+          accept={accept}
           className="hidden"
-          onChange={(event) => handleFile(event.target.files?.[0] ?? null)}
+          onChange={(event) => {
+            handleFile(event.target.files?.[0] ?? null);
+            event.target.value = "";
+          }}
         />
 
         <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg border border-[color:var(--border-subtle)] bg-[color:var(--bg-muted)] text-[color:var(--text-muted)]">
@@ -76,7 +81,7 @@ export function KycLookupFileUpload({ hint, file, onFileChange, error }: KycLook
             </button>
             <span className="text-[color:var(--text-muted)]"> or drag and drop</span>
           </p>
-          <p className="text-sm text-[color:var(--text-light)]">Accepted format: xlsx</p>
+          <p className="text-sm text-[color:var(--text-light)]">{formatHint}</p>
           {file ? (
             <p className="text-sm font-medium text-[color:var(--text-primary)]">{file.name}</p>
           ) : null}

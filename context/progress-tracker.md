@@ -16,7 +16,7 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 | Figma scope | **WebApp page only** (`1:2`) |
 | Landing page | **Out of scope** — built in another repo |
 | **Active milestone** | **M2** (`lib/constants/milestones.ts`) |
-| Data | Hybrid — live auth/settings via BFF; KYC/KYB/AML/overview/audit logs mock |
+| Data | Hybrid — live auth/settings/KYC+KYB customers via BFF; AML, bank analysis, registry lookup results, overview, audit logs mock |
 
 ## M1 Completion Checklist
 
@@ -62,12 +62,14 @@ Policy: `context/feature-specs/00-design-inventory.md`, `design/figma/webapp/REA
 - **Compliance queue:** Not a separate Figma route — reviewer workflow uses KYC/KYB list status filters (`Pending`, `In Review`, etc.) per frames 79–86. Do not add `/compliance-queue`.
 - **Bank analysis fourth metric label:** Frame 11 uses **high risk alerts**; populated frame 16 uses **high risk Entity**. List UI uses frame 11 string until design confirms one label.
 - **Packages / Request:** Sidebar items under BACKGROUND CHECK have **no dedicated WebApp section frames** (only nav labels). Keep placeholder routes until design adds screens.
-- **KYB Validate Document:** Choose-action option exists in Figma/UI but has no business onboarding wizard frames; button currently closes modal only.
+- **KYB Validate Document (resolved 2026-08-21):** No Figma business-onboarding wizard. Validate Document now opens `/kyb/onboarding` — a live create form posting `POST /v1/customers/kyb`.
 - **KYC Choose action frame:** Overlay lives on frame **114** (`886:80735`), not 115 (`886:81117` is empty sandbox list). Spec notes should prefer 114 as modal reference.
 - **MFA challenge payload (resolved 2026-07-26):** Live upstream returns HTTP 401 / `status:false` with `message: "Multifactor Authentication required."` and `data: { userId }` only (no `requiresMfa` flag). BFF now detects via message + `userId` and returns `{ requiresMfa: true, userId }` so sign-in routes to `/mfa`.
 - **Audit logs API:** No OpenAPI route — Settings → Audit Logs remains mock.
 - **RBAC vs API permissions:** UI still gates on `TenantRole` slugs; API returns fine-grained permissions (`verification:approve`, …). Migrate nav/action gating later.
 - **Google OAuth upstream redirect_uri:** Core Platform Google app currently points at its own callback host (e.g. API localhost). Frontend wires `redirectUrl` → `/auth/google/callback?intent=…`; end-to-end requires upstream Google config to match the deployed API.
+- **Email verify token (resolved 2026-08-21):** Upstream emails a 4-digit OTP, not a magic link. `/verify-email` now accepts the code (and still auto-submits `?token=&email=`). Successful verify sets `signed_out` so sign-in is reachable.
+- **Tenant onboarding UI (resolved 2026-08-21):** No Figma workspace-create frame. Empty `userAccess` now stays on `/tenant-selection` with a create form posting `POST /v1/tenants/onboarding`. Documented as a spec/design gap until a frame exists.
 
 ## M2 Figma coverage audit (2026-07-23)
 
@@ -128,12 +130,26 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 
 - Transaction monitoring (M3)
 
+## Core Platform API gaps (M2)
+
+| Gap | UI today | Why it stays mock |
+| --- | -------- | ----------------- |
+| AML screening module | `/aml-screening` placeholder | No `/aml` routes |
+| Bank analysis | Mock list / lookup / `ba-run-1` detail | No `/bank-analysis` routes |
+| Registry lookup results | `/kyc/lookup/result`, `/kyb/lookup/result` mock | No BVN/CAC registry endpoint |
+| Batch / bulk lookup persist | UI navigates to mock result | No batch upload API |
+| Approve / reject / escalate / resubmission | Local modal state only | No decision endpoints |
+| KYC IP/device, liveness, biometric, Figma AML panel | EmptyState | Not on customer GET payload |
+| Overview charts, audit logs, packages, request | Unchanged | Not these APIs |
+
+**Live:** `GET/POST/PUT /v1/customers/kyc|kyb`, nested documents and KYB shareholders, `POST /v1/verifications/kyc|kyb`, `GET /v1/verifications/available-checks`.
+
 ## Next Up (M2)
 
-1. AML screening list + choose-action modal (`886:134393` … `886:139364`)
+1. AML screening list + choose-action modal (`886:134393` … `886:139364`) — blocked on backend module
 2. AML detail + escalate (`Customer // AML // 34+`)
-3. Bank analysis Perform Lookup / Batch Lookup / detail (wire Single/Batch CTAs)
-4. KYB Batch Lookup (`886:124831`) if still in M2 scope
+3. Bank analysis Batch Lookup result and escalation
+4. KYB Batch Lookup (`886:124831`) if still in M2 scope — blocked on batch API
 
 ## Feature Unit Queue (through M2)
 
@@ -167,25 +183,32 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - Backend Phase 1: `API_BASE_URL` server-only; tokens in `uc_access` / `uc_refresh` httpOnly cookies; browser talks only to `/api/*`
 - `administrator` role alias maps to UI `admin` for RBAC
 - `CURRENT_MILESTONE = 2` in `lib/constants/milestones.ts` — M2 routes enabled through KYC/KYB/AML/bank analysis
-- `/kyc` uses populated list (frame 86) for M2 development; `kycListDataEmpty` reserved for post–Add Customer flow
-- `/kyc/onboarding` — five-step customer wizard (personal → business → documents → review → consent); entry via Validate Document modal
-- `/kyb` — KYB list (frame 79 empty default, frame 84 populated fixture); mock via `lib/data/kyb.ts`; filters reuse KYC dropdown pattern
-- `/kyb/lookup` — Perform Lookup entry (frames 85–88) with country/app/lookup-type form, single + bulk modes
-- `/kyb/lookup/result` — business registry lookup results with tabs, summary panel, footer actions; mock via `lib/data/kyb-lookup.ts`
-- `/kyb/[id]` — KYB detail (frame 93) with Business Overview tab, risk/verification/business-size sidebar, decision modals; mock via `lib/data/kyb-detail.ts`; table rows link from `/kyb`
-- KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`
+- `/kyc` uses live `GET /v1/customers/kyc` (empty tenant shows Figma “No User Activity”); `kycListDataPopulated` remains a design fixture only — restored 2026-08-22 after an incomplete revert had rewired the page to that fixture
+- `/kyc/onboarding` — five-step customer wizard; consent posts live KYC customer + documents + `POST /verifications/kyc`; does not create a KYB customer from the business-info step
+- `/kyb` — live `GET /v1/customers/kyb`; filters remain client-side on the loaded page
+- `/kyb/onboarding` — live create form for Validate Document (`POST /customers/kyb` + documents + `POST /verifications/kyb`)
+- `/kyb/lookup` — Perform Lookup entry; ID-type dropdown uses `available-checks` when country is set; result page still mock
+- `/kyb/lookup/result` — business registry lookup results; mock via `lib/data/kyb-lookup.ts`
+- `/kyb/[id]` — live customer + documents + shareholders; directors/risk/compliance tabs empty until those payloads exist
+- KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`; Validate Document → `/kyb/onboarding`
+- `/kyc/[id]` detail — live customer + documents + lifecycle timeline; missing Figma panels use EmptyState (no mock people)
+- `/kyc/lookup` — Perform Lookup; available-checks labels for ID types; submit still opens mock result
+- `/kyc/lookup/result` — BVN lookup results remain mock via `lib/data/kyc-lookup.ts`
 - `/bank-analysis` — list (frame 11 empty, frame 16 populated); metrics Total screening / Total Alerts Generated / Completed / high risk alerts; **New Lookup** choose-action modal (Single / Batch Lookup)
 - `/bank-analysis/lookup` — KYB-pattern single verification UI with Country, App, Bank, and Account Number; successful mock submission opens `/bank-analysis/ba-run-1`; Bulk Verification remains disabled pending its result design
 - `/bank-analysis/[id]` — Key Summary, Linked Entity, Account Analysis, Network Intelligence, Alerts, Compliance, Decision history, date-range menu, and persistent sidebar; Favour Peter Soma row links to `/bank-analysis/ba-run-1`; report export and escalation are deferred
-- `/kyc/[id]` detail page — frame 96 baseline with document viewer, extracted fields, risk/biometric/timeline panels; mock via `lib/data/kyc-detail.ts`; **0–4 risk score** drives per-tab UI variants via `lib/kyc/risk-score.ts` (no separate tier enum)
-- `/kyc/lookup` — Perform Lookup entry (frame 90) with lookup type/country/identifier form, sandbox/production toggle
-- `/kyc/lookup/result` — BVN lookup results (frames 91–94) with tabs, summary panel, address tab, footer actions
-- KYC list **Add Customer** opens choose-action modal (frame 115) — Perform Lookup → `/kyc/lookup`
+- `/kyc/[id]` detail page — frame 96 baseline; live customer fields; **0–4 risk score** from API `riskScore` (clamped, never invented)
+- `/kyc/lookup` — Perform Lookup entry (frame 90) with lookup type/country/identifier form; Staging/Production app remains UI (domain is header switch)
+- `/kyc/lookup/result` — BVN lookup results (frames 91–94) stay mock until a registry API exists
+- KYC list **Add Customer** opens choose-action modal (frame 114) — Perform Lookup → `/kyc/lookup`; Validate Document → `/kyc/onboarding`
 - `/aml-screening`, `/packages`, `/request` — placeholder routes via `RoutePlaceholderPanel`; milestone + RBAC gating enforced in `canAccessPath`
 - `canAccessPath` combines RBAC permissions with `isPathEnabledForCurrentMilestone` for deep-link protection
 
 ## Session Notes
 
+- 2026-08-21: KYC onboarding document step collects passport number, issue date, and expiry date; uploads send required metadata to `POST /customers/kyc/{id}/documents` (back image still UI-only — API stores one id-document file per customer).
+- 2026-08-21: First-run smoke passed on local stack — new account `qa.frun.1787269478@unifycomply.test` registered, Mailpit OTP 5539 verified, signed in to create-workspace (no overview loop), `POST /v1/tenants/onboarding` 201 for Firstrun QA Ltd, Overview stayed put, business-information loaded 38 industries + 8 employee bands (`options/:key` 200)
+- 2026-08-21: First-run unblock — email OTP on `/verify-email`; empty `userAccess` no longer authenticates (stops overview ↔ tenant-selection loop); create-workspace form → `POST /v1/tenants/onboarding` with BFF cookie capture; business information options use `/public/misc/options/:key`
 - 2026-07-26: MFA enable modal shows authenticator QR from `keyUri` (vendored Nayuki qrcodegen) plus copyable secret
 - 2026-07-26: Added global toast system (`ToastViewport` + `runAction`) for settings mutations, password change, MFA enable/disable, domain switch, and API key rotate
 - 2026-07-26: Auth polish — Google OAuth BFF (`/api/auth/google` + intent exchange), MFA challenge detection hardened, MFA paste + copy polish, auth redirect guard hydration skeletons
@@ -238,3 +261,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - 2026-07-24: Bank Analysis Decision history state implemented from supplied reference — date-range header and no-history empty state; all five detail tabs now enabled
 - 2026-07-24: Bank Analysis Single Lookup wired to `/bank-analysis/lookup` with KYB-pattern verification form and bank-specific fields; Bulk Lookup remains deferred because its distinct result screen is not implemented
 - 2026-07-26: MFA login routing — detect upstream `{ message: "Multifactor Authentication required.", data: { userId } }` (401, no flag) in `extractMfaChallenge`; BFF returns challenge so sign-in navigates to `/mfa` instead of showing the message as a form error
+- 2026-08-21: **Option A (API-first KYC/KYB)** — removed Add Customer/Business CTAs and choose-action modals from list pages; API ingestion empty state + Settings API keys link; sandbox-only Create test customer and lookup/onboarding routes (`SandboxOnlyGate`); Run verification modal on KYC/KYB detail wired to `available-checks` + `POST /verifications/kyc|kyb`; overview quick actions navigate to review queues; API keys page helper copy
+- 2026-08-22: Restored live `/kyc` and `/kyb` lists (`GET /v1/customers/kyc|kyb`) after an incomplete revert had put the Figma populated fixtures back on those pages
+- 2026-08-22: BFF `app/api/v1/[...path]` allowlist includes `customers/` and `verifications/` so KYC/KYB list + lookup calls are not 404 `Path not allowed`
+- 2026-08-22: Fixed `/kyb/[id]` 404 — detail page now uses `useKybDetail` + `mapKybDetail` (live API) instead of mock `getKybDetailById` fixture lookup

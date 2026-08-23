@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ApiError } from "@/lib/api/errors";
 import { getAccessToken, setAuthCookies } from "@/lib/api/server/cookies";
-import { jsonError } from "@/lib/api/server/http";
+import { jsonError, stripTokensFromSignInData } from "@/lib/api/server/http";
 import { upstreamFetchRaw } from "@/lib/api/server/upstream";
 
 const ALLOWED_PREFIXES = [
@@ -9,6 +9,8 @@ const ALLOWED_PREFIXES = [
   "users/",
   "tenants/",
   "public/",
+  "customers/",
+  "verifications/",
 ] as const;
 
 type RouteContext = {
@@ -64,14 +66,25 @@ async function proxy(request: Request, context: RouteContext) {
       auth: needsAuth,
     });
 
-    // Domain switch may return new tokens — set cookies when present.
-    if (upstreamPath === "/v1/tenants/settings/domain/switch" && response.ok) {
+    if (response.ok && bodyText) {
       try {
         const parsed = JSON.parse(bodyText) as {
-          data?: { access?: { token: string; refreshToken: string; domain: "sandbox" | "production" } };
+          status?: boolean;
+          message?: string;
+          data?: Record<string, unknown> & {
+            access?: { token: string; refreshToken: string; domain: "sandbox" | "production" };
+          };
         };
-        if (parsed?.data?.access?.token) {
+        if (parsed?.data?.access?.token && parsed.data.access.refreshToken) {
           await setAuthCookies(parsed.data.access);
+          return NextResponse.json(
+            {
+              status: parsed.status,
+              message: parsed.message,
+              data: stripTokensFromSignInData(parsed.data),
+            },
+            { status: response.status },
+          );
         }
       } catch {
         // ignore parse errors; still return upstream body

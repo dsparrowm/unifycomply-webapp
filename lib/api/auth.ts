@@ -4,8 +4,10 @@ import type {
   AccessSwitchDto,
   ApiDomain,
   ApiSignInData,
+  ApiTenantOnboardingData,
   ApiUser,
   ApiUserAccess,
+  CreateTenantOnboardingDto,
   SignInDto,
   SignUpDto,
   ValidateMFATokenDto,
@@ -136,4 +138,19 @@ export async function fetchAuthAccess(): Promise<{
   currentAccess: ApiUserAccess | null;
 }> {
   return apiFetch("/api/v1/auth/access");
+}
+
+export async function createTenantOnboarding(
+  dto: CreateTenantOnboardingDto,
+): Promise<ClientSignInResult> {
+  const data = await apiFetch<ApiTenantOnboardingData>("/api/v1/tenants/onboarding", {
+    method: "POST",
+    body: dto,
+  });
+  return {
+    user: data.user,
+    userAccess: data.userAccess ?? [],
+    currentAccess: data.currentAccess ?? data.userAccess?.[0] ?? null,
+    domain: data.domain ?? data.access?.domain ?? "sandbox",
+  };
 }
