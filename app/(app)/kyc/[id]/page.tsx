@@ -1,36 +1,18 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { QueryGate } from "@/components/feedback/QueryGate";
-import { PageErrorState } from "@/components/feedback/PageErrorState";
+import { notFound } from "next/navigation";
 import { KycDetailPanel } from "@/components/kyc/KycDetailPanel";
-import { KycLookupResultPanel } from "@/components/kyc/lookup/KycLookupResultPanel";
-import { useKycDetail } from "@/lib/hooks/use-compliance";
+import { getKycDetailById } from "@/lib/data/kyc-detail";
 
-export default function KycDetailPage() {
-  const params = useParams<{ id: string }>();
-  const customerId = params.id;
-  const query = useKycDetail(customerId);
+type KycDetailPageProps = {
+  params: Promise<{ id: string }>;
+};
 
-  return (
-    <QueryGate
-      isLoading={query.isLoading}
-      isError={query.isError}
-      error={query.error}
-      title="Could not load this customer"
-      onRetry={() => void query.refetch()}
-    >
-      {query.data?.lookupView ? (
-        <KycLookupResultPanel
-          view={query.data.lookupView}
-          backHref="/kyc"
-          breadcrumb={`KYC / ${query.data.detail.customerName}`}
-        />
-      ) : query.data?.detail ? (
-        <KycDetailPanel detail={query.data.detail} />
-      ) : (
-        <PageErrorState title="Customer not found" description="This KYC record is not in the current workspace." />
-      )}
-    </QueryGate>
-  );
+export default async function KycDetailPage({ params }: KycDetailPageProps) {
+  const { id } = await params;
+  const detail = getKycDetailById(id);
+
+  if (!detail) {
+    notFound();
+  }
+
+  return <KycDetailPanel detail={detail} />;
 }

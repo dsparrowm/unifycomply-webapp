@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Building2, ChevronRight } from "lucide-react";
 import { AuthSplitLayout } from "@/components/auth/AuthLayout";
-import { CreateWorkspaceForm } from "@/components/auth/CreateWorkspaceForm";
 import { getErrorMessage } from "@/lib/api/errors";
 import { getTenantRoleLabel, normalizeTenantRole } from "@/lib/rbac/permissions";
 import { useAuthStore, type Tenant } from "@/store/auth.store";
@@ -14,7 +13,6 @@ export default function TenantSelectionPage() {
   const router = useRouter();
   const userAccess = useAuthStore((state) => state.userAccess);
   const selectAccess = useAuthStore((state) => state.selectAccess);
-  const createWorkspace = useAuthStore((state) => state.createWorkspace);
   const setEnvironment = useUiStore((state) => state.setEnvironment);
   const [error, setError] = useState<string | null>(null);
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -42,40 +40,15 @@ export default function TenantSelectionPage() {
     }
   };
 
-  const handleCreated = () => {
-    setEnvironment(useAuthStore.getState().domain);
-    router.push("/overview");
-  };
-
-  const handleCreateWorkspace = async (values: {
-    name: string;
-    registrationNumber: string;
-    countryCode: string;
-    timezone: string;
-  }) => {
-    const next = await createWorkspace({
-      name: values.name.trim(),
-      registrationNumber: values.registrationNumber.trim(),
-      countryCode: values.countryCode.toUpperCase(),
-      timezone: values.timezone,
-    });
-    if (next !== "authenticated") {
-      throw new Error("Workspace was created but could not be selected. Try signing in again.");
-    }
-    handleCreated();
-  };
-
   return (
     <AuthSplitLayout>
       <div className="w-full max-w-[461px]">
         <div className="mb-8 space-y-2">
           <h1 className="text-3xl font-semibold text-[color:var(--text-primary)]">
-            {tenants.length === 0 ? "Create a workspace" : "Choose a workspace"}
+            Choose a workspace
           </h1>
           <p className="text-sm text-[color:var(--text-muted)]">
-            {tenants.length === 0
-              ? "Set up your organization to start using Unifycomply."
-              : "Select the organization you want to access."}
+            Select the organization you want to access.
           </p>
         </div>
 
@@ -85,11 +58,13 @@ export default function TenantSelectionPage() {
           </p>
         ) : null}
 
-        {tenants.length === 0 ? (
-          <CreateWorkspaceForm onSubmit={handleCreateWorkspace} />
-        ) : (
-          <div className="space-y-3">
-            {tenants.map((tenant) => (
+        <div className="space-y-3">
+          {tenants.length === 0 ? (
+            <p className="text-sm text-[color:var(--text-muted)]">
+              No workspaces are available for this account.
+            </p>
+          ) : (
+            tenants.map((tenant) => (
               <button
                 key={tenant.accessId}
                 type="button"
@@ -114,9 +89,9 @@ export default function TenantSelectionPage() {
                 </div>
                 <ChevronRight className="h-4 w-4 text-[color:var(--text-light)]" />
               </button>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     </AuthSplitLayout>
   );

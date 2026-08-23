@@ -9,12 +9,7 @@ import { OnboardingDocumentUploadStep } from "@/components/onboarding/Onboarding
 import { OnboardingIdentityReviewStep } from "@/components/onboarding/OnboardingIdentityReviewStep";
 import { OnboardingPersonalInfoStep } from "@/components/onboarding/OnboardingPersonalInfoStep";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
-import { getAvailableChecks } from "@/lib/api/compliance";
-import { getErrorMessage } from "@/lib/api/errors";
-import { buildCustomerAddress, toE164 } from "@/lib/compliance/format";
 import { onboardingDefaultData, onboardingSteps } from "@/lib/data/onboarding";
-import { useCreateKycCustomer } from "@/lib/hooks/use-compliance";
-import { toastError, toastSuccess } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import type { OnboardingStepId, OnboardingWizardData } from "@/types/onboarding";
 
@@ -28,16 +23,14 @@ export function OnboardingWizardPanel({
   successHref = "/kyc",
 }: OnboardingWizardPanelProps) {
   const router = useRouter();
-  const createCustomer = useCreateKycCustomer();
   const [currentStepId, setCurrentStepId] = useState<OnboardingStepId>("personal");
   const [data, setData] = useState<OnboardingWizardData>(onboardingDefaultData);
-  const [formError, setFormError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const currentIndex = onboardingSteps.findIndex((step) => step.id === currentStepId);
   const isFirstStep = currentIndex === 0;
   const isReviewStep = currentStepId === "review";
   const isLastStep = currentStepId === "consent";
-  const isSubmitting = createCustomer.isPending;
 
   const goToStep = (stepId: OnboardingStepId) => {
     setCurrentStepId(stepId);
@@ -58,84 +51,11 @@ export function OnboardingWizardPanel({
   };
 
   const handleFinalSubmit = async (consent: OnboardingWizardData["consent"]) => {
-    setFormError(null);
-    const next = { ...data, consent };
-    setData(next);
-
-    const personal = next.personal;
-    if (personal.gender !== "male" && personal.gender !== "female") {
-      setFormError("Gender is required");
-      return;
-    }
-
-    try {
-      let verificationTypes = ["national-id", "sanctions-screening"];
-      try {
-        const catalogue = await getAvailableChecks(personal.nationality, "individual");
-        const types = catalogue.checks.map((check) => check.type);
-        verificationTypes = types.includes("national-id")
-          ? ["national-id", ...types.filter((type) => type === "sanctions-screening" || type === "pep-screening")]
-          : types.slice(0, 2);
-        if (verificationTypes.length === 0) {
-          verificationTypes = ["national-id", "sanctions-screening"];
-        }
-      } catch {
-        verificationTypes = ["national-id", "sanctions-screening"];
-      }
-
-      const passportMeta = {
-        idNumber: next.documents.idNumber.trim(),
-        issueDate: next.documents.issueDate,
-        expiryDate: next.documents.expiryDate,
-      };
-
-      const documents = [
-        next.documents.idFront
-          ? { type: "passport", file: next.documents.idFront, ...passportMeta }
-          : null,
-        next.documents.selfie
-          ? { type: "selfie-photo", file: next.documents.selfie }
-          : null,
-      ].filter(
-        (
-          document,
-        ): document is {
-          type: string;
-          file: File;
-          idNumber?: string;
-          issueDate?: string;
-          expiryDate?: string;
-        } => Boolean(document),
-      );
-
-      const created = await createCustomer.mutateAsync({
-        customer: {
-          firstName: personal.firstName.trim(),
-          lastName: personal.lastName.trim(),
-          dob: personal.dateOfBirth,
-          countryCode: personal.nationality.toUpperCase(),
-          gender: personal.gender,
-          email: personal.email.trim(),
-          phone: toE164(personal.phone, personal.nationality),
-          address: buildCustomerAddress({
-            street: personal.street,
-            city: personal.city,
-            state: personal.state,
-            zipCode: personal.zipCode,
-            countryCode: personal.nationality,
-          }),
-        },
-        documents,
-        verificationTypes,
-      });
-
-      toastSuccess("Customer created");
-      router.push(`${successHref}/${created.id}`);
-    } catch (error) {
-      const message = getErrorMessage(error, "Could not create customer");
-      setFormError(message);
-      toastError(error, "Could not create customer");
-    }
+    setIsSubmitting(true);
+    setData((current) => ({ ...current, consent }));
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setIsSubmitting(false);
+    router.push(successHref);
   };
 
   return (
@@ -181,12 +101,6 @@ export function OnboardingWizardPanel({
           <OnboardingConsentStep defaultValues={data.consent} onSubmit={handleFinalSubmit} />
         ) : null}
       </div>
-
-      {formError ? (
-        <p className="text-sm text-[color:var(--state-error)]" role="alert">
-          {formError}
-        </p>
-      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <button

@@ -14,15 +14,13 @@ const tabs: { id: KycLookupTab; label: string }[] = [
 type KycLookupTabsProps = {
   activeTab: KycLookupTab;
   onTabChange: (tab: KycLookupTab) => void;
-  identityTabLabel?: string;
 };
 
-export function KycLookupTabs({ activeTab, onTabChange, identityTabLabel }: KycLookupTabsProps) {
+export function KycLookupTabs({ activeTab, onTabChange }: KycLookupTabsProps) {
   return (
     <div className="inline-flex max-w-full flex-wrap gap-1 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-muted)] p-1">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
-        const label = tab.id === "bvn" && identityTabLabel ? identityTabLabel : tab.label;
 
         return (
           <button
@@ -36,7 +34,7 @@ export function KycLookupTabs({ activeTab, onTabChange, identityTabLabel }: KycL
                 : "text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)]",
             )}
           >
-            {label}
+            {tab.label}
           </button>
         );
       })}

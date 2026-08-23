@@ -1,5 +1,0 @@
-# pnpm 11+ blocks postinstall scripts until explicitly allowed.
-# sharp — Next.js image optimization; unrs-resolver — eslint-config-next peer.
-allowBuilds:
-  sharp: true
-  unrs-resolver: true

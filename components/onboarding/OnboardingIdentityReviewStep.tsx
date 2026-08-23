@@ -53,9 +53,6 @@ export function OnboardingIdentityReviewStep({ data }: OnboardingIdentityReviewS
       </ReviewSection>
 
       <ReviewSection title="Uploaded documents">
-        <ReviewItem label="Passport number" value={documents.idNumber || "—"} />
-        <ReviewItem label="Issue date" value={documents.issueDate || "—"} />
-        <ReviewItem label="Expiry date" value={documents.expiryDate || "—"} />
         <ReviewItem label="ID front" value={documents.idFront?.name ?? "—"} />
         <ReviewItem label="ID back" value={documents.idBack?.name ?? "—"} />
         <ReviewItem label="Selfie" value={documents.selfie?.name ?? "—"} />

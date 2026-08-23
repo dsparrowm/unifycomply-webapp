@@ -21,11 +21,9 @@ layout/feedback). There is no generated `components/ui/` shadcn layer in this re
 ## Multi-Tenant UI Considerations
 
 Tenant context comes from `/v1/auth/sign-in` / `/v1/auth/access` (`userAccess`,
-`currentAccess`). New accounts with no tenant create one via
-`POST /v1/tenants/onboarding` on `/tenant-selection`. Workspace switching uses
-`POST /v1/auth/access/switch`. Role names from the API (e.g. `Administrator`) map
-to UI `TenantRole` slugs via `normalizeTenantRole` / `ROLE_ALIASES` in
-`lib/rbac/permissions.ts`.
+`currentAccess`). Workspace switching uses `POST /v1/auth/access/switch`. Role names
+from the API (e.g. `Administrator`) map to UI `TenantRole` slugs via
+`normalizeTenantRole` / `ROLE_ALIASES` in `lib/rbac/permissions.ts`.
 
 ## System Boundaries
 
@@ -79,7 +77,7 @@ types/                 ← shared TypeScript types
 - Envelope: `{ status: boolean, message: string, data: T }`
 - Auth: JWT Bearer. Cookies `uc_access` / `uc_refresh` (httpOnly). Refresh uses
   `Authorization: Bearer <refreshToken>`.
-- Live today: authentication, tenant onboarding (`POST /tenants/onboarding`), tenant settings, user profile, public misc (`/v1/public/misc/options/:key`).
+- Live today: authentication, tenant settings, user profile, public misc.
 - Still mock: KYC, KYB, bank analysis, AML, overview charts, audit logs (no endpoint).
 
 ### Route map by milestone
@@ -109,16 +107,13 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
   pattern with bank-specific single-verification fields under `components/bank-analysis/lookup/`.
 - **Placeholders** — Routes enabled in nav but not yet fully implemented use
   `RoutePlaceholderPanel` until the feature spec unit is built.
-- **Create workspace** — `CreateWorkspaceForm` is presentational; `/tenant-selection`
-  posts through the auth store to `POST /v1/tenants/onboarding`.
 
 ## State Model
 
 - **Form state (React Hook Form):** All multi-field forms; schemas colocated with forms.
 - **UI state (Zustand):** Sidebar, sandbox/production environment.
 - **Auth session (Zustand persist):** `authStep`, user, tenant/access metadata, domain —
-  **never** JWTs (cookies only). Empty `userAccess` after sign-in is `pending_tenant`
-  (create workspace), not `authenticated`.
+  **never** JWTs (cookies only).
 - **Server state (TanStack Query):** Settings and other BFF-backed reads/mutations.
 - **Mock data:** Static fixtures in `lib/data/` for M2 compliance modules until APIs exist.
 - **RBAC:** Tenant role on auth tenant context. Permission matrix in
@@ -127,7 +122,7 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 
 ## Data Source
 
-- **Live (BFF):** Auth, tenant onboarding, tenant settings, user profile, public misc options, domain switch.
+- **Live (BFF):** Auth, tenant settings, user profile, public misc, domain switch.
 - **Mock:** KYC, KYB, bank analysis, AML, overview, audit logs.
 
 ## Invariants

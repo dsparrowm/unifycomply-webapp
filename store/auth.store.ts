@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import {
   completeGoogleSignIn as apiCompleteGoogleSignIn,
-  createTenantOnboarding as apiCreateTenant,
   signInWithPassword as apiSignIn,
   signOut as apiSignOut,
   switchAccess as apiSwitchAccess,
@@ -10,7 +9,7 @@ import {
   type ClientSignInResult,
 } from "@/lib/api/auth";
 import { getRolesPermissions } from "@/lib/api/settings";
-import type { ApiDomain, ApiUser, ApiUserAccess, CreateTenantOnboardingDto } from "@/lib/api/types";
+import type { ApiDomain, ApiUser, ApiUserAccess } from "@/lib/api/types";
 import { normalizeTenantRole } from "@/lib/rbac/permissions";
 import type { TenantRole } from "@/types/rbac";
 
@@ -55,10 +54,6 @@ type AuthState = {
   completeMfa: (code: string) => Promise<"tenant" | "authenticated">;
   selectTenant: (tenant: Tenant) => Promise<void>;
   selectAccess: (accessId: string) => Promise<void>;
-  createWorkspace: (
-    dto: CreateTenantOnboardingDto,
-  ) => Promise<"mfa" | "tenant" | "authenticated">;
-  recoverWorkspaceStep: () => void;
   applySession: (session: ClientSignInResult, roleName?: string | null) => "mfa" | "tenant" | "authenticated";
   setDomain: (domain: ApiDomain) => void;
   signOut: () => Promise<void>;
@@ -98,17 +93,6 @@ async function resolveRoleName(roleId: string | null | undefined): Promise<strin
   } catch {
     return null;
   }
-}
-
-export function effectiveAuthStep(state: {
-  authStep: AuthStep;
-  tenant: Tenant | null;
-  userAccess: ApiUserAccess[];
-}): AuthStep {
-  if (state.authStep === "authenticated" && (state.userAccess.length === 0 || !state.tenant)) {
-    return "pending_tenant";
-  }
-  return state.authStep;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -167,18 +151,6 @@ export const useAuthStore = create<AuthState>()(
 
         const user = toAuthUser(session.user);
         const accesses = session.userAccess ?? [];
-
-        if (accesses.length === 0) {
-          set({
-            authStep: "pending_tenant",
-            user,
-            userAccess: [],
-            tenant: null,
-            domain: session.domain,
-            pendingMfaUserId: null,
-          });
-          return "tenant";
-        }
 
         if (accesses.length > 1 && !session.currentAccess) {
           set({
@@ -298,20 +270,6 @@ export const useAuthStore = create<AuthState>()(
           domain: session.domain ?? get().domain,
           pendingMfaUserId: null,
         });
-      },
-
-      createWorkspace: async (dto) => {
-        const session = await apiCreateTenant(dto);
-        const roleId = session.currentAccess?.roleId ?? session.userAccess[0]?.roleId;
-        const roleName = await resolveRoleName(roleId);
-        return get().applySession(session, roleName);
-      },
-
-      recoverWorkspaceStep: () => {
-        const { authStep, tenant, userAccess } = get();
-        if (authStep === "authenticated" && (userAccess.length === 0 || !tenant)) {
-          set({ authStep: "pending_tenant", tenant: null });
-        }
       },
 
       setDomain: (domain) => set({ domain }),

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { KybChooseActionModal } from "@/components/kyb/KybChooseActionModal";
 import { KybFilters, kybDefaultFilters } from "@/components/kyb/KybFilters";
 import { KybMetricCards } from "@/components/kyb/KybMetricCards";
 import { KybPageHeader } from "@/components/kyb/KybPageHeader";
@@ -19,6 +20,7 @@ export function KybListPanel({ data }: KybListPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<KybListFilters>(kybDefaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
+  const [actionModalOpen, setActionModalOpen] = useState(false);
 
   const filteredRecords = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -61,13 +63,17 @@ export function KybListPanel({ data }: KybListPanelProps) {
   const emptyMessage =
     data.records.length === 0
       ? "No User Activity"
-      : searchQuery.trim()
-        ? "No businesses match your search"
-        : "No businesses match your filters";
+      : filteredRecords.length === 0
+        ? "No businesses match your filters"
+        : "No businesses match your search";
 
   return (
     <div className="flex flex-col gap-8">
-      <KybPageHeader />
+      <KybPageHeader onAddBusiness={() => setActionModalOpen(true)} />
+      <KybChooseActionModal
+        open={actionModalOpen}
+        onClose={() => setActionModalOpen(false)}
+      />
 
       <KybMetricCards metrics={data.metrics} />
 

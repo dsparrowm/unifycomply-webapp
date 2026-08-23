@@ -12,10 +12,10 @@
 | `/register` | Sign up // 3 (`886:48929`) | Registration (API: email, name, country, password) |
 | `/forgot-password` | — | Request password reset email |
 | `/reset-password` | — | Set new password after reset link |
-| `/verify-email` | Sign up flow | Post-registration email confirmation (4-digit OTP from email, optional `?token=&email=` auto-submit) |
+| `/verify-email` | Sign up flow | Post-registration email confirmation |
 | `/auth/google/callback` | — | Completes Google OAuth via session intent |
 | `/mfa` | — | 6-digit authenticator verification when required |
-| `/tenant-selection` | — | Choose workspace, or create one via `POST /v1/tenants/onboarding` when `userAccess` is empty |
+| `/tenant-selection` | — | Choose workspace when user has multiple tenants |
 
 ## Layout patterns
 
@@ -32,7 +32,6 @@
 ```
 sign-in (POST /api/auth/sign-in → upstream /v1/auth/sign-in?platform=app)
   → if MFA challenge (no tokens + requiresMfa/userId) → /mfa (POST /api/auth/mfa/validate)
-  → if userAccess is empty → /tenant-selection (create workspace)
   → if multiple userAccess → /tenant-selection (POST /api/auth/access/switch)
   → /overview
 
@@ -46,14 +45,9 @@ Google:
 
 register (POST /api/auth/sign-up) → /verify-email
   → resend: POST /api/auth/email/verify → upstream /v1/auth/email/verify
-  → enter 4-digit code from email, or /verify-email?token=…&email=…
+  → link: /verify-email?token=…&email=…
   → POST /api/auth/email/verify/complete → upstream /v1/auth/email/verify/{token}?platform=app
-  → authStep signed_out → /sign-in
-
-create workspace (no tenant yet):
-  POST /api/v1/tenants/onboarding → upstream /v1/tenants/onboarding
-  → BFF stores new tokens in httpOnly cookies
-  → /overview
+  → /sign-in
 
 forgot-password (POST /api/auth/forgot-password)
   → email link → /reset-password?token=…&email=…
@@ -84,7 +78,6 @@ App routes are protected by `AppAuthGuard`. Auth routes use `AuthRedirectGuard`.
 - `components/auth/AuthField.tsx`
 - `components/auth/AuthButton.tsx` — primary/secondary, divider, Google button
 - `components/auth/AuthRedirectGuard.tsx`
-- `components/auth/CreateWorkspaceForm.tsx`
 - `components/layout/AppAuthGuard.tsx`
 - `app/api/auth/*` — BFF routes
 

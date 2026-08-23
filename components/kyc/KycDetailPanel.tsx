@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { EmptyState } from "@/components/feedback/EmptyState";
 import { KycAmlScreeningPanel } from "@/components/kyc/detail/KycAmlScreeningPanel";
 import { KycApproveModal } from "@/components/kyc/detail/KycApproveModal";
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
@@ -11,10 +10,12 @@ import { KycLivenessPanel } from "@/components/kyc/detail/KycLivenessPanel";
 import { KycRejectModal } from "@/components/kyc/detail/KycRejectModal";
 import { KycRequestResubmissionModal } from "@/components/kyc/detail/KycRequestResubmissionModal";
 import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPanel";
+import { KycBiometricVerification } from "@/components/kyc/KycBiometricVerification";
 import { KycDocumentAlertCard } from "@/components/kyc/KycDocumentAlertCard";
 import { KycDocumentRiskTierCard } from "@/components/kyc/KycDocumentRiskTierCard";
 import { KycDetailHeader } from "@/components/kyc/KycDetailHeader";
 import { KycDetailTabs } from "@/components/kyc/KycDetailTabs";
+import { KycDocumentViewer } from "@/components/kyc/KycDocumentViewer";
 import { KycExtractedInformation } from "@/components/kyc/KycExtractedInformation";
 import { KycRiskAnalysisCard } from "@/components/kyc/KycRiskAnalysisCard";
 import { KycVerificationTimeline } from "@/components/kyc/KycVerificationTimeline";
@@ -25,8 +26,6 @@ type KycDetailPanelProps = {
 };
 
 type KycDetailModal = "approve" | "reject" | "resubmission" | "escalate" | null;
-
-const unavailableCopy = "This panel is not returned by the current Core Platform API.";
 
 export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<KycDetailTab>("document");
@@ -47,10 +46,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
       {activeTab === "document" ? (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_457px]">
           <div className="space-y-6">
-            <EmptyState
-              title="Document images unavailable"
-              description="Uploaded files are stored by the API, but preview URLs are not exposed on this customer record yet."
-            />
+            <KycDocumentViewer matchScore={detail.matchScore} />
             <KycExtractedInformation
               fields={detail.extractedFields}
               statusLabel={detail.extractionStatus}
@@ -64,42 +60,26 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
               <KycRiskAnalysisCard detail={detail} />
             )}
             {detail.documentAlert ? <KycDocumentAlertCard alert={detail.documentAlert} /> : null}
-            <EmptyState title="Biometric match unavailable" description={unavailableCopy} />
+            <KycBiometricVerification detail={detail} />
             <KycVerificationTimeline events={detail.timeline} />
           </div>
         </div>
       ) : null}
 
       {activeTab === "risk-analysis" ? (
-        detail.riskAnalysis ? (
-          <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
-        ) : (
-          <EmptyState title="Risk analysis unavailable" description={unavailableCopy} />
-        )
+        <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
       ) : null}
 
       {activeTab === "aml-screening" ? (
-        detail.amlScreening ? (
-          <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
-        ) : (
-          <EmptyState title="AML screening unavailable" description={unavailableCopy} />
-        )
+        <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
       ) : null}
 
       {activeTab === "ip-device" ? (
-        detail.ipDevice ? (
-          <KycIpDevicePanel ipDevice={detail.ipDevice} />
-        ) : (
-          <EmptyState title="IP and device data unavailable" description={unavailableCopy} />
-        )
+        <KycIpDevicePanel ipDevice={detail.ipDevice} />
       ) : null}
 
       {activeTab === "liveness" ? (
-        detail.liveness ? (
-          <KycLivenessPanel liveness={detail.liveness} />
-        ) : (
-          <EmptyState title="Liveness data unavailable" description={unavailableCopy} />
-        )
+        <KycLivenessPanel liveness={detail.liveness} />
       ) : null}
 
       <KycDetailFooterActions

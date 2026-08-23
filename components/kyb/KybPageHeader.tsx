@@ -1,11 +1,8 @@
-"use client";
+type KybPageHeaderProps = {
+  onAddBusiness: () => void;
+};
 
-import { useState } from "react";
-import { KybChooseActionModal } from "@/components/kyb/KybChooseActionModal";
-
-export function KybPageHeader() {
-  const [chooseActionOpen, setChooseActionOpen] = useState(false);
-
+export function KybPageHeader({ onAddBusiness }: KybPageHeaderProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
@@ -14,12 +11,11 @@ export function KybPageHeader() {
       </div>
       <button
         type="button"
-        onClick={() => setChooseActionOpen(true)}
+        onClick={onAddBusiness}
         className="inline-flex shrink-0 items-center justify-center rounded-lg bg-[color:var(--accent-primary-hover)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
       >
         Add Business
       </button>
-      <KybChooseActionModal open={chooseActionOpen} onClose={() => setChooseActionOpen(false)} />
     </div>
   );
 }

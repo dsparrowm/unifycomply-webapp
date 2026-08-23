@@ -365,7 +365,7 @@ function buildAmlScreening(score: RiskScore, options?: { pepMatch?: boolean }): 
 
 type KycDetailTemplate = Omit<
   KycDetail,
-  "id" | "kycId" | "customerName" | "documentType" | "country" | "countryCode" | "status" | "priority"
+  "id" | "kycId" | "customerName" | "documentType" | "country" | "status" | "priority"
 >;
 
 function buildDetailTemplate(score: RiskScore): KycDetailTemplate {

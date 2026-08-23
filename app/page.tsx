@@ -2,17 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { effectiveAuthStep, useAuthStore } from "@/store/auth.store";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function HomePage() {
   const router = useRouter();
-  const authStep = useAuthStore((state) =>
-    effectiveAuthStep({
-      authStep: state.authStep,
-      tenant: state.tenant,
-      userAccess: state.userAccess,
-    }),
-  );
+  const authStep = useAuthStore((state) => state.authStep);
 
   useEffect(() => {
     if (authStep === "authenticated") {

@@ -27,9 +27,6 @@ export type OnboardingBusinessInfo = {
 };
 
 export type OnboardingDocuments = {
-  idNumber: string;
-  issueDate: string;
-  expiryDate: string;
   idFront: File | null;
   idBack: File | null;
   selfie: File | null;
