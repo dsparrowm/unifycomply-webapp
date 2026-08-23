@@ -1,18 +1,32 @@
-import { notFound } from "next/navigation";
+"use client";
+
+import { useParams } from "next/navigation";
+import { QueryGate } from "@/components/feedback/QueryGate";
+import { PageErrorState } from "@/components/feedback/PageErrorState";
 import { KybDetailPanel } from "@/components/kyb/detail/KybDetailPanel";
-import { getKybDetailById } from "@/lib/data/kyb-detail";
+import { useKybDetail } from "@/lib/hooks/use-compliance";
 
-type KybDetailPageProps = {
-  params: Promise<{ id: string }>;
-};
+export default function KybDetailPage() {
+  const params = useParams<{ id: string }>();
+  const customerId = params.id;
+  const query = useKybDetail(customerId);
 
-export default async function KybDetailPage({ params }: KybDetailPageProps) {
-  const { id } = await params;
-  const detail = getKybDetailById(id);
-
-  if (!detail) {
-    notFound();
-  }
-
-  return <KybDetailPanel detail={detail} />;
+  return (
+    <QueryGate
+      isLoading={query.isLoading}
+      isError={query.isError}
+      error={query.error}
+      title="Could not load this business"
+      onRetry={() => void query.refetch()}
+    >
+      {query.data ? (
+        <KybDetailPanel detail={query.data} />
+      ) : (
+        <PageErrorState
+          title="Business not found"
+          description="This KYB record is not in the current workspace."
+        />
+      )}
+    </QueryGate>
+  );
 }

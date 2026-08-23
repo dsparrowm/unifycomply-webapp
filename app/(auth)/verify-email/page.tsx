@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
+import type { ClipboardEvent, KeyboardEvent } from "react";
 import { Mail } from "lucide-react";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { AuthCardLayout } from "@/components/auth/AuthLayout";
@@ -11,59 +12,117 @@ import { completeEmailVerify, requestEmailVerify } from "@/lib/api/auth";
 import { getErrorMessage } from "@/lib/api/errors";
 import { useAuthStore } from "@/store/auth.store";
 
+const EMAIL_OTP_LENGTH = 4;
+const inFlightVerifyKeys = new Set<string>();
+const completedVerifyKeys = new Set<string>();
+
+function verifyKey(email: string, token: string) {
+  return `${email.toLowerCase()}:${token}`;
+}
+
 function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token")?.trim() ?? "";
+  const tokenFromLink = searchParams.get("token")?.trim() ?? "";
   const emailFromLink = searchParams.get("email")?.trim() ?? "";
   const userEmail = useAuthStore((state) => state.user?.email);
   const verifyEmail = useAuthStore((state) => state.verifyEmail);
 
   const email = emailFromLink || userEmail || "";
+  const [digits, setDigits] = useState(Array.from({ length: EMAIL_OTP_LENGTH }, () => ""));
   const [formError, setFormError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [isConfirming, setIsConfirming] = useState(Boolean(token));
+  const [isConfirming, setIsConfirming] = useState(Boolean(tokenFromLink));
   const [isResending, setIsResending] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
-  const autoConfirmStarted = useRef(false);
+  const inputsRef = useRef<Array<HTMLInputElement | null>>([]);
 
-  useEffect(() => {
-    if (!token || !email || autoConfirmStarted.current) {
+  const otp = digits.join("");
+  const otpComplete = otp.length === EMAIL_OTP_LENGTH;
+  const autoConfirming = Boolean(tokenFromLink) && isConfirming && !confirmed && !formError;
+
+  const markVerified = (redirect: boolean) => {
+    verifyEmail();
+    setConfirmed(true);
+    setIsConfirming(false);
+    setStatusMessage("Email verified. You can continue to sign in.");
+    if (redirect) {
+      window.setTimeout(() => {
+        router.push("/sign-in");
+      }, 1200);
+    }
+  };
+
+  const confirmToken = async (token: string, redirect: boolean) => {
+    if (!token || !email) {
+      setIsConfirming(false);
       if (token && !email) {
-        setIsConfirming(false);
-        setFormError("This verification link is missing an email. Open the link from your inbox, or request a new one.");
+        setFormError(
+          "This verification request is missing an email. Open the message from your inbox, or go back to register.",
+        );
       }
       return;
     }
 
-    autoConfirmStarted.current = true;
-    let cancelled = false;
+    const key = verifyKey(email, token);
+    if (completedVerifyKeys.has(key)) {
+      markVerified(false);
+      return;
+    }
+    if (inFlightVerifyKeys.has(key)) {
+      return;
+    }
 
-    const run = async () => {
-      setFormError(null);
-      setIsConfirming(true);
-      try {
-        await completeEmailVerify({ token, email });
-        if (cancelled) return;
-        verifyEmail();
-        setConfirmed(true);
-        setStatusMessage("Email verified. Redirecting you to sign in…");
-        window.setTimeout(() => {
-          router.push("/sign-in");
-        }, 1500);
-      } catch (error) {
-        if (cancelled) return;
-        setFormError(getErrorMessage(error, "Could not verify email"));
-      } finally {
-        if (!cancelled) setIsConfirming(false);
-      }
-    };
+    inFlightVerifyKeys.add(key);
+    setFormError(null);
+    setIsConfirming(true);
 
-    void run();
-    return () => {
-      cancelled = true;
-    };
-  }, [email, router, token, verifyEmail]);
+    try {
+      await completeEmailVerify({ token, email });
+      completedVerifyKeys.add(key);
+      markVerified(redirect);
+    } catch (error) {
+      inFlightVerifyKeys.delete(key);
+      setFormError(getErrorMessage(error, "Could not verify email"));
+      setIsConfirming(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!tokenFromLink) {
+      setIsConfirming(false);
+      return;
+    }
+    void confirmToken(tokenFromLink, true);
+    // Link tokens auto-submit once; confirmToken guards duplicate requests.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- inbound link token only
+  }, [tokenFromLink, email]);
+
+  const handleChange = (index: number, value: string) => {
+    if (!/^\d?$/.test(value)) return;
+    const next = [...digits];
+    next[index] = value;
+    setDigits(next);
+    if (value && index < EMAIL_OTP_LENGTH - 1) {
+      inputsRef.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyDown = (index: number, key: string) => {
+    if (key === "Backspace" && !digits[index] && index > 0) {
+      inputsRef.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, EMAIL_OTP_LENGTH);
+    if (!pasted) return;
+    const next = Array.from({ length: EMAIL_OTP_LENGTH }, (_, i) => pasted[i] ?? "");
+    setDigits(next);
+    const focusIndex = Math.min(pasted.length, EMAIL_OTP_LENGTH - 1);
+    inputsRef.current[focusIndex]?.focus();
+  };
 
   const handleResend = async () => {
     if (!email) {
@@ -75,7 +134,7 @@ function VerifyEmailContent() {
     setIsResending(true);
     try {
       await requestEmailVerify(email);
-      setStatusMessage("Verification email sent. Check your inbox.");
+      setStatusMessage("Verification code sent. Check your inbox.");
     } catch (error) {
       setFormError(getErrorMessage(error, "Could not resend verification email"));
     } finally {
@@ -97,16 +156,38 @@ function VerifyEmailContent() {
         {confirmed ? "Email verified" : "Check your inbox"}
       </h1>
       <p className="mt-2 text-sm text-[color:var(--text-muted)]">
-        {token
-          ? isConfirming
-            ? "Confirming your email…"
-            : confirmed
-              ? "Your account is ready. Continue to sign in."
-              : "We could not confirm this link. Request a new verification email below."
-          : email
-            ? `We sent a verification link to ${email}. Open it to activate your account.`
-            : "We sent a verification link to your work email. Open it to activate your account."}
+        {autoConfirming
+          ? "Confirming your email…"
+          : confirmed
+            ? "Your account is ready. Continue to sign in."
+            : email
+              ? `We sent a ${EMAIL_OTP_LENGTH}-digit verification code to ${email}. Enter it below to activate your account.`
+              : `We sent a ${EMAIL_OTP_LENGTH}-digit verification code to your work email. Enter it below to activate your account.`}
       </p>
+
+      {!confirmed && !autoConfirming ? (
+        <div className="mt-6 flex justify-center gap-2">
+          {digits.map((digit, index) => (
+            <input
+              key={index}
+              ref={(element) => {
+                inputsRef.current[index] = element;
+              }}
+              inputMode="numeric"
+              autoComplete={index === 0 ? "one-time-code" : "off"}
+              maxLength={1}
+              value={digit}
+              aria-label={`Digit ${index + 1} of verification code`}
+              onChange={(event) => handleChange(index, event.target.value)}
+              onKeyDown={(event: KeyboardEvent<HTMLInputElement>) =>
+                handleKeyDown(index, event.key)
+              }
+              onPaste={handlePaste}
+              className="h-12 w-12 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] text-center text-lg font-medium outline-none focus:border-[color:var(--accent-primary)] focus:ring-2 focus:ring-[color:var(--accent-primary-soft)]"
+            />
+          ))}
+        </div>
+      ) : null}
 
       {statusMessage ? (
         <p className="mt-4 text-sm text-[color:var(--accent-primary-hover)]">{statusMessage}</p>
@@ -118,10 +199,14 @@ function VerifyEmailContent() {
       ) : null}
 
       <div className="mt-8 space-y-3">
-        {!token && !confirmed ? (
+        {!confirmed && !autoConfirming ? (
           <>
-            <AuthButton type="button" onClick={() => router.push("/sign-in")}>
-              Continue to sign in
+            <AuthButton
+              type="button"
+              disabled={!otpComplete || isConfirming || !email}
+              onClick={() => void confirmToken(otp, true)}
+            >
+              {isConfirming ? "Confirming…" : "Verify email"}
             </AuthButton>
             <button
               type="button"
@@ -129,31 +214,28 @@ function VerifyEmailContent() {
               onClick={() => void handleResend()}
               className="text-sm font-medium text-[color:var(--accent-primary-hover)] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {isResending ? "Sending…" : "Resend verification email"}
+              {isResending ? "Sending…" : "Resend verification code"}
             </button>
           </>
         ) : null}
 
-        {token && !confirmed && !isConfirming ? (
-          <button
-            type="button"
-            disabled={isResending || !email}
-            onClick={() => void handleResend()}
-            className="text-sm font-medium text-[color:var(--accent-primary-hover)] hover:underline disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isResending ? "Sending…" : "Resend verification email"}
-          </button>
+        {confirmed ? (
+          <AuthButton type="button" onClick={() => router.push("/sign-in")}>
+            Continue to sign in
+          </AuthButton>
         ) : null}
       </div>
 
-      <p className="mt-8 text-sm text-[color:var(--text-muted)]">
-        <Link
-          href="/sign-in"
-          className="font-medium text-[color:var(--accent-primary-hover)] hover:underline"
-        >
-          Back to sign in
-        </Link>
-      </p>
+      {confirmed ? (
+        <p className="mt-8 text-sm text-[color:var(--text-muted)]">
+          <Link
+            href="/sign-in"
+            className="font-medium text-[color:var(--accent-primary-hover)] hover:underline"
+          >
+            Back to sign in
+          </Link>
+        </p>
+      ) : null}
     </div>
   );
 }

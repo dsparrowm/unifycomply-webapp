@@ -44,7 +44,14 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
       ) : null}
 
       {activeTab === "risk-analysis" ? (
-        <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
+        detail.riskAnalysis ? (
+          <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
+        ) : (
+          <KybLookupPlaceholderTab
+            title="Risk analysis"
+            description="Task-level risk analysis is not returned on the customer record yet."
+          />
+        )
       ) : null}
 
       {activeTab === "directors" ? (
@@ -67,7 +74,14 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
       ) : null}
 
       {activeTab === "compliance-checks" ? (
-        <KybComplianceChecksTab complianceChecks={detail.complianceChecks} />
+        detail.complianceChecks ? (
+          <KybComplianceChecksTab complianceChecks={detail.complianceChecks} />
+        ) : (
+          <KybLookupPlaceholderTab
+            title="Compliance checks"
+            description="Sanctions and PEP results will appear here when the verification API exposes them on the customer."
+          />
+        )
       ) : null}
 
       <KycDetailFooterActions

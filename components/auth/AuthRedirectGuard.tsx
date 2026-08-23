@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { useAuthHydrated } from "@/lib/hooks/use-auth-hydrated";
-import { useAuthStore } from "@/store/auth.store";
+import { effectiveAuthStep, useAuthStore } from "@/store/auth.store";
 
 const AUTH_ROUTES: Record<string, Array<ReturnType<typeof useAuthStore.getState>["authStep"]>> = {
   "/sign-in": ["signed_out"],
@@ -23,6 +23,12 @@ export function AuthRedirectGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const hydrated = useAuthHydrated();
   const authStep = useAuthStore((state) => state.authStep);
+  const recoverWorkspaceStep = useAuthStore((state) => state.recoverWorkspaceStep);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    recoverWorkspaceStep();
+  }, [hydrated, recoverWorkspaceStep]);
 
   useEffect(() => {
     if (!hydrated) return;

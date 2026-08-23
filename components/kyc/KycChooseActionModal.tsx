@@ -3,7 +3,9 @@
 import { useEffect } from "react";
 import { ChevronRight, FileSearch, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toastInfo } from "@/lib/toast";
 import { cn } from "@/lib/utils";
+import { useUiStore } from "@/store/ui.store";
 
 type KycChooseActionModalProps = {
   open: boolean;
@@ -12,6 +14,7 @@ type KycChooseActionModalProps = {
 
 export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProps) {
   const router = useRouter();
+  const isSandbox = useUiStore((state) => state.environment) === "sandbox";
 
   useEffect(() => {
     if (!open) {
@@ -48,6 +51,12 @@ export function KycChooseActionModal({ open, onClose }: KycChooseActionModalProp
       icon: FileSearch,
       onClick: () => {
         onClose();
+        if (!isSandbox) {
+          toastInfo(
+            "Customers are added through your API. Switch to sandbox to seed a test case.",
+          );
+          return;
+        }
         router.push("/kyc/onboarding");
       },
     },
