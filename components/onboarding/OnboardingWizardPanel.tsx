@@ -11,7 +11,7 @@ import { OnboardingPersonalInfoStep } from "@/components/onboarding/OnboardingPe
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
 import { getAvailableChecks } from "@/lib/api/compliance";
 import { getErrorMessage } from "@/lib/api/errors";
-import { buildCustomerAddress, toE164 } from "@/lib/compliance/format";
+import { buildCustomerAddress, countryCodeFromSlug, toE164 } from "@/lib/compliance/format";
 import { onboardingDefaultData, onboardingSteps } from "@/lib/data/onboarding";
 import { useCreateKycCustomer } from "@/lib/hooks/use-compliance";
 import { toastError, toastSuccess } from "@/lib/toast";
@@ -68,10 +68,12 @@ export function OnboardingWizardPanel({
       return;
     }
 
+    const countryCode = countryCodeFromSlug(personal.nationality);
+
     try {
       let verificationTypes = ["national-id", "sanctions-screening"];
       try {
-        const catalogue = await getAvailableChecks(personal.nationality, "individual");
+        const catalogue = await getAvailableChecks(countryCode, "individual");
         const types = catalogue.checks.map((check) => check.type);
         verificationTypes = types.includes("national-id")
           ? ["national-id", ...types.filter((type) => type === "sanctions-screening" || type === "pep-screening")]
@@ -113,16 +115,16 @@ export function OnboardingWizardPanel({
           firstName: personal.firstName.trim(),
           lastName: personal.lastName.trim(),
           dob: personal.dateOfBirth,
-          countryCode: personal.nationality.toUpperCase(),
+          countryCode,
           gender: personal.gender,
           email: personal.email.trim(),
-          phone: toE164(personal.phone, personal.nationality),
+          phone: toE164(personal.phone, countryCode),
           address: buildCustomerAddress({
             street: personal.street,
             city: personal.city,
             state: personal.state,
             zipCode: personal.zipCode,
-            countryCode: personal.nationality,
+            countryCode,
           }),
         },
         documents,

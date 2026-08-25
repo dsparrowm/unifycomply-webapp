@@ -46,7 +46,10 @@ export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProp
       id: "validate",
       label: "Validate Document",
       icon: FileSearch,
-      onClick: onClose,
+      onClick: () => {
+        onClose();
+        router.push("/kyb/onboarding");
+      },
     },
   ];
 

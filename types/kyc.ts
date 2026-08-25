@@ -315,7 +315,7 @@ export type KycDetail = {
   extractionStatus: string;
   extractedFields: KycExtractedField[];
   timeline: KycTimelineEvent[];
-  riskAnalysis: KycRiskAnalysisData;
+  riskAnalysis: KycRiskAnalysisData | null;
   amlScreening: KycAmlScreeningData | null;
   ipDevice: KycIpDeviceData | null;
   liveness: KycLivenessData | null;

@@ -44,7 +44,7 @@ Navigation and actions must respect the role model defined in `mvp-roadmap.md`.
 | Onboarding / Auth | ONBOARDING - COMPLIANCE OFFICER | M1 | `/sign-in`, `/register`, `/mfa`, … |
 | Overview | OVERVIEW PAGE | M1 | `/overview` |
 | KYC | KYC COMPLIANCE | M2 | `/kyc`, `/kyc/[id]`, `/customers`, … |
-| KYB | KYB COMPLIANCE | M2 | `/kyb`, `/businesses`, … |
+| KYB | KYB COMPLIANCE | M2 | `/kyb`, `/kyb/onboarding`, `/kyb/[id]`, … |
 | Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/[id]` |
 | AML Screening | AML SCREENING | M2 | `/aml-screening` |
 | Transaction Monitoring | Transaction Monitoring | M3 | `/transaction-monitoring`, `/transactions`, … |

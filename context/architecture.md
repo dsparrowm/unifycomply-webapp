@@ -87,7 +87,7 @@ types/                 ← shared TypeScript types
 | Milestone | Routes under `app/(app)/` | Status |
 | --------- | ------------------------- | ------ |
 | **M1** | `/overview`, `/settings`, `/billing`, auth routes | Complete (settings live via API) |
-| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding` | In progress — AML list UI remaining; data still mock |
+| **M2 (active)** | `/kyc`, `/kyb`, `/bank-analysis`, `/aml-screening`, `/packages`, `/request`, `/kyc/onboarding`, `/kyb/onboarding` | In progress — AML list UI remaining; data still mock |
 | M3 | `/transaction-monitoring`, … | Blocked until M3 |
 | M4 | `/sar`, `/pnd-watchlist`, … | Blocked until M4 |
 

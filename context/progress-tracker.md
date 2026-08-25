@@ -36,7 +36,7 @@ M1 is complete. M2 routes through milestone 2 are enabled; M3+ remain disabled.
 
 1. AML screening UI (full section — list, modals, lookup, detail)
 2. Bank analysis supporting flows (lookup entry, batch, detail, wire choose-action CTAs)
-3. KYB Batch Lookup + Validate Document decision (or defer with design)
+3. KYB Batch Lookup (`886:124831`) if still in M2 scope — blocked on batch API
 
 ## Design cache (2026-07-23 / 2026-07-24)
 
@@ -78,7 +78,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 | Area | Figma top-level frames | App coverage | Gaps (screens + supporting UI) |
 | ---- | ---------------------- | ------------ | ------------------------------ |
 | **KYC** | 79–156 (~78 screens) | Strong — list, filters, lookup, detail, decision modals | Minor state variants; choose-action ref = frame 114; no wizard frames |
-| **KYB** | 77–137 (~61 screens) | Strong — list, lookup, detail tabs, decision modals | **Validate Document** dead; **Batch Lookup** (`886:124831`); Confirm Approval variants |
+| **KYB** | 77–137 (~61 screens) | Strong — list, lookup, detail tabs, decision modals | **Batch Lookup** (`886:124831`); Confirm Approval variants |
 | **Bank Analysis** | 11–19, 41–72, run 7–12 (~48) | Partial — list, lookup entry, all five detail tabs | Dedicated batch result (18), remaining run-state variants, escalate flow |
 | **AML Screening** | 15–27 + AML 34–66 + verifications (~67) | Placeholder route only | **Entire section:** list, Batch Screening CTA, choose-action Single/Batch, batch results (24), detail (`AML Screening/ FAVOUR…`), matching config / Create Case (44+), Escalate |
 | **Packages / Request** | No section frames | Placeholder routes | No Figma screens to implement |
@@ -190,8 +190,8 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - `/kyb/lookup` — Perform Lookup entry; ID-type dropdown uses `available-checks` when country is set; result page still mock
 - `/kyb/lookup/result` — business registry lookup results; mock via `lib/data/kyb-lookup.ts`
 - `/kyb/[id]` — live customer + documents + shareholders; directors/risk/compliance tabs empty until those payloads exist
-- KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`; Validate Document → `/kyb/onboarding`
-- `/kyc/[id]` detail — always **full detail** (Figma queue review); never swaps to lookup layout. Live customer + documents + lifecycle; verification merge fills risk/AML when present; missing panels use EmptyState (no mock people)
+- KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`; Validate Document → `/kyb/onboarding` (`CreateKybForm`)
+- `/kyc/[id]` detail — always **full detail** (Figma queue review); never swaps to lookup layout. Live customer + documents + lifecycle; verification merge fills risk/AML when present; missing panels use EmptyState (no mock people). Customer-only mapping does not synthesize a risk analysis.
 - `/kyc/lookup` — Perform Lookup; available-checks labels for ID types; submit still opens mock result
 - `/kyc/lookup/result` — BVN lookup results remain mock via `lib/data/kyc-lookup.ts`
 - `/bank-analysis` — list (frame 11 empty, frame 16 populated); metrics Total screening / Total Alerts Generated / Completed / high risk alerts; **New Lookup** choose-action modal (Single / Batch Lookup)
@@ -266,3 +266,4 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - 2026-08-22: BFF `app/api/v1/[...path]` allowlist includes `customers/` and `verifications/` so KYC/KYB list + lookup calls are not 404 `Path not allowed`
 - 2026-08-22: Fixed `/kyb/[id]` 404 — detail page now uses `useKybDetail` + `mapKybDetail` (live API) instead of mock `getKybDetailById` fixture lookup
 - 2026-08-25: KYC live/Figma safety — `/kyc/[id]` always uses full detail shell; pick verification by `statusRunId` then latest settled; merge risk/AML from API only; EmptyState for docs/IP/liveness/AML when missing; no fake OCR confidence; footer respects `canApprove` / escalate
+- 2026-08-25: Codex P1 follow-up — normalize KYC nationality to ISO via `countryCodeFromSlug`; wire KYB Validate Document → `/kyb/onboarding`; do not synthesize KYC risk analysis or KYB PEP/AML “No Match” when no verification payload exists

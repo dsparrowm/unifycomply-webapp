@@ -23,6 +23,7 @@ The KYB section contains multiple frames (`Customer // KYB // 77` …) as state 
 | `/kyb` | KYB business list | Done — empty default (frame 79) + populated fixture (frame 84) |
 | `/kyb/lookup` | Perform Lookup entry (frames 85–88) | Done |
 | `/kyb/lookup/result` | Registry lookup results | Done — mock CAC/TIN/RC result |
+| `/kyb/onboarding` | Validate Document live create form | Done — `POST /v1/customers/kyb` |
 | `/kyb/[id]` | KYB business detail (frame 93) | Done — Business Overview tab + decision footer |
 
 App shell is provided by `app/(app)/layout.tsx`.
@@ -68,6 +69,7 @@ Same **0–4 risk score scale** as KYC and Settings → Approvals. Numeric score
 | `KybTable` | Data table or empty state |
 | `KybListPanel` | Composes list screen |
 | `KybChooseActionModal` | Add Business action picker (Perform Lookup, Validate Document) |
+| `CreateKybForm` | Live Validate Document create form on `/kyb/onboarding` |
 | `KybLookupEntryPanel` | Perform Lookup verification form |
 | `KybLookupResultPanel` | Business registry lookup results with tabs and footer actions |
 | `KybDetailPanel` | KYB detail with Business Overview tab, sidebar panels, decision modals |
@@ -96,6 +98,7 @@ Same **0–4 risk score scale** as KYC and Settings → Approvals. Numeric score
 - [x] Add Business button opens choose-action modal
 - [x] Populated fixture with metrics `12` / `4` / `4` / `4`
 - [x] Add Business → Perform Lookup routes to `/kyb/lookup`
+- [x] Add Business → Validate Document routes to `/kyb/onboarding`
 - [x] Perform Lookup entry — single + bulk verification form
 - [x] Perform Lookup result — registry card, summary panel, tabs, footer actions
 - [x] KYB detail route (`/kyb/[id]`) — frame 93 Business Overview baseline
@@ -108,8 +111,7 @@ Same **0–4 risk score scale** as KYC and Settings → Approvals. Numeric score
 
 ## Out of scope (this unit)
 
-- Real API integration
-- Validate Document flow from choose-action modal
+- Real API integration for registry lookup results
 - Directors & Officers tab for risk score 2 baseline
 - Standalone `/aml-screening` list UI (see `08-aml-screening.md`)
 

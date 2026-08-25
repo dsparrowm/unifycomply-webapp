@@ -14,11 +14,9 @@ import {
   shortCustomerRef,
 } from "@/lib/compliance/format";
 import { kycDetailAvailability } from "@/lib/api/mappers/kyc-detail-merge";
-import { buildRiskAnalysisData } from "@/lib/compliance/risk-analysis";
 import { clampRiskScore, getRiskAnalysisScoreLabel } from "@/lib/kyc/risk-score";
 import type { KycDetail, KycExtractedField, KycListData, KycMetric, KycRecord } from "@/types/kyc";
 import type {
-  KybComplianceChecksData,
   KybDetail,
   KybListData,
   KybRecord,
@@ -42,21 +40,6 @@ function metricsFromStatuses(records: Array<{ status: KycRecord["status"]; riskS
     if (record.status === "rejected") metrics[3].value += 1;
   }
   return metrics;
-}
-
-function emptyComplianceChecks(): KybComplianceChecksData {
-  return {
-    clearanceStatus: "Unavailable",
-    registryChecks: [],
-    sanctionsLists: [],
-    pepCheck: { id: "pep", label: "PEP Check", description: "No screening payload yet.", status: "no-match" },
-    adverseMediaCheck: {
-      id: "adverse-media",
-      label: "Adverse Media",
-      description: "No screening payload yet.",
-      status: "no-match",
-    },
-  };
 }
 
 export function mapKycRecord(
@@ -138,11 +121,11 @@ export function mapKycDetail(
       timestamp: event.createdAt,
       status: "completed" as const,
     })),
-    riskAnalysis: buildRiskAnalysisData(riskScore),
+    riskAnalysis: null,
     amlScreening: null,
     ipDevice: null,
     liveness: null,
-    availability: kycDetailAvailability({ riskAnalysis: true }),
+    availability: kycDetailAvailability(),
   };
 }
 
@@ -236,10 +219,10 @@ export function mapKybDetail(
     businessPermit: "—",
     operatingCountries: record.country,
     riskFactors: [],
-    riskAnalysis: buildRiskAnalysisData(clampRiskScore(record.riskScore), "business"),
+    riskAnalysis: null,
     shareholders: mapShareholders(shareholders),
     documents: mapDocuments(documents),
     directors: null,
-    complianceChecks: emptyComplianceChecks(),
+    complianceChecks: null,
   };
 }

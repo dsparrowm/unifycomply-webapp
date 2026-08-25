@@ -186,11 +186,11 @@ export type KybDetail = {
   businessPermit: string;
   operatingCountries: string;
   riskFactors: KybRiskFactor[];
-  riskAnalysis: KycRiskAnalysisData;
+  riskAnalysis: KycRiskAnalysisData | null;
   directors: KybDirectorsData | null;
   shareholders: KybShareCapitalData;
   documents: KybSubmittedDocumentsData;
-  complianceChecks: KybComplianceChecksData;
+  complianceChecks: KybComplianceChecksData | null;
 };
 
 export type KybRegistryLookupResult = {

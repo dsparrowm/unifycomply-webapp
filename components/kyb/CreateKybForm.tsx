@@ -13,7 +13,7 @@ import { getErrorMessage } from "@/lib/api/errors";
 import { buildCustomerAddress, toE164 } from "@/lib/compliance/format";
 import {
   onboardingBusinessTypeOptions,
-  onboardingCountryOptions,
+  onboardingCountryCodeOptions,
 } from "@/lib/data/onboarding";
 import { useCreateKybCustomer } from "@/lib/hooks/use-compliance";
 import { toastError, toastSuccess } from "@/lib/toast";
@@ -49,7 +49,7 @@ export function CreateKybForm() {
     defaultValues: {
       companyName: "",
       country: "NG",
-      businessType: "private-limited-company",
+      businessType: "",
       registrationDate: "",
       contactEmail: "",
       contactPhone: "",
@@ -137,7 +137,7 @@ export function CreateKybForm() {
           />
           <SettingsSelect
             label="Country"
-            options={onboardingCountryOptions.filter((option) => option.value)}
+            options={onboardingCountryCodeOptions.filter((option) => option.value)}
             error={errors.country?.message}
             {...register("country")}
           />
