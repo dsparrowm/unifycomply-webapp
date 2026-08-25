@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 
 type KycDetailFooterActionsProps = {
   riskScore: number;
+  /** When set from the API, overrides score-based threshold. */
+  canApprove?: boolean;
+  requiresEscalation?: boolean;
   onRequestResubmission: () => void;
   onReject: () => void;
   onApprove: () => void;
@@ -14,12 +17,15 @@ type KycDetailFooterActionsProps = {
 
 export function KycDetailFooterActions({
   riskScore,
+  canApprove,
+  requiresEscalation,
   onRequestResubmission,
   onReject,
   onApprove,
   onEscalate,
 }: KycDetailFooterActionsProps) {
-  const approvalBlocked = isApprovalBlocked(riskScore);
+  const approvalBlocked =
+    canApprove === false || requiresEscalation === true || isApprovalBlocked(riskScore);
 
   if (approvalBlocked) {
     return (

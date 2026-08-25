@@ -20,9 +20,9 @@ import {
   startKycVerification,
 } from "@/lib/api/compliance";
 import { mapKybDetail, mapKybListData, mapKycDetail, mapKycListData } from "@/lib/api/mappers/compliance";
-import { isVerificationSettled, mapVerificationView } from "@/lib/api/mappers/verification";
+import { mergeKycDetailWithVerification } from "@/lib/api/mappers/kyc-detail-merge";
+import { isVerificationSettled } from "@/lib/api/mappers/verification";
 import type { CreateKybCustomerDto, CreateKycCustomerDto } from "@/lib/api/types";
-import { newestIdentityDocument } from "@/lib/compliance/document-type";
 import { fileToDataUri } from "@/lib/compliance/format";
 import { startKycLookup } from "@/lib/compliance/lookup-run";
 
@@ -65,28 +65,22 @@ export function useKycDetail(customerId: string) {
     queryKey: complianceKeys.kycDetail(customerId),
     enabled: Boolean(customerId),
     queryFn: async () => {
-      const [customer, documents, verification] = await Promise.all([
+      const [customer, documents] = await Promise.all([
         getKycCustomer(customerId),
         listKycDocuments(customerId).catch(() => []),
-        findVerificationForCustomer(customerId).catch(() => null),
       ]);
-      const detail = mapKycDetail(customer, documents);
-      const mapped = verification
-        ? mapVerificationView(verification, {
-            customer,
-            documents,
-            identifier: newestIdentityDocument(documents)?.idNumber ?? undefined,
-          })
-        : null;
-      return {
-        detail:
-          mapped && !mapped.usesLookupLayout
-            ? { ...detail, riskScore: mapped.result.riskScore, riskAnalysis: mapped.riskAnalysis, amlScreening: mapped.amlScreening }
-            : detail,
-        lookupView: mapped?.usesLookupLayout ? mapped : null,
-      };
+      const verification = await findVerificationForCustomer(
+        customerId,
+        customer.statusRunId,
+      ).catch(() => null);
+
+      let detail = mapKycDetail(customer, documents);
+      if (verification) {
+        detail = mergeKycDetailWithVerification(detail, verification);
+      }
+
+      return { detail };
     },
-    refetchInterval: (query) => (query.state.data?.lookupView?.polling ? 2000 : false),
   });
 }
 

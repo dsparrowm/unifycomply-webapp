@@ -191,7 +191,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - `/kyb/lookup/result` — business registry lookup results; mock via `lib/data/kyb-lookup.ts`
 - `/kyb/[id]` — live customer + documents + shareholders; directors/risk/compliance tabs empty until those payloads exist
 - KYB list **Add Business** opens choose-action modal — Perform Lookup → `/kyb/lookup`; Validate Document → `/kyb/onboarding`
-- `/kyc/[id]` detail — live customer + documents + lifecycle timeline; missing Figma panels use EmptyState (no mock people)
+- `/kyc/[id]` detail — always **full detail** (Figma queue review); never swaps to lookup layout. Live customer + documents + lifecycle; verification merge fills risk/AML when present; missing panels use EmptyState (no mock people)
 - `/kyc/lookup` — Perform Lookup; available-checks labels for ID types; submit still opens mock result
 - `/kyc/lookup/result` — BVN lookup results remain mock via `lib/data/kyc-lookup.ts`
 - `/bank-analysis` — list (frame 11 empty, frame 16 populated); metrics Total screening / Total Alerts Generated / Completed / high risk alerts; **New Lookup** choose-action modal (Single / Batch Lookup)
@@ -265,3 +265,4 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - 2026-08-22: Restored live `/kyc` and `/kyb` lists (`GET /v1/customers/kyc|kyb`) after an incomplete revert had put the Figma populated fixtures back on those pages
 - 2026-08-22: BFF `app/api/v1/[...path]` allowlist includes `customers/` and `verifications/` so KYC/KYB list + lookup calls are not 404 `Path not allowed`
 - 2026-08-22: Fixed `/kyb/[id]` 404 — detail page now uses `useKybDetail` + `mapKybDetail` (live API) instead of mock `getKybDetailById` fixture lookup
+- 2026-08-25: KYC live/Figma safety — `/kyc/[id]` always uses full detail shell; pick verification by `statusRunId` then latest settled; merge risk/AML from API only; EmptyState for docs/IP/liveness/AML when missing; no fake OCR confidence; footer respects `canApprove` / escalate

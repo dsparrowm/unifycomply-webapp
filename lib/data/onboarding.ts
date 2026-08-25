@@ -16,6 +16,12 @@ export const onboardingNationalityOptions = [
   { label: "South Africa", value: "South Africa" },
 ];
 
+export const onboardingGenderOptions = [
+  { label: "Select gender", value: "" },
+  { label: "Male", value: "male" },
+  { label: "Female", value: "female" },
+];
+
 export const onboardingBusinessTypeOptions = [
   { label: "Select business type", value: "" },
   { label: "Private Limited Company", value: "Private Limited Company" },
@@ -40,6 +46,11 @@ export const onboardingDefaultData: OnboardingWizardData = {
     phone: "",
     dateOfBirth: "",
     nationality: "",
+    gender: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
   },
   business: {
     companyName: "",

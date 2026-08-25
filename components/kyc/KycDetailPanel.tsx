@@ -34,6 +34,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   const [activeModal, setActiveModal] = useState<KycDetailModal>(null);
 
   const detail = { ...initialDetail, status };
+  const { availability } = detail;
 
   function closeModal() {
     setActiveModal(null);
@@ -47,10 +48,12 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
       {activeTab === "document" ? (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_457px]">
           <div className="space-y-6">
-            <EmptyState
-              title="Document images unavailable"
-              description="Uploaded files are stored by the API, but preview URLs are not exposed on this customer record yet."
-            />
+            {availability.documentPreview ? null : (
+              <EmptyState
+                title="Document images unavailable"
+                description="Uploaded files are stored by the API, but preview URLs are not exposed on this customer record yet."
+              />
+            )}
             <KycExtractedInformation
               fields={detail.extractedFields}
               statusLabel={detail.extractionStatus}
@@ -64,14 +67,16 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
               <KycRiskAnalysisCard detail={detail} />
             )}
             {detail.documentAlert ? <KycDocumentAlertCard alert={detail.documentAlert} /> : null}
-            <EmptyState title="Biometric match unavailable" description={unavailableCopy} />
+            {availability.biometric ? null : (
+              <EmptyState title="Biometric match unavailable" description={unavailableCopy} />
+            )}
             <KycVerificationTimeline events={detail.timeline} />
           </div>
         </div>
       ) : null}
 
       {activeTab === "risk-analysis" ? (
-        detail.riskAnalysis ? (
+        availability.riskAnalysis && detail.riskAnalysis ? (
           <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
         ) : (
           <EmptyState title="Risk analysis unavailable" description={unavailableCopy} />
@@ -79,15 +84,18 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
       ) : null}
 
       {activeTab === "aml-screening" ? (
-        detail.amlScreening ? (
+        availability.amlScreening && detail.amlScreening ? (
           <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
         ) : (
-          <EmptyState title="AML screening unavailable" description={unavailableCopy} />
+          <EmptyState
+            title="AML screening unavailable"
+            description="No verification screening payload is linked to this customer yet."
+          />
         )
       ) : null}
 
       {activeTab === "ip-device" ? (
-        detail.ipDevice ? (
+        availability.ipDevice && detail.ipDevice ? (
           <KycIpDevicePanel ipDevice={detail.ipDevice} />
         ) : (
           <EmptyState title="IP and device data unavailable" description={unavailableCopy} />
@@ -95,7 +103,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
       ) : null}
 
       {activeTab === "liveness" ? (
-        detail.liveness ? (
+        availability.liveness && detail.liveness ? (
           <KycLivenessPanel liveness={detail.liveness} />
         ) : (
           <EmptyState title="Liveness data unavailable" description={unavailableCopy} />
@@ -104,6 +112,8 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
 
       <KycDetailFooterActions
         riskScore={detail.riskScore}
+        canApprove={detail.canApprove}
+        requiresEscalation={detail.requiresEscalation}
         onRequestResubmission={() => setActiveModal("resubmission")}
         onReject={() => setActiveModal("reject")}
         onApprove={() => setActiveModal("approve")}

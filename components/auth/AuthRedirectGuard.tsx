@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { useAuthHydrated } from "@/lib/hooks/use-auth-hydrated";
-import { effectiveAuthStep, useAuthStore } from "@/store/auth.store";
+import { useAuthStore } from "@/store/auth.store";
 
 const AUTH_ROUTES: Record<string, Array<ReturnType<typeof useAuthStore.getState>["authStep"]>> = {
   "/sign-in": ["signed_out"],

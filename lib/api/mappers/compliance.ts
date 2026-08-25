@@ -13,19 +13,10 @@ import {
   priorityFromRisk,
   shortCustomerRef,
 } from "@/lib/compliance/format";
+import { kycDetailAvailability } from "@/lib/api/mappers/kyc-detail-merge";
 import { buildRiskAnalysisData } from "@/lib/compliance/risk-analysis";
-import { clampRiskScore, getAmlRiskLevelLabel, getAmlScreeningStatusLabel, RISK_SCORE_MAX } from "@/lib/kyc/risk-score";
-import type {
-  KycAmlScreeningData,
-  KycAmlScreeningRow,
-  KycDetail,
-  KycExtractedField,
-  KycIpDeviceData,
-  KycListData,
-  KycLivenessData,
-  KycMetric,
-  KycRecord,
-} from "@/types/kyc";
+import { clampRiskScore, getRiskAnalysisScoreLabel } from "@/lib/kyc/risk-score";
+import type { KycDetail, KycExtractedField, KycListData, KycMetric, KycRecord } from "@/types/kyc";
 import type {
   KybComplianceChecksData,
   KybDetail,
@@ -51,58 +42,6 @@ function metricsFromStatuses(records: Array<{ status: KycRecord["status"]; riskS
     if (record.status === "rejected") metrics[3].value += 1;
   }
   return metrics;
-}
-
-function noMatchRow(label: string): KycAmlScreeningRow {
-  return { label, status: "no-match", statusLabel: "No Match" };
-}
-
-function emptyAmlScreening(score: number): KycAmlScreeningData {
-  return {
-    clearanceStatus: score === 0 ? "Cleared" : "Review",
-    screeningStatus: getAmlScreeningStatusLabel(score),
-    screeningStatusNote: "No screening payload on this customer yet.",
-    riskLevelLabel: getAmlRiskLevelLabel(score),
-    riskLevel: score,
-    riskScore: score,
-    riskScoreMax: RISK_SCORE_MAX,
-    pepCheck: noMatchRow("PEP Check"),
-    sanctionsLists: [
-      { id: "ofac", label: "OFAC", status: "no-match" },
-      { id: "un", label: "UN", status: "no-match" },
-      { id: "eu", label: "EU", status: "no-match" },
-      { id: "uk", label: "UK", status: "no-match" },
-    ],
-    warningEnforcement: noMatchRow("Warning / Enforcement"),
-    watchlist: noMatchRow("Watchlist"),
-  };
-}
-
-function emptyIpDevice(country: string): KycIpDeviceData {
-  return {
-    clearanceStatus: "Unavailable",
-    ipAddress: "—",
-    ipAddressNote: "No device session on this customer yet.",
-    location: "—",
-    countryLabel: `Country: ${country}`,
-    vpnDetection: { label: "VPN Detection", statusLabel: "No Match", detected: false },
-    proxyDetection: { label: "Proxy Detection", statusLabel: "No Match", detected: false },
-    device: { label: "Device", version: "—", status: "pass" },
-    usageStats: { count: "—", deviceType: "—", status: "pass" },
-  };
-}
-
-function emptyLiveness(): KycLivenessData {
-  return {
-    overallStatusLabel: "Unavailable",
-    livenessStatus: "Unavailable",
-    livenessStatusNote: "No liveness check on this customer yet.",
-    confidenceScore: "—",
-    confidenceNote: "",
-    completionTime: "—",
-    attemptsLabel: "—",
-    checks: [],
-  };
 }
 
 function emptyComplianceChecks(): KybComplianceChecksData {
@@ -153,15 +92,22 @@ export function mapKycListData(
 
 function extractedFieldsFromCustomer(customer: ApiKycCustomer): KycExtractedField[] {
   const address = formatAddress(customer.address);
+  const field = (id: string, label: string, value: string): KycExtractedField => ({
+    id,
+    label,
+    value: value || "—",
+    confidence: null,
+  });
+
   return [
-    { id: "firstName", label: "First name", value: customer.firstName || "—", confidence: 100 },
-    { id: "lastName", label: "Last name", value: customer.lastName || "—", confidence: 100 },
-    { id: "dob", label: "Date of birth", value: customer.dob || "—", confidence: 100 },
-    { id: "gender", label: "Gender", value: customer.gender || "—", confidence: 100 },
-    { id: "email", label: "Email", value: customer.email || "—", confidence: 100 },
-    { id: "phone", label: "Phone", value: customer.phone || "—", confidence: 100 },
-    { id: "country", label: "Country", value: countryNameFromCode(customer.countryCode), confidence: 100 },
-    { id: "address", label: "Address", value: address, confidence: 100 },
+    field("firstName", "First name", customer.firstName),
+    field("lastName", "Last name", customer.lastName),
+    field("dob", "Date of birth", customer.dob ?? ""),
+    field("gender", "Gender", customer.gender ?? ""),
+    field("email", "Email", customer.email ?? ""),
+    field("phone", "Phone", customer.phone ?? ""),
+    field("country", "Country", countryNameFromCode(customer.countryCode)),
+    field("address", "Address", address),
   ];
 }
 
@@ -170,6 +116,8 @@ export function mapKycDetail(
   documents: ApiComplianceDocument[],
 ): KycDetail {
   const record = mapKycRecord(customer, documents);
+  const riskScore = clampRiskScore(record.riskScore);
+
   return {
     id: customer.id,
     kycId: record.kycId,
@@ -178,22 +126,23 @@ export function mapKycDetail(
     country: record.country,
     status: record.status,
     priority: record.priority,
-    riskScore: record.riskScore,
-    riskSummary: record.riskScore === 0 ? "Standard Score" : String(record.riskScore),
+    riskScore,
+    riskSummary: getRiskAnalysisScoreLabel(riskScore),
     matchScore: 0,
     livenessStatus: "Unavailable",
-    extractionStatus: documents.length > 0 ? "Customer record" : "No documents",
+    extractionStatus: "Customer record",
     extractedFields: extractedFieldsFromCustomer(customer),
     timeline: (customer.lifecycle ?? []).map((event) => ({
       id: event.id,
-      title: event.toStatus,
+      title: mapLifecycleStatus(event.toStatus),
       timestamp: event.createdAt,
-      status: "completed",
+      status: "completed" as const,
     })),
-    riskAnalysis: buildRiskAnalysisData(clampRiskScore(record.riskScore)),
-    amlScreening: emptyAmlScreening(record.riskScore),
-    ipDevice: emptyIpDevice(record.country),
-    liveness: emptyLiveness(),
+    riskAnalysis: buildRiskAnalysisData(riskScore),
+    amlScreening: null,
+    ipDevice: null,
+    liveness: null,
+    availability: kycDetailAvailability({ riskAnalysis: true }),
   };
 }
 

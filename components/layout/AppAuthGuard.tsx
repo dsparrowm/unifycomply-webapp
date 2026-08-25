@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { useAuthHydrated } from "@/lib/hooks/use-auth-hydrated";
-import { effectiveAuthStep, useAuthStore } from "@/store/auth.store";
+import { useAuthStore } from "@/store/auth.store";
 
 export function AppAuthGuard({ children }: { children: ReactNode }) {
   const router = useRouter();

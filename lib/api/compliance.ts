@@ -14,6 +14,7 @@ import type {
   CreateKycCustomerDto,
   StartVerificationDto,
 } from "@/lib/api/types";
+import { isVerificationSettled } from "@/lib/api/mappers/verification";
 
 export type PagedResult<T> = {
   items: T;
@@ -131,16 +132,35 @@ export async function getVerification(workflowId: string) {
   return apiFetch<ApiVerificationDetail>(`/api/v1/verifications/${workflowId}`);
 }
 
-export async function findVerificationForCustomer(customerId: string) {
+export async function findVerificationForCustomer(
+  customerId: string,
+  preferredRunId?: string | null,
+) {
   const { items } = await listVerifications({ profileType: "individual", limit: 40 });
-  const details = await Promise.all(items.map((workflow) => getVerification(workflow.id).catch(() => null)));
-  return (
-    details.find((detail) => {
-      if (!detail) return false;
-      if (detail.run?.run.customerId === customerId) return true;
-      return detail.events?.some((event) => event.detail?.customerId === customerId) ?? false;
-    }) ?? null
-  );
+  const details = (
+    await Promise.all(items.map((workflow) => getVerification(workflow.id).catch(() => null)))
+  ).filter((detail): detail is ApiVerificationDetail => Boolean(detail));
+
+  const forCustomer = details.filter((detail) => {
+    if (detail.run?.run.customerId === customerId) return true;
+    return detail.events?.some((event) => event.detail?.customerId === customerId) ?? false;
+  });
+
+  if (forCustomer.length === 0) return null;
+
+  if (preferredRunId) {
+    const byStatusRun = forCustomer.find((detail) => detail.run?.run.id === preferredRunId);
+    if (byStatusRun) return byStatusRun;
+  }
+
+  const settled = forCustomer.filter(isVerificationSettled);
+  const pool = settled.length > 0 ? settled : forCustomer;
+
+  return [...pool].sort((a, b) => {
+    const aTime = Date.parse(a.workflow.updatedAt ?? a.workflow.createdAt ?? "") || 0;
+    const bTime = Date.parse(b.workflow.updatedAt ?? b.workflow.createdAt ?? "") || 0;
+    return bTime - aTime;
+  })[0];
 }
 
 export function workflowIdFromStart(started: ApiVerificationStart) {

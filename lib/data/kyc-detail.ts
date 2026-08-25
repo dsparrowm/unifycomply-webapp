@@ -1,5 +1,6 @@
 import { buildRiskAnalysisData } from "@/lib/compliance/risk-analysis";
 import { kycListDataPopulated } from "@/lib/data/kyc";
+import { kycDetailAvailability } from "@/lib/api/mappers/kyc-detail-merge";
 import { getAmlRiskLevelLabel, getAmlScreeningStatusLabel, RISK_SCORE_MAX, type RiskScore } from "@/lib/kyc/risk-score";
 import type {
   KycAmlScreeningData,
@@ -365,8 +366,25 @@ function buildAmlScreening(score: RiskScore, options?: { pepMatch?: boolean }): 
 
 type KycDetailTemplate = Omit<
   KycDetail,
-  "id" | "kycId" | "customerName" | "documentType" | "country" | "countryCode" | "status" | "priority"
->;
+  | "id"
+  | "kycId"
+  | "customerName"
+  | "documentType"
+  | "country"
+  | "countryCode"
+  | "status"
+  | "priority"
+  | "availability"
+  | "canApprove"
+  | "requiresEscalation"
+  | "amlScreening"
+  | "ipDevice"
+  | "liveness"
+> & {
+  amlScreening: KycAmlScreeningData;
+  ipDevice: KycIpDeviceData;
+  liveness: KycLivenessData;
+};
 
 function buildDetailTemplate(score: RiskScore): KycDetailTemplate {
   const riskSummaryByScore: Record<RiskScore, string> = {
@@ -452,6 +470,24 @@ function buildTimeline(record: KycRecord, templateTimeline: KycTimelineEvent[]):
 function buildDetailFromRecord(record: KycRecord): KycDetail {
   const score = Math.min(RISK_SCORE_MAX, Math.max(0, record.riskScore)) as RiskScore;
   const template = kycDetailByScore[score];
+  const amlScreening: KycAmlScreeningData = {
+    clearanceStatus: template.amlScreening.clearanceStatus,
+    screeningStatus: template.amlScreening.screeningStatus,
+    screeningStatusNote: template.amlScreening.screeningStatusNote,
+    riskLevelLabel: getAmlRiskLevelLabel(score),
+    riskLevel: score,
+    riskScore: score,
+    riskScoreMax: template.amlScreening.riskScoreMax,
+    pepCheck: template.amlScreening.pepCheck,
+    sanctionsLists: template.amlScreening.sanctionsLists,
+    warningEnforcement: template.amlScreening.warningEnforcement,
+    watchlist: template.amlScreening.watchlist,
+    pepMatchDetail: template.amlScreening.pepMatchDetail,
+  };
+  const ipDevice: KycIpDeviceData = {
+    ...template.ipDevice,
+    countryLabel: `Country: ${record.country}`,
+  };
 
   return {
     id: record.id,
@@ -469,17 +505,18 @@ function buildDetailFromRecord(record: KycRecord): KycDetail {
     extractedFields: buildExtractedFields(record, template.extractedFields),
     timeline: buildTimeline(record, template.timeline),
     riskAnalysis: template.riskAnalysis,
-    amlScreening: {
-      ...template.amlScreening,
-      riskLevel: score,
-      riskScore: score,
-      riskLevelLabel: getAmlRiskLevelLabel(score),
-    },
-    ipDevice: {
-      ...template.ipDevice,
-      countryLabel: `Country: ${record.country}`,
-    },
+    amlScreening,
+    ipDevice,
     liveness: template.liveness,
+    availability: kycDetailAvailability({
+      documentPreview: true,
+      ocr: true,
+      biometric: true,
+      ipDevice: true,
+      liveness: true,
+      amlScreening: true,
+      riskAnalysis: true,
+    }),
     documentRiskTier: template.documentRiskTier,
     documentAlert: template.documentAlert,
   };

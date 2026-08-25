@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Onest } from "next/font/google";
+import localFont from "next/font/local";
 import { AppProviders } from "@/components/providers/AppProviders";
 import "./globals.css";
 
-const onest = Onest({
-  subsets: ["latin"],
+const onest = localFont({
+  src: [
+    { path: "../fonts/onest/onest-400.ttf", weight: "400", style: "normal" },
+    { path: "../fonts/onest/onest-500.ttf", weight: "500", style: "normal" },
+    { path: "../fonts/onest/onest-600.ttf", weight: "600", style: "normal" },
+    { path: "../fonts/onest/onest-700.ttf", weight: "700", style: "normal" },
+  ],
   variable: "--font-onest",
+  display: "swap",
 });
 
 export const metadata: Metadata = {

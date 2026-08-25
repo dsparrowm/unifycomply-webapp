@@ -84,7 +84,7 @@ export function KycLookupResultPanel({
         />
       ) : null}
 
-      <KycLookupFooterActions />
+      <KycLookupFooterActions riskScore={view.result.riskScore} />
     </div>
   );
 }

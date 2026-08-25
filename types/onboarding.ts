@@ -17,6 +17,11 @@ export type OnboardingPersonalInfo = {
   phone: string;
   dateOfBirth: string;
   nationality: string;
+  gender: "male" | "female" | "";
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
 };
 
 export type OnboardingBusinessInfo = {
