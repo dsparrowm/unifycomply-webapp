@@ -17,6 +17,7 @@ const statusLabels: Record<KybVerificationStatus, string> = {
   rejected: "Rejected",
   "in-review": "In Review",
   escalated: "Escalated",
+  resubmission: "Resubmission",
 };
 
 const priorityLabels: Record<KybPriority, string> = {

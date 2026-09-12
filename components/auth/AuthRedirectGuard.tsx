@@ -23,6 +23,12 @@ export function AuthRedirectGuard({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const hydrated = useAuthHydrated();
   const authStep = useAuthStore((state) => state.authStep);
+  const recoverWorkspaceStep = useAuthStore((state) => state.recoverWorkspaceStep);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    recoverWorkspaceStep();
+  }, [hydrated, recoverWorkspaceStep]);
 
   useEffect(() => {
     if (!hydrated) return;

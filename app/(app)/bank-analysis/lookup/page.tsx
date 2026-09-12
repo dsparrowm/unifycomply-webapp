@@ -9,7 +9,6 @@ export default async function BankAnalysisLookupPage({
   searchParams,
 }: BankAnalysisLookupPageProps) {
   const { mode } = await searchParams;
-  const initialMode: BankAnalysisLookupMode = mode === "batch" ? "batch" : "single";
 
-  return <BankAnalysisLookupEntryPanel initialMode={initialMode} />;
+  return <BankAnalysisLookupEntryPanel mode={mode === "batch" ? "batch" : "single"} />;
 }

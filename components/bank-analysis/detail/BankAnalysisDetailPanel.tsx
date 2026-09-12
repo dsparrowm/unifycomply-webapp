@@ -12,12 +12,12 @@ import {
   BankAnalysisDetailTabs,
   type BankAnalysisDetailTab,
 } from "@/components/bank-analysis/detail/BankAnalysisDetailTabs";
+import { BankAnalysisEscalateModal } from "@/components/bank-analysis/detail/BankAnalysisEscalateModal";
 import { BankAnalysisNetworkPanel } from "@/components/bank-analysis/detail/BankAnalysisNetworkPanel";
 import { BankAnalysisSummaryPanel } from "@/components/bank-analysis/detail/BankAnalysisSummaryPanel";
-import type {
-  BankAnalysisDecisionHistoryEntry,
-  BankAnalysisDetail,
-} from "@/types/bank-analysis";
+import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
+import { isApprovalBlocked } from "@/lib/kyc/risk-score";
+import type { BankAnalysisDetail } from "@/types/bank-analysis";
 
 type BankAnalysisDetailPanelProps = {
   detail: BankAnalysisDetail;
@@ -27,26 +27,8 @@ export function BankAnalysisDetailPanel({
   detail,
 }: BankAnalysisDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<BankAnalysisDetailTab>("Bank Summary");
-  const [decisionHistory, setDecisionHistory] = useState(detail.decisionHistory);
-  const [escalateModalOpen, setEscalateModalOpen] = useState(false);
-  const [feedback, setFeedback] = useState("");
-  const escalated = decisionHistory.some((entry) => entry.type === "escalated");
-
-  const handleEscalation = (notes: string) => {
-    const entry: BankAnalysisDecisionHistoryEntry = {
-      id: `escalated-${Date.now()}`,
-      type: "escalated",
-      title: "Escalated to Senior Officer",
-      description: notes,
-      actor: "Current Compliance Officer",
-      timestamp: "Just now",
-    };
-
-    setDecisionHistory((current) => [entry, ...current]);
-    setEscalateModalOpen(false);
-    setFeedback("Analysis escalated to the Senior Officer queue.");
-    setActiveTab("Decision history");
-  };
+  const [escalateOpen, setEscalateOpen] = useState(false);
+  const showEscalateFooter = isApprovalBlocked(detail.riskScore);
 
   return (
     <div className="mx-auto flex max-w-[1327px] flex-col gap-6 pb-6">
@@ -78,15 +60,22 @@ export function BankAnalysisDetailPanel({
         ) : null}
         <BankAnalysisDetailSidebar detail={detail} />
       </div>
-      <BankAnalysisDetailActions
-        escalated={escalated}
-        onEscalate={() => setEscalateModalOpen(true)}
-      />
+
+      {showEscalateFooter ? (
+        <KycDetailFooterActions
+          riskScore={detail.riskScore}
+          onRequestResubmission={() => undefined}
+          onReject={() => undefined}
+          onApprove={() => undefined}
+          onEscalate={() => setEscalateOpen(true)}
+        />
+      ) : null}
+
       <BankAnalysisEscalateModal
-        open={escalateModalOpen}
-        detail={detail}
-        onClose={() => setEscalateModalOpen(false)}
-        onConfirm={handleEscalation}
+        open={escalateOpen}
+        summary={detail.escalateSummary}
+        onClose={() => setEscalateOpen(false)}
+        onConfirm={() => setEscalateOpen(false)}
       />
     </div>
   );

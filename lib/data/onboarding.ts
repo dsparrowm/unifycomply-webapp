@@ -40,6 +40,12 @@ export const onboardingDefaultData: OnboardingWizardData = {
     phone: "",
     dateOfBirth: "",
     nationality: "",
+    gender: "",
+    houseNo: "",
+    street: "",
+    city: "",
+    state: "",
+    zipCode: "",
   },
   business: {
     companyName: "",
@@ -58,3 +64,9 @@ export const onboardingDefaultData: OnboardingWizardData = {
     accuracyDeclaration: false,
   },
 };
+
+export const onboardingGenderOptions = [
+  { label: "Select gender", value: "" },
+  { label: "Male", value: "male" },
+  { label: "Female", value: "female" },
+];

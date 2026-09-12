@@ -1,6 +1,5 @@
-import { KycListPanel } from "@/components/kyc/KycListPanel";
-import { kycListDataPopulated } from "@/lib/data/kyc";
+import { KycListContainer } from "@/components/kyc/KycListContainer";
 
 export default function KycPage() {
-  return <KycListPanel data={kycListDataPopulated} />;
+  return <KycListContainer />;
 }

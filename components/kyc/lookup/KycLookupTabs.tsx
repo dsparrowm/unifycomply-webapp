@@ -8,19 +8,22 @@ const tabs: { id: KycLookupTab; label: string }[] = [
   { id: "risk-analysis", label: "Risk Score Analysis" },
   { id: "validation", label: "Validation Information" },
   { id: "aml-screening", label: "AML Screening" },
+  { id: "address", label: "Address Information" },
   { id: "ip-device", label: "Ip & Device Information" },
 ];
 
 type KycLookupTabsProps = {
   activeTab: KycLookupTab;
   onTabChange: (tab: KycLookupTab) => void;
+  identityTabLabel?: string;
 };
 
-export function KycLookupTabs({ activeTab, onTabChange }: KycLookupTabsProps) {
+export function KycLookupTabs({ activeTab, onTabChange, identityTabLabel }: KycLookupTabsProps) {
   return (
     <div className="inline-flex max-w-full flex-wrap gap-1 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-muted)] p-1">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
+        const label = tab.id === "bvn" && identityTabLabel ? identityTabLabel : tab.label;
 
         return (
           <button
@@ -34,7 +37,7 @@ export function KycLookupTabs({ activeTab, onTabChange }: KycLookupTabsProps) {
                 : "text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)]",
             )}
           >
-            {tab.label}
+            {label}
           </button>
         );
       })}

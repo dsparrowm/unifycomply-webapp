@@ -1,5 +1,5 @@
 import { defaultApprovalThresholds } from "@/lib/kyc/risk-score";
-import type { KybListFilters, KybRecord } from "@/types/kyb";
+import type { KybBatchRecord, KybListFilters, KybRecord } from "@/types/kyb";
 import type { KycStatusFilter } from "@/types/kyc";
 
 const HIGH_RISK_THRESHOLD = defaultApprovalThresholds.approvalBlockThreshold;
@@ -94,6 +94,20 @@ export function filterKybRecords(records: KybRecord[], filters: KybListFilters) 
     }
 
     if (filters.more === "high-risk" && record.riskScore < HIGH_RISK_THRESHOLD) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+export function filterKybBatches(batches: KybBatchRecord[], filters: KybListFilters) {
+  return batches.filter((batch) => {
+    if (!isWithinDateFilter(batch.createdAt, filters.date)) {
+      return false;
+    }
+
+    if (filters.status !== "all" && batch.status !== statusFilterMap[filters.status]) {
       return false;
     }
 

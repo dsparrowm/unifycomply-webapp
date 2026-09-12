@@ -18,15 +18,11 @@ design/
   figma/
     cover/            ← Cover page frames
     landing-page/     ← Landing Page frames
-    webapp/           ← WebApp frames (primary build target), by module:
-      onboarding/     ← auth / sign-in / sign-up
-      overview/
-      kyc/
-      kyb/
-      aml/
-      bank-analysis/
-      settings/
-      shared/         ← app-shell overlays (search modal, etc.)
+    webapp/           ← WebApp frames (primary build target)
+      kyc/            ← Full KYC section (74 unique + stray 157 + manifest)
+      kyb/            ← Full KYB section (54 unique PNGs + manifest)
+      aml/            ← Full AML section (63 unique / 67 exported + manifest)
+      bank/           ← Full Bank Analysis section (47 unique + manifest)
     assets/           ← logos, icons, illustrations (optional SVG/PNG)
 ```
 

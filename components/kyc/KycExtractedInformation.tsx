@@ -24,9 +24,11 @@ export function KycExtractedInformation({ fields, statusLabel }: KycExtractedInf
               <label className="text-sm font-medium text-[color:var(--text-primary)]">
                 {field.label}
               </label>
-              <span className="text-xs font-medium text-[color:var(--state-success)]">
-                {field.confidence}% Confidence level
-              </span>
+              {typeof field.confidence === "number" ? (
+                <span className="text-xs font-medium text-[color:var(--state-success)]">
+                  {field.confidence}% Confidence level
+                </span>
+              ) : null}
             </div>
             <div className="rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3.5 py-3 text-base text-[color:var(--text-primary)] shadow-[0px_1px_2px_0px_rgba(16,24,40,0.05)]">
               {field.value}

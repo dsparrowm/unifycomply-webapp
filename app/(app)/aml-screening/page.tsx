@@ -1,17 +1,14 @@
-import { AmlScreeningListPanel } from "@/components/aml-screening/AmlScreeningListPanel";
-import {
-  amlScreeningListDataEmpty,
-  amlScreeningListDataPopulated,
-} from "@/lib/data/aml-screening";
+import { AmlListPanel } from "@/components/aml/AmlListPanel";
+import { amlListDataEmpty, amlListDataPopulated } from "@/lib/data/aml-screening";
 
 type AmlScreeningPageProps = {
-  searchParams: Promise<{ state?: string }>;
+  searchParams: Promise<{ empty?: string }>;
 };
 
 export default async function AmlScreeningPage({ searchParams }: AmlScreeningPageProps) {
-  const { state } = await searchParams;
-  const data =
-    state === "empty" ? amlScreeningListDataEmpty : amlScreeningListDataPopulated;
+  const { empty } = await searchParams;
 
-  return <AmlScreeningListPanel data={data} />;
+  return (
+    <AmlListPanel data={empty === "1" ? amlListDataEmpty : amlListDataPopulated} />
+  );
 }

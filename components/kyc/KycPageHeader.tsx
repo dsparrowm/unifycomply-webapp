@@ -1,8 +1,11 @@
-type KycPageHeaderProps = {
-  onAddCustomer: () => void;
-};
+"use client";
 
-export function KycPageHeader({ onAddCustomer }: KycPageHeaderProps) {
+import { useState } from "react";
+import { KycChooseActionModal } from "@/components/kyc/KycChooseActionModal";
+
+export function KycPageHeader() {
+  const [chooseActionOpen, setChooseActionOpen] = useState(false);
+
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
@@ -11,11 +14,12 @@ export function KycPageHeader({ onAddCustomer }: KycPageHeaderProps) {
       </div>
       <button
         type="button"
-        onClick={onAddCustomer}
+        onClick={() => setChooseActionOpen(true)}
         className="inline-flex shrink-0 items-center justify-center rounded-lg bg-[color:var(--accent-primary-hover)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
       >
         Add Customer
       </button>
+      <KycChooseActionModal open={chooseActionOpen} onClose={() => setChooseActionOpen(false)} />
     </div>
   );
 }

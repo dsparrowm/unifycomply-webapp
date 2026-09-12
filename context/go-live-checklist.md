@@ -47,10 +47,10 @@ deployment of the frontend.
 - [x] Risk score visualization completed
 - [x] Bank analysis list screen completed (`/bank-analysis`)
 - [x] Bank analysis Single Lookup entry completed (`/bank-analysis/lookup`)
-- [x] Bank analysis Batch Lookup entry/result completed (`/bank-analysis/lookup?mode=batch`, `/bank-analysis/batch`)
+- [x] Bank analysis Bulk Analysis + Batch Lookup result completed (`/bank-analysis/batch/[id]`, frame 18)
 - [x] Bank analysis Bank Summary detail completed (`/bank-analysis/ba-run-1`, frame 41)
-- [x] Bank analysis decision history and Senior Officer escalation completed
-- [x] AML screening list, Single/Batch lookup, detail, case, and escalation completed
+- [x] Bank analysis escalate completed (`/bank-analysis/ba-run-1?view=high-risk`, frames 71–72)
+- [x] AML screening screens completed (list + lookup + Search Result + Batch Lookup + case detail + escalate; mock data)
 
 ### Milestone 3 — Transaction Monitoring
 

@@ -1,6 +1,13 @@
-import { KybListPanel } from "@/components/kyb/KybListPanel";
-import { kybListDataPopulated } from "@/lib/data/kyb";
+import { KybListContainer } from "@/components/kyb/KybListContainer";
 
-export default function KybPage() {
-  return <KybListPanel data={kybListDataPopulated} />;
+type KybPageProps = {
+  searchParams: Promise<{ mode?: string }>;
+};
+
+export default async function KybPage({ searchParams }: KybPageProps) {
+  const { mode } = await searchParams;
+
+  return (
+    <KybListContainer initialSearchMode={mode === "bulk" ? "bulk-search" : undefined} />
+  );
 }

@@ -1,15 +1,11 @@
-import { AmlScreeningLookupPanel } from "@/components/aml-screening/AmlScreeningLookupPanel";
-import type { AmlLookupMode } from "@/types/aml-screening";
+import { AmlCreateCasePanel } from "@/components/aml/lookup/AmlCreateCasePanel";
 
-type AmlScreeningLookupPageProps = {
+type AmlLookupPageProps = {
   searchParams: Promise<{ mode?: string }>;
 };
 
-export default async function AmlScreeningLookupPage({
-  searchParams,
-}: AmlScreeningLookupPageProps) {
+export default async function AmlLookupPage({ searchParams }: AmlLookupPageProps) {
   const { mode } = await searchParams;
-  const initialMode: AmlLookupMode = mode === "batch" ? "batch" : "single";
 
-  return <AmlScreeningLookupPanel initialMode={initialMode} />;
+  return <AmlCreateCasePanel mode={mode === "batch" ? "batch" : "single"} />;
 }

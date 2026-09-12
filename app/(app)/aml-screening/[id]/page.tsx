@@ -1,20 +1,26 @@
 import { notFound } from "next/navigation";
-import { AmlScreeningDetailPanel } from "@/components/aml-screening/detail/AmlScreeningDetailPanel";
-import { getAmlScreeningDetailById } from "@/lib/data/aml-screening";
+import { AmlCaseDetailPanel } from "@/components/aml/detail/AmlCaseDetailPanel";
+import { getAmlCaseDetail } from "@/lib/data/aml-detail";
 
-type AmlScreeningDetailPageProps = {
+type AmlCaseDetailPageProps = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ kind?: string }>;
 };
 
-export default async function AmlScreeningDetailPage({
+export default async function AmlCaseDetailPage({
   params,
-}: AmlScreeningDetailPageProps) {
+  searchParams,
+}: AmlCaseDetailPageProps) {
   const { id } = await params;
-  const detail = getAmlScreeningDetailById(id);
+  const { kind } = await searchParams;
+  const detail = getAmlCaseDetail(
+    id,
+    kind === "corporate" ? "corporate" : kind === "person" ? "person" : undefined,
+  );
 
   if (!detail) {
     notFound();
   }
 
-  return <AmlScreeningDetailPanel detail={detail} />;
+  return <AmlCaseDetailPanel detail={detail} />;
 }

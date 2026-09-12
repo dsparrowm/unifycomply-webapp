@@ -1,5 +1,6 @@
 import { buildRiskAnalysisData } from "@/lib/compliance/risk-analysis";
 import { kycListDataPopulated } from "@/lib/data/kyc";
+import { kycDetailAvailability } from "@/lib/api/mappers/kyc-detail-merge";
 import { getAmlRiskLevelLabel, getAmlScreeningStatusLabel, RISK_SCORE_MAX, type RiskScore } from "@/lib/kyc/risk-score";
 import type {
   KycAmlScreeningData,
@@ -186,6 +187,23 @@ const passedLiveness: KycLivenessData = {
   ],
 };
 
+const failedLiveness: KycLivenessData = {
+  overallStatusLabel: "Failed",
+  livenessStatus: "Failed",
+  livenessStatusNote: "Liveness check did not pass",
+  confidenceScore: "20.0%",
+  confidenceNote: "Low Confidence",
+  completionTime: "12 Seconds",
+  attemptsLabel: "2 attempts",
+  checks: [
+    { id: "face", label: "Face Detection", status: "passed" },
+    { id: "real-person", label: "Real Person (Live Person Verified)", status: "failed" },
+    { id: "mask", label: "No Mask Detected", status: "passed" },
+    { id: "eyes", label: "Eyes Open", status: "failed" },
+    { id: "facing", label: "Facing Camera", status: "passed" },
+  ],
+};
+
 const reviewLiveness: KycLivenessData = {
   overallStatusLabel: "Review",
   livenessStatus: "Review",
@@ -365,8 +383,25 @@ function buildAmlScreening(score: RiskScore, options?: { pepMatch?: boolean }): 
 
 type KycDetailTemplate = Omit<
   KycDetail,
-  "id" | "kycId" | "customerName" | "documentType" | "country" | "status" | "priority"
->;
+  | "id"
+  | "kycId"
+  | "customerName"
+  | "documentType"
+  | "country"
+  | "countryCode"
+  | "status"
+  | "priority"
+  | "availability"
+  | "canApprove"
+  | "requiresEscalation"
+  | "amlScreening"
+  | "ipDevice"
+  | "liveness"
+> & {
+  amlScreening: KycAmlScreeningData;
+  ipDevice: KycIpDeviceData;
+  liveness: KycLivenessData;
+};
 
 function buildDetailTemplate(score: RiskScore): KycDetailTemplate {
   const riskSummaryByScore: Record<RiskScore, string> = {
@@ -449,11 +484,29 @@ function buildTimeline(record: KycRecord, templateTimeline: KycTimelineEvent[]):
   }));
 }
 
-function buildDetailFromRecord(record: KycRecord): KycDetail {
+export function buildKycDetailFromRecord(record: KycRecord): KycDetail {
   const score = Math.min(RISK_SCORE_MAX, Math.max(0, record.riskScore)) as RiskScore;
   const template = kycDetailByScore[score];
+  const amlScreening: KycAmlScreeningData = {
+    clearanceStatus: template.amlScreening.clearanceStatus,
+    screeningStatus: template.amlScreening.screeningStatus,
+    screeningStatusNote: template.amlScreening.screeningStatusNote,
+    riskLevelLabel: getAmlRiskLevelLabel(score),
+    riskLevel: score,
+    riskScore: score,
+    riskScoreMax: template.amlScreening.riskScoreMax,
+    pepCheck: template.amlScreening.pepCheck,
+    sanctionsLists: template.amlScreening.sanctionsLists,
+    warningEnforcement: template.amlScreening.warningEnforcement,
+    watchlist: template.amlScreening.watchlist,
+    pepMatchDetail: template.amlScreening.pepMatchDetail,
+  };
+  const ipDevice: KycIpDeviceData = {
+    ...template.ipDevice,
+    countryLabel: `Country: ${record.country}`,
+  };
 
-  return {
+  const detail: KycDetail = {
     id: record.id,
     kycId: record.kycId,
     customerName: record.customerName,
@@ -469,24 +522,36 @@ function buildDetailFromRecord(record: KycRecord): KycDetail {
     extractedFields: buildExtractedFields(record, template.extractedFields),
     timeline: buildTimeline(record, template.timeline),
     riskAnalysis: template.riskAnalysis,
-    amlScreening: {
-      ...template.amlScreening,
-      riskLevel: score,
-      riskScore: score,
-      riskLevelLabel: getAmlRiskLevelLabel(score),
-    },
-    ipDevice: {
-      ...template.ipDevice,
-      countryLabel: `Country: ${record.country}`,
-    },
+    amlScreening,
+    ipDevice,
     liveness: template.liveness,
+    availability: kycDetailAvailability({
+      documentPreview: true,
+      ocr: true,
+      biometric: true,
+      ipDevice: true,
+      liveness: true,
+      amlScreening: true,
+      riskAnalysis: true,
+    }),
     documentRiskTier: template.documentRiskTier,
     documentAlert: template.documentAlert,
+  };
+
+  if (record.status !== "resubmission") {
+    return detail;
+  }
+
+  return {
+    ...detail,
+    matchScore: 20,
+    livenessStatus: "Failed",
+    liveness: failedLiveness,
   };
 }
 
 const detailById = new Map<string, KycDetail>(
-  kycListDataPopulated.records.map((record) => [record.id, buildDetailFromRecord(record)]),
+  kycListDataPopulated.records.map((record) => [record.id, buildKycDetailFromRecord(record)]),
 );
 
 export function getKycDetailById(id: string): KycDetail | undefined {

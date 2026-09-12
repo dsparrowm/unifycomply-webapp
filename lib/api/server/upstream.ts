@@ -19,6 +19,7 @@ type UpstreamOptions = {
   bearer?: string;
   /** Skip automatic refresh-on-401. */
   skipRefresh?: boolean;
+  extraHeaders?: Record<string, string>;
 };
 
 function buildUrl(path: string, query?: Record<string, string | undefined>): string {
@@ -109,10 +110,20 @@ async function refreshAccessToken(): Promise<string | null> {
 }
 
 export async function upstreamFetch<T>(options: UpstreamOptions): Promise<ApiEnvelope<T>> {
-  const { method = "GET", path, query, body, auth = false, bearer, skipRefresh = false } = options;
+  const {
+    method = "GET",
+    path,
+    query,
+    body,
+    auth = false,
+    bearer,
+    skipRefresh = false,
+    extraHeaders,
+  } = options;
 
   const headers: Record<string, string> = {
     Accept: "application/json",
+    ...extraHeaders,
   };
 
   if (body !== undefined) {
@@ -151,10 +162,20 @@ export async function upstreamFetch<T>(options: UpstreamOptions): Promise<ApiEnv
 export async function upstreamFetchRaw(
   options: UpstreamOptions,
 ): Promise<{ response: Response; bodyText: string }> {
-  const { method = "GET", path, query, body, auth = false, bearer, skipRefresh = false } = options;
+  const {
+    method = "GET",
+    path,
+    query,
+    body,
+    auth = false,
+    bearer,
+    skipRefresh = false,
+    extraHeaders,
+  } = options;
 
   const headers: Record<string, string> = {
     Accept: "application/json",
+    ...extraHeaders,
   };
 
   if (body !== undefined) {

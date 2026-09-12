@@ -1,18 +1,18 @@
 import type {
-  BankAnalysisBankFilter,
+  BankAnalysisAssigneeFilter,
   BankAnalysisDateFilter,
   BankAnalysisFilterOption,
   BankAnalysisListFilters,
   BankAnalysisMoreFilter,
-  BankAnalysisPriorityFilter,
   BankAnalysisStatusFilter,
+  BankAnalysisTypeFilter,
 } from "@/types/bank-analysis";
 
 export const bankAnalysisDefaultFilters: BankAnalysisListFilters = {
   date: "all",
   status: "all",
-  priority: "all",
-  bank: "all",
+  assignee: "all",
+  type: "all",
   more: "all",
 };
 
@@ -26,35 +26,33 @@ export const bankAnalysisDateFilterOptions: BankAnalysisFilterOption<BankAnalysi
     { value: "last-month", label: "Last month" },
     { value: "last-3-months", label: "Last 3 months" },
     { value: "last-6-months", label: "Last 6 months" },
-    { value: "specific-range", label: "Specific range" },
+    { value: "specific-range", label: "Specific Date Range" },
   ];
 
 export const bankAnalysisStatusFilterOptions: BankAnalysisFilterOption<BankAnalysisStatusFilter>[] =
   [
     { value: "all", label: "All statuses" },
-    { value: "success", label: "Completed" },
-    { value: "pending", label: "Pending" },
-    { value: "in-review", label: "In review" },
-    { value: "failed", label: "Failed" },
+    { value: "clear", label: "Clear" },
+    { value: "flagged", label: "Flagged" },
+    { value: "in-review", label: "Under Review" },
+    { value: "blocked", label: "Blocked" },
   ];
 
-export const bankAnalysisPriorityFilterOptions: BankAnalysisFilterOption<BankAnalysisPriorityFilter>[] =
+export const bankAnalysisAssigneeFilterOptions: BankAnalysisFilterOption<BankAnalysisAssigneeFilter>[] =
   [
-    { value: "all", label: "All priorities" },
-    { value: "urgent", label: "Critical" },
-    { value: "high", label: "High" },
-    { value: "medium", label: "Medium" },
-    { value: "standard", label: "Low" },
+    { value: "all", label: "All assignees" },
+    { value: "Alimi Ayomikun", label: "Alimi Ayomikun" },
+    { value: "Tejumade Olomola", label: "Tejumade Olomola" },
+    { value: "Favour Soma", label: "Favour Soma" },
   ];
 
-export const bankAnalysisBankFilterOptions: BankAnalysisFilterOption<BankAnalysisBankFilter>[] =
+export const bankAnalysisTypeFilterOptions: BankAnalysisFilterOption<BankAnalysisTypeFilter>[] =
   [
-    { value: "all", label: "All banks" },
-    { value: "access-bank", label: "Access Bank" },
-    { value: "gtbank", label: "GTBank" },
-    { value: "first-bank", label: "First Bank" },
-    { value: "zenith-bank", label: "Zenith Bank" },
-    { value: "uba", label: "UBA" },
+    { value: "all", label: "All types" },
+    { value: "batch", label: "Batch" },
+    { value: "organization", label: "Organization" },
+    { value: "individual", label: "Individual" },
+    { value: "manual", label: "Manual" },
   ];
 
 export const bankAnalysisMoreFilterOptions: BankAnalysisFilterOption<BankAnalysisMoreFilter>[] =

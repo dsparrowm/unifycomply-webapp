@@ -4,16 +4,16 @@ import { useState } from "react";
 import { Calendar, Filter, Search } from "lucide-react";
 import { KycFilterDropdown } from "@/components/kyc/KycFilterDropdown";
 import {
-  bankAnalysisBankFilterOptions,
+  bankAnalysisAssigneeFilterOptions,
   bankAnalysisDateFilterOptions,
   bankAnalysisDefaultFilters,
   bankAnalysisMoreFilterOptions,
-  bankAnalysisPriorityFilterOptions,
   bankAnalysisStatusFilterOptions,
+  bankAnalysisTypeFilterOptions,
 } from "@/lib/data/bank-analysis-filters";
 import type { BankAnalysisListFilters } from "@/types/bank-analysis";
 
-type BankAnalysisFilterKey = "date" | "status" | "priority" | "bank" | "more";
+type BankAnalysisFilterKey = "date" | "status" | "assignee" | "type" | "more";
 
 type BankAnalysisFiltersProps = {
   filters: BankAnalysisListFilters;
@@ -64,21 +64,21 @@ export function BankAnalysisFilters({
         />
 
         <KycFilterDropdown
-          label="Priorities"
-          options={bankAnalysisPriorityFilterOptions}
-          value={filters.priority}
-          onChange={(value) => updateFilter("priority", value)}
-          open={openFilter === "priority"}
-          onOpenChange={handleOpenChange("priority")}
+          label="Assignee"
+          options={bankAnalysisAssigneeFilterOptions}
+          value={filters.assignee}
+          onChange={(value) => updateFilter("assignee", value)}
+          open={openFilter === "assignee"}
+          onOpenChange={handleOpenChange("assignee")}
         />
 
         <KycFilterDropdown
-          label="Banks"
-          options={bankAnalysisBankFilterOptions}
-          value={filters.bank}
-          onChange={(value) => updateFilter("bank", value)}
-          open={openFilter === "bank"}
-          onOpenChange={handleOpenChange("bank")}
+          label="Type"
+          options={bankAnalysisTypeFilterOptions}
+          value={filters.type}
+          onChange={(value) => updateFilter("type", value)}
+          open={openFilter === "type"}
+          onOpenChange={handleOpenChange("type")}
         />
 
         <KycFilterDropdown

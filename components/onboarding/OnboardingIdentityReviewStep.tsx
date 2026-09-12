@@ -42,7 +42,12 @@ export function OnboardingIdentityReviewStep({ data }: OnboardingIdentityReviewS
         <ReviewItem label="Email" value={personal.email} />
         <ReviewItem label="Phone" value={personal.phone} />
         <ReviewItem label="Date of birth" value={personal.dateOfBirth} />
+        <ReviewItem label="Gender" value={personal.gender || "—"} />
         <ReviewItem label="Nationality" value={personal.nationality} />
+        <ReviewItem
+          label="Address"
+          value={`${personal.houseNo} ${personal.street}, ${personal.city}, ${personal.state} ${personal.zipCode}`}
+        />
       </ReviewSection>
 
       <ReviewSection title="Business information">
@@ -53,6 +58,9 @@ export function OnboardingIdentityReviewStep({ data }: OnboardingIdentityReviewS
       </ReviewSection>
 
       <ReviewSection title="Uploaded documents">
+        <ReviewItem label="Passport number" value={documents.idNumber || "—"} />
+        <ReviewItem label="Issue date" value={documents.issueDate || "—"} />
+        <ReviewItem label="Expiry date" value={documents.expiryDate || "—"} />
         <ReviewItem label="ID front" value={documents.idFront?.name ?? "—"} />
         <ReviewItem label="ID back" value={documents.idBack?.name ?? "—"} />
         <ReviewItem label="Selfie" value={documents.selfie?.name ?? "—"} />

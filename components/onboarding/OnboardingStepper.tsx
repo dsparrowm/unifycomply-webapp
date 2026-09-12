@@ -1,9 +1,13 @@
-import type { OnboardingStep, OnboardingStepId } from "@/types/onboarding";
 import { cn } from "@/lib/utils";
 
+type StepperStep = {
+  id: string;
+  label: string;
+};
+
 type OnboardingStepperProps = {
-  steps: OnboardingStep[];
-  currentStepId: OnboardingStepId;
+  steps: StepperStep[];
+  currentStepId: string;
 };
 
 export function OnboardingStepper({ steps, currentStepId }: OnboardingStepperProps) {

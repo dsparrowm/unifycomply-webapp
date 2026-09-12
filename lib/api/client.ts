@@ -5,6 +5,7 @@ type ClientFetchOptions = {
   method?: string;
   body?: unknown;
   query?: Record<string, string | undefined>;
+  headers?: Record<string, string>;
 };
 
 function buildClientUrl(path: string, query?: Record<string, string | undefined>): string {
@@ -19,13 +20,21 @@ function buildClientUrl(path: string, query?: Record<string, string | undefined>
   return `${url.pathname}${url.search}`;
 }
 
+function buildRequestHeaders(options: ClientFetchOptions): Record<string, string> | undefined {
+  const headers: Record<string, string> = { ...options.headers };
+  if (options.body !== undefined) {
+    headers["Content-Type"] = "application/json";
+  }
+  return Object.keys(headers).length > 0 ? headers : undefined;
+}
+
 export async function apiFetch<T>(path: string, options: ClientFetchOptions = {}): Promise<T> {
   const { method = "GET", body, query } = options;
 
   const response = await fetch(buildClientUrl(path, query), {
     method,
     credentials: "same-origin",
-    headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+    headers: buildRequestHeaders(options),
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 
@@ -52,7 +61,7 @@ export async function apiFetchEnvelope<T>(
   const response = await fetch(buildClientUrl(path, query), {
     method,
     credentials: "same-origin",
-    headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+    headers: buildRequestHeaders(options),
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 

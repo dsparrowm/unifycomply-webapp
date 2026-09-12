@@ -35,14 +35,15 @@ export function BankAnalysisListPanel({ data }: BankAnalysisListPanelProps) {
 
     return runs.filter((run) =>
       [
-        run.analysisId,
-        run.entityName,
-        run.accountNumber,
-        run.bank,
-        run.country,
+        run.runId,
+        run.fullName,
+        run.date,
+        run.type,
+        run.analyst,
+        run.assignedTo ?? "Unassigned",
         run.status,
-        run.priority,
-        String(run.alertsGenerated),
+        String(run.accounts),
+        String(run.alerts),
         String(run.riskScore),
       ].some((value) => value.toLowerCase().includes(query)),
     );

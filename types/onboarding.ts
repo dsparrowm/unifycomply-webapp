@@ -17,6 +17,13 @@ export type OnboardingPersonalInfo = {
   phone: string;
   dateOfBirth: string;
   nationality: string;
+  /** Required by Core Platform CreateTenantKycDto — added to complete live intake. */
+  gender: "male" | "female" | "";
+  houseNo: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
 };
 
 export type OnboardingBusinessInfo = {

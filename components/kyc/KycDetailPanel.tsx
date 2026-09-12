@@ -13,6 +13,7 @@ import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPan
 import { KycBiometricVerification } from "@/components/kyc/KycBiometricVerification";
 import { KycDocumentAlertCard } from "@/components/kyc/KycDocumentAlertCard";
 import { KycDocumentRiskTierCard } from "@/components/kyc/KycDocumentRiskTierCard";
+import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
 import { KycDetailHeader } from "@/components/kyc/KycDetailHeader";
 import { KycDetailTabs } from "@/components/kyc/KycDetailTabs";
 import { KycDocumentViewer } from "@/components/kyc/KycDocumentViewer";
@@ -41,12 +42,18 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   return (
     <div className="flex flex-col gap-6 pb-4">
       <KycDetailHeader detail={detail} status={status} />
+      <CustomerIntakeLinks kind="kyc" customerId={detail.id} />
       <KycDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "document" ? (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_457px]">
           <div className="space-y-6">
-            <KycDocumentViewer matchScore={detail.matchScore} />
+            <KycDocumentViewer
+              matchScore={detail.matchScore}
+              failedMatch={
+                status === "resubmission" || detail.livenessStatus === "Failed"
+              }
+            />
             <KycExtractedInformation
               fields={detail.extractedFields}
               statusLabel={detail.extractionStatus}
@@ -84,6 +91,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
 
       <KycDetailFooterActions
         riskScore={detail.riskScore}
+        variant={status === "resubmission" ? "resubmission-primary" : "standard"}
         onRequestResubmission={() => setActiveModal("resubmission")}
         onReject={() => setActiveModal("reject")}
         onApprove={() => setActiveModal("approve")}
@@ -111,7 +119,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
         open={activeModal === "resubmission"}
         onClose={closeModal}
         onConfirm={() => {
-          setStatus("pending");
+          setStatus("resubmission");
           closeModal();
         }}
       />

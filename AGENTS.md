@@ -7,14 +7,20 @@ This repository is the **WebApp frontend** from Figma (page `1:2`), including a
 JWTs in httpOnly cookies. Do **not** implement the Core Platform backend itself, or
 the **Landing Page** (built in a separate project).
 
-**Current milestone: M2** (`lib/constants/milestones.ts`). M1 is complete. Implement
-routes and feature specs for the active milestone and earlier milestones only. Do not
-implement M3–M5 until `CURRENT_MILESTONE` is advanced and `mvp-roadmap.md` completion
-criteria are met.
+**Current milestone: M2** (`lib/constants/milestones.ts`). M1 is complete. M3 TM UI is
+complete and parked. KYC unique UI from `design/figma/webapp/kyc/` is closed. KYB
+unique UI from `design/figma/webapp/kyb/` is closed. AML unique UI from
+`design/figma/webapp/aml/` is closed. Bank Analysis unique UI from
+`design/figma/webapp/bank/` is closed. Resume M2 with **live KYC/KYB** unless
+the user says otherwise. Implement
+routes and feature specs for the active milestone and earlier milestones only.
+Do not implement M4–M5 until `CURRENT_MILESTONE` is advanced. M3 routes stay built
+but are gated while `CURRENT_MILESTONE` is 2.
 
 Use **Next.js App Router** with routes under `app/` at the project root. Use **live
-APIs** for auth and tenant settings via the BFF; use **mock data** for modules without
-OpenAPI contracts (KYC, KYB, AML, bank analysis, overview, audit logs).
+APIs** for auth, tenant settings, and KYC/KYB create + list/detail reads via the BFF; use
+**mock data** for TM, lookup, and modules without OpenAPI contracts (AML,
+bank analysis, overview, audit logs).
 
 ## Design Source of Truth
 
@@ -29,6 +35,17 @@ exports directly and they persist across sessions when committed to git.
 When implementing UI, match the referenced frame in Figma or its export in
 `design/figma/`. If the design and the context docs conflict, record the mismatch in
 `context/progress-tracker.md` before implementing.
+
+### API integration (UI first)
+
+Figma / existing WebApp UI is the product contract. When connecting live APIs:
+
+- Adapt payloads in BFF / `lib/api` mappers — **do not** reshape screens to match DTOs
+- If the API cannot support the designed UI without changing it, **raise a blocker** in
+  `context/progress-tracker.md` and tell the user — do not ship a degraded UI
+- If Figma is **missing** for an API-backed flow, **log it and build the flow** (mark
+  API-derived in the feature spec) — see `09-m2-api-ui-flow-gap.md`
+- Details: `.cursor/rules/ui-first-api-integration.mdc`
 
 See `design/README.md` for export instructions.
 

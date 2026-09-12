@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { OnboardingDocumentUploadField } from "@/components/onboarding/OnboardingDocumentUploadField";
+import { SettingsField } from "@/components/settings/SettingsField";
 import type { OnboardingDocuments } from "@/types/onboarding";
 
 type OnboardingDocumentUploadStepProps = {
@@ -9,18 +10,33 @@ type OnboardingDocumentUploadStepProps = {
   onSubmit: (values: OnboardingDocuments) => void;
 };
 
+type DocumentFieldErrors = Partial<Record<keyof OnboardingDocuments, string>>;
+
 export function OnboardingDocumentUploadStep({
   defaultValues,
   onSubmit,
 }: OnboardingDocumentUploadStepProps) {
   const [documents, setDocuments] = useState<OnboardingDocuments>(defaultValues);
-  const [errors, setErrors] = useState<Partial<Record<keyof OnboardingDocuments, string>>>({});
+  const [errors, setErrors] = useState<DocumentFieldErrors>({});
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const nextErrors: Partial<Record<keyof OnboardingDocuments, string>> = {};
+    const nextErrors: DocumentFieldErrors = {};
 
+    if (!documents.idNumber.trim()) {
+      nextErrors.idNumber = "Passport number is required.";
+    }
+    if (!documents.issueDate) {
+      nextErrors.issueDate = "Issue date is required.";
+    }
+    if (!documents.expiryDate) {
+      nextErrors.expiryDate = "Expiry date is required.";
+    } else if (documents.expiryDate <= documents.issueDate) {
+      nextErrors.expiryDate = "Expiry date must be after the issue date.";
+    } else if (new Date(documents.expiryDate) < new Date()) {
+      nextErrors.expiryDate = "Passport must not be expired.";
+    }
     if (!documents.idFront) {
       nextErrors.idFront = "Upload the front of the ID document.";
     }
@@ -37,7 +53,10 @@ export function OnboardingDocumentUploadStep({
       return;
     }
 
-    onSubmit(documents);
+    onSubmit({
+      ...documents,
+      idNumber: documents.idNumber.trim(),
+    });
   };
 
   return (
@@ -47,8 +66,38 @@ export function OnboardingDocumentUploadStep({
           Document upload
         </h2>
         <p className="mt-1 text-sm text-[color:var(--text-muted)]">
-          Upload identity documents for automated verification and review.
+          Upload identity documents and enter passport details for automated verification.
         </p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <SettingsField
+          label="Passport number"
+          placeholder="e.g. A12345678"
+          value={documents.idNumber}
+          onChange={(event) =>
+            setDocuments((current) => ({ ...current, idNumber: event.target.value }))
+          }
+          error={errors.idNumber}
+        />
+        <SettingsField
+          label="Issue date"
+          type="date"
+          value={documents.issueDate}
+          onChange={(event) =>
+            setDocuments((current) => ({ ...current, issueDate: event.target.value }))
+          }
+          error={errors.issueDate}
+        />
+        <SettingsField
+          label="Expiry date"
+          type="date"
+          value={documents.expiryDate}
+          onChange={(event) =>
+            setDocuments((current) => ({ ...current, expiryDate: event.target.value }))
+          }
+          error={errors.expiryDate}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">

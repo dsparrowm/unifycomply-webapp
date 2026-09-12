@@ -2,22 +2,20 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { KybLookupBackHeader } from "@/components/kyb/lookup/KybLookupBackHeader";
 import { KybLookupFileUpload } from "@/components/kyb/lookup/KybLookupFileUpload";
 import { KybLookupTypeDropdown } from "@/components/kyb/lookup/KybLookupTypeDropdown";
+import { getBankAnalysisBatchLookupSlug } from "@/lib/data/bank-analysis-batch-results";
 import {
   bankAnalysisLookupAppOptions,
   bankAnalysisLookupBankOptions,
   bankAnalysisLookupCountryOptions,
 } from "@/lib/data/bank-analysis-lookup";
 import { cn } from "@/lib/utils";
-import type {
-  BankAnalysisLookupBank,
-  BankAnalysisLookupMode,
-} from "@/types/bank-analysis";
+import type { BankAnalysisLookupBank, BankAnalysisLookupMode } from "@/types/bank-analysis";
 
 const bankAnalysisLookupSchema = z
   .object({
@@ -61,16 +59,18 @@ type BankAnalysisLookupValues = z.infer<typeof bankAnalysisLookupSchema>;
 type OpenDropdown = "country" | "app" | "bank" | null;
 
 type BankAnalysisLookupEntryPanelProps = {
-  initialMode: BankAnalysisLookupMode;
+  mode?: BankAnalysisLookupMode;
 };
 
 export function BankAnalysisLookupEntryPanel({
-  initialMode,
+  mode = "single",
 }: BankAnalysisLookupEntryPanelProps) {
   const router = useRouter();
   const [mode, setMode] = useState<BankAnalysisLookupMode>(initialMode);
   const [bulkFile, setBulkFile] = useState<File | null>(null);
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
+  const [batchFile, setBatchFile] = useState<File | null>(null);
+  const [batchError, setBatchError] = useState<string | null>(null);
 
   const {
     register,
@@ -96,20 +96,33 @@ export function BankAnalysisLookupEntryPanel({
   const app = watch("app");
   const bank = watch("bank") as BankAnalysisLookupBank | "";
 
+  const setMode = (nextMode: BankAnalysisLookupMode) => {
+    router.replace(nextMode === "batch" ? "/bank-analysis/lookup?mode=batch" : "/bank-analysis/lookup");
+  };
+
   const onSubmit = handleSubmit((values) => {
     router.push(values.mode === "batch" ? "/bank-analysis/batch" : "/bank-analysis/ba-run-1");
   });
 
-  const handleModeChange = (nextMode: BankAnalysisLookupMode) => {
-    setMode(nextMode);
-    setValue("mode", nextMode);
-    setValue("accountNumber", "");
-    setValue("batchName", "");
-    setValue("fileName", "");
-    setBulkFile(null);
-    setOpenDropdown(null);
-    clearErrors();
-    router.replace(`/bank-analysis/lookup?mode=${nextMode}`, { scroll: false });
+  const onBatchSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!country) {
+      setBatchError("Select a country to continue.");
+      return;
+    }
+
+    if (!app) {
+      setBatchError("Select an app to continue.");
+      return;
+    }
+
+    if (!batchFile) {
+      setBatchError("Upload a spreadsheet to continue.");
+      return;
+    }
+
+    router.push(`/bank-analysis/batch/${getBankAnalysisBatchLookupSlug(batchFile.name)}`);
   };
 
   const formError =
@@ -130,10 +143,10 @@ export function BankAnalysisLookupEntryPanel({
         <div className="flex w-full flex-col items-center gap-6 text-center">
           <div className="space-y-2">
             <h1 className="text-[30px] leading-tight font-semibold text-[color:var(--text-primary)]">
-              Verification
+              Bank Analysis
             </h1>
             <p className="text-sm text-[color:var(--text-muted)]">
-              Perform bank analysis checks on your customers
+              Perform a bank/account analysis
             </p>
           </div>
 
@@ -144,21 +157,19 @@ export function BankAnalysisLookupEntryPanel({
           >
             {(
               [
-                { id: "single", label: "Single Verification" },
-                { id: "bulk", label: "Bulk Verification" },
+                { id: "single", label: "Single Lookup" },
+                { id: "batch", label: "Bulk Analysis" },
               ] as const
             ).map((option) => (
               <button
                 key={option.id}
                 type="button"
-                role="tab"
-                aria-selected={mode === (option.id === "bulk" ? "batch" : "single")}
-                onClick={() => handleModeChange(option.id === "bulk" ? "batch" : "single")}
+                onClick={() => setMode(option.id)}
                 className={cn(
                   "h-11 flex-1 rounded-full px-4 py-2.5 text-sm font-medium transition-colors",
-                  mode === (option.id === "bulk" ? "batch" : "single")
+                  mode === option.id
                     ? "bg-[color:var(--accent-primary-hover)] text-white"
-                    : "border border-[color:var(--accent-primary-hover)] bg-white text-[color:var(--accent-primary-hover)] hover:bg-[color:var(--accent-primary-soft)]",
+                    : "border border-[color:var(--accent-primary-hover)] bg-white text-[color:var(--accent-primary-hover)]",
                 )}
               >
                 {option.label}
@@ -168,67 +179,89 @@ export function BankAnalysisLookupEntryPanel({
         </div>
 
         <div className="w-full rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
-          <form onSubmit={onSubmit} className="flex flex-col gap-5 p-8">
-            <input type="hidden" {...register("mode")} />
-            <input type="hidden" {...register("fileName")} />
+          {mode === "batch" ? (
+            <form onSubmit={onBatchSubmit} className="flex flex-col gap-5 p-8">
+              <KybLookupTypeDropdown
+                label="Country"
+                placeholder="Select country"
+                options={bankAnalysisLookupCountryOptions}
+                value={country}
+                onChange={(value) => {
+                  setValue("country", value, { shouldValidate: true });
+                  setBatchError(null);
+                }}
+                open={openDropdown === "country"}
+                onOpenChange={(open) => setOpenDropdown(open ? "country" : null)}
+              />
 
-            <KybLookupTypeDropdown
-              label="Country"
-              placeholder="Select country"
-              options={bankAnalysisLookupCountryOptions}
-              value={country}
-              onChange={(value) => setValue("country", value, { shouldValidate: true })}
-              open={openDropdown === "country"}
-              onOpenChange={(open) => setOpenDropdown(open ? "country" : null)}
-            />
+              <KybLookupTypeDropdown
+                label="Select app"
+                options={bankAnalysisLookupAppOptions}
+                value={app}
+                onChange={(value) => {
+                  setValue("app", value, { shouldValidate: true });
+                  setBatchError(null);
+                }}
+                open={openDropdown === "app"}
+                onOpenChange={(open) => setOpenDropdown(open ? "app" : null)}
+              />
 
-            <KybLookupTypeDropdown
-              label="Select app"
-              options={bankAnalysisLookupAppOptions}
-              value={app}
-              onChange={(value) => setValue("app", value, { shouldValidate: true })}
-              open={openDropdown === "app"}
-              onOpenChange={(open) => setOpenDropdown(open ? "app" : null)}
-            />
+              <KybLookupFileUpload
+                hint="Upload an excel sheet consist of Bank Verification Number (BVN)"
+                file={batchFile}
+                onFileChange={(file) => {
+                  setBatchFile(file);
+                  setBatchError(null);
+                }}
+                error={batchError ?? undefined}
+              />
 
-            <KybLookupTypeDropdown
-              label="Select bank"
-              options={bankAnalysisLookupBankOptions}
-              value={bank}
-              onChange={(value) => setValue("bank", value, { shouldValidate: true })}
-              open={openDropdown === "bank"}
-              onOpenChange={(open) => setOpenDropdown(open ? "bank" : null)}
-            />
+              <div className="flex justify-end gap-5 pt-3">
+                <button
+                  type="button"
+                  onClick={() => router.push("/bank-analysis")}
+                  className="h-11 min-w-[240px] rounded-lg bg-[color:var(--border-subtle)] px-6 text-sm font-medium text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--border-default)]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="h-11 min-w-[240px] rounded-lg bg-[color:var(--accent-primary-hover)] px-6 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
+                >
+                  Perform Analysis
+                </button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={onSubmit} className="flex flex-col gap-5 p-8">
+              <KybLookupTypeDropdown
+                label="Country"
+                placeholder="Select country"
+                options={bankAnalysisLookupCountryOptions}
+                value={country}
+                onChange={(value) => setValue("country", value, { shouldValidate: true })}
+                open={openDropdown === "country"}
+                onOpenChange={(open) => setOpenDropdown(open ? "country" : null)}
+              />
 
-            {mode === "batch" ? (
-              <>
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="bank-analysis-batch-name"
-                    className="text-sm font-medium text-[color:var(--text-primary)]"
-                  >
-                    Batch Name
-                  </label>
-                  <input
-                    id="bank-analysis-batch-name"
-                    {...register("batchName")}
-                    aria-invalid={Boolean(errors.batchName)}
-                    placeholder="e.g. Techventures"
-                    className="w-full rounded-lg border border-[color:var(--border-default)] bg-white px-3.5 py-2.5 text-sm text-[color:var(--text-primary)] shadow-sm outline-none placeholder:text-[color:var(--text-light)] focus:border-[color:var(--accent-primary-hover)] focus:ring-2 focus:ring-[color:var(--accent-primary-soft)]"
-                  />
-                </div>
+              <KybLookupTypeDropdown
+                label="Select app"
+                options={bankAnalysisLookupAppOptions}
+                value={app}
+                onChange={(value) => setValue("app", value, { shouldValidate: true })}
+                open={openDropdown === "app"}
+                onOpenChange={(open) => setOpenDropdown(open ? "app" : null)}
+              />
 
-                <KybLookupFileUpload
-                  hint="Upload an xlsx file with entity name, account number, and bank columns."
-                  file={bulkFile}
-                  onFileChange={(file) => {
-                    setBulkFile(file);
-                    setValue("fileName", file?.name ?? "", { shouldValidate: true });
-                  }}
-                  error={errors.fileName?.message}
-                />
-              </>
-            ) : (
+              <KybLookupTypeDropdown
+                label="Select bank"
+                options={bankAnalysisLookupBankOptions}
+                value={bank}
+                onChange={(value) => setValue("bank", value, { shouldValidate: true })}
+                open={openDropdown === "bank"}
+                onOpenChange={(open) => setOpenDropdown(open ? "bank" : null)}
+              />
+
               <div className="space-y-1.5">
                 <label
                   htmlFor="bank-analysis-account-number"
@@ -240,35 +273,32 @@ export function BankAnalysisLookupEntryPanel({
                   id="bank-analysis-account-number"
                   {...register("accountNumber")}
                   inputMode="numeric"
-                  aria-invalid={Boolean(errors.accountNumber)}
                   placeholder="Enter account number"
                   className="w-full rounded-lg border border-[color:var(--border-default)] bg-white px-3.5 py-2.5 text-sm text-[color:var(--text-primary)] shadow-sm outline-none placeholder:text-[color:var(--text-light)] focus:border-[color:var(--accent-primary-hover)] focus:ring-2 focus:ring-[color:var(--accent-primary-soft)]"
                 />
               </div>
-            )}
 
-            {formError ? (
-              <p role="alert" className="text-sm text-[color:var(--state-error)]">
-                {formError}
-              </p>
-            ) : null}
+              {formError ? (
+                <p className="text-sm text-[color:var(--state-error)]">{formError}</p>
+              ) : null}
 
-            <div className="flex flex-col-reverse gap-3 pt-3 sm:flex-row sm:justify-end sm:gap-5">
-              <button
-                type="button"
-                onClick={() => router.push("/bank-analysis")}
-                className="h-11 w-full rounded-lg bg-[color:var(--border-subtle)] px-6 text-sm font-medium text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--border-default)] sm:w-auto sm:min-w-[240px]"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="h-11 w-full rounded-lg bg-[color:var(--accent-primary-hover)] px-6 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)] sm:w-auto sm:min-w-[240px]"
-              >
-                {mode === "batch" ? "Start Batch Verification" : "Perform Verification"}
-              </button>
-            </div>
-          </form>
+              <div className="flex justify-end gap-5 pt-3">
+                <button
+                  type="button"
+                  onClick={() => router.push("/bank-analysis")}
+                  className="h-11 min-w-[240px] rounded-lg bg-[color:var(--border-subtle)] px-6 text-sm font-medium text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--border-default)]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="h-11 min-w-[240px] rounded-lg bg-[color:var(--accent-primary-hover)] px-6 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
+                >
+                  Perform Verification
+                </button>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

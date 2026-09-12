@@ -1,24 +1,27 @@
 "use client";
 
-import { ShieldAlert, X } from "lucide-react";
-import { useEffect } from "react";
-import type { BankAnalysisDetail } from "@/types/bank-analysis";
+import { useEffect, useState } from "react";
+import { AlertTriangle, X } from "lucide-react";
+import type { BankAnalysisEscalateSummary } from "@/types/bank-analysis";
 
 type BankAnalysisEscalateModalProps = {
   open: boolean;
-  detail: BankAnalysisDetail;
+  summary: BankAnalysisEscalateSummary;
   onClose: () => void;
   onConfirm: (notes: string) => void;
 };
 
 export function BankAnalysisEscalateModal({
   open,
-  detail,
+  summary,
   onClose,
   onConfirm,
 }: BankAnalysisEscalateModalProps) {
+  const [notes, setNotes] = useState("");
+
   useEffect(() => {
     if (!open) {
+      setNotes("");
       return;
     }
 
@@ -32,6 +35,7 @@ export function BankAnalysisEscalateModal({
     };
 
     document.addEventListener("keydown", handleKeyDown);
+
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
@@ -42,94 +46,115 @@ export function BankAnalysisEscalateModal({
     return null;
   }
 
+  const flags = [
+    { label: "Risk Score", value: String(summary.riskScore) },
+    { label: "Sanction", value: summary.sanction ? "Yes" : "No" },
+    {
+      label: "Warnings and regulatory enforcement",
+      value: summary.warningEnforcement ? "Yes" : "No",
+    },
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <button
         type="button"
-        aria-label="Close escalation dialog"
+        aria-label="Close dialog"
         onClick={onClose}
-        className="absolute inset-0 bg-[color:var(--text-primary)]/30 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-[color:var(--text-primary)]/20 backdrop-blur-[2px]"
       />
-      <section
+
+      <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="bank-analysis-escalate-title"
-        aria-describedby="bank-analysis-escalate-description"
-        className="relative w-full max-w-xl rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-xl"
+        className="relative z-10 w-full max-w-[640px] overflow-hidden rounded-2xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-xl"
       >
-        <div className="flex items-center justify-between border-b border-[color:var(--border-default)] px-6 py-5">
-          <h2
-            id="bank-analysis-escalate-title"
-            className="text-lg font-semibold text-[color:var(--text-primary)]"
-          >
-            Escalate to Senior Officer
-          </h2>
+        <div className="flex items-start justify-between px-6 pt-6">
+          <div>
+            <h2
+              id="bank-analysis-escalate-title"
+              className="text-lg font-semibold text-[color:var(--text-primary)]"
+            >
+              Escalate to Senior Officer
+            </h2>
+            <p className="mt-1 text-sm text-[color:var(--text-muted)]">
+              You are escalating this to a senior officer for further review
+            </p>
+          </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded-md p-1 text-[color:var(--text-light)] hover:bg-[color:var(--bg-muted)]"
+            className="rounded-md p-1 text-[color:var(--text-light)] transition-colors hover:bg-[color:var(--bg-muted)] hover:text-[color:var(--text-primary)]"
           >
-            <X className="h-5 w-5" aria-hidden="true" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         <form
-          className="space-y-5 p-6"
+          className="space-y-5 px-6 pb-6 pt-5"
           onSubmit={(event) => {
             event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            onConfirm(String(formData.get("notes") ?? "").trim());
+            onConfirm(notes.trim());
           }}
         >
-          <div className="flex gap-3 rounded-lg border border-[color:var(--state-warning)]/40 bg-[color:var(--state-warning-soft)] p-4">
-            <ShieldAlert
-              className="h-5 w-5 shrink-0 text-[color:var(--state-warning)]"
-              aria-hidden="true"
-            />
-            <p
-              id="bank-analysis-escalate-description"
-              className="text-sm leading-relaxed text-[color:var(--text-primary)]"
+          <div>
+            <p className="text-sm font-medium text-[color:var(--state-error)]">Risk Summary:</p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-2">
+              {flags.map((flag) => (
+                <p
+                  key={flag.label}
+                  className="inline-flex items-center gap-1.5 text-sm text-[color:var(--state-error)]"
+                >
+                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                  <span>
+                    {flag.label}: {flag.value}
+                  </span>
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="bank-analysis-escalate-notes"
+              className="text-sm font-medium text-[color:var(--text-primary)]"
             >
-              Escalate {detail.customerName} for senior compliance review. The decision and
-              reviewer notes will be added to this analysis history.
+              Comments / Justification
+            </label>
+            <textarea
+              id="bank-analysis-escalate-notes"
+              name="notes"
+              rows={4}
+              value={notes}
+              onChange={(event) => setNotes(event.target.value)}
+              placeholder="Enter"
+              className="w-full rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3.5 py-3 text-sm text-[color:var(--text-primary)] outline-none placeholder:text-[color:var(--text-light)] focus:border-[color:var(--accent-primary-hover)]"
+            />
+            <p className="text-xs text-[color:var(--text-light)]">
+              Your comments will be recorded in the audit trail and visible to other compliance
+              officers.
             </p>
           </div>
 
-          <label
-            htmlFor="bank-analysis-escalation-notes"
-            className="block space-y-1.5 text-sm font-medium text-[color:var(--text-primary)]"
-          >
-            Escalation notes
-            <textarea
-              id="bank-analysis-escalation-notes"
-              name="notes"
-              rows={4}
-              required
-              minLength={10}
-              autoFocus
-              placeholder="Explain why senior review is required"
-              className="w-full rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3.5 py-3 text-sm text-[color:var(--text-primary)] outline-none placeholder:text-[color:var(--text-light)] focus:border-[color:var(--accent-primary-hover)]"
-            />
-          </label>
-
-          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={onClose}
-              className="h-11 rounded-lg border border-[color:var(--border-default)] px-5 text-sm font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-muted)]"
+              className="h-11 min-w-[110px] rounded-lg bg-[color:var(--bg-muted)] px-5 text-sm font-medium text-[color:var(--text-primary)] transition-colors hover:bg-[color:var(--border-subtle)]"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="h-11 rounded-lg bg-[color:var(--accent-primary)] px-5 text-sm font-medium text-white hover:bg-[color:var(--accent-primary-hover)]"
+              className="h-11 min-w-[140px] rounded-lg bg-[color:var(--accent-primary)] px-5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary-hover)]"
             >
-              Escalate Analysis
+              Escalate Case
             </button>
           </div>
         </form>
-      </section>
+      </div>
     </div>
   );
 }

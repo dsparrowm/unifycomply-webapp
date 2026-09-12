@@ -49,8 +49,10 @@ export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProp
       label: "Validate Document",
       description: "Awaiting dedicated business onboarding design",
       icon: FileSearch,
-      disabled: true,
-      onClick: undefined,
+      onClick: () => {
+        onClose();
+        router.push("/kyb/onboarding");
+      },
     },
   ];
 

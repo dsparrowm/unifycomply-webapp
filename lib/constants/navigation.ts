@@ -113,7 +113,7 @@ export const appNavigation: NavSection[] = [
         icon: "pnd-watchlist",
         permission: "nav.pnd-watchlist",
       },
-      { label: "Rules", href: "/rules", milestone: 4, icon: "rules", permission: "nav.rules" },
+      { label: "Rules", href: "/rules", milestone: 3, icon: "rules", permission: "nav.rules" },
       {
         label: "Risk Score",
         href: "/risk-score",

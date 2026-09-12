@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { KycLookupBackHeader } from "@/components/kyc/lookup/KycLookupBackHeader";
 import { OnboardingBusinessInfoStep } from "@/components/onboarding/OnboardingBusinessInfoStep";
@@ -9,7 +10,16 @@ import { OnboardingDocumentUploadStep } from "@/components/onboarding/Onboarding
 import { OnboardingIdentityReviewStep } from "@/components/onboarding/OnboardingIdentityReviewStep";
 import { OnboardingPersonalInfoStep } from "@/components/onboarding/OnboardingPersonalInfoStep";
 import { OnboardingStepper } from "@/components/onboarding/OnboardingStepper";
+import { createKycCustomer, createKycDocument, extractCustomerId } from "@/lib/api/customers";
+import { customerKeys } from "@/lib/hooks/use-customers";
+import {
+  isApiGender,
+  mapKycDocumentsToDtos,
+  mapPersonalToCreateKycDto,
+  noteUnusedKycBusinessInfo,
+} from "@/lib/api/mappers/onboarding";
 import { onboardingDefaultData, onboardingSteps } from "@/lib/data/onboarding";
+import { toastError, toastSuccess } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import type { OnboardingStepId, OnboardingWizardData } from "@/types/onboarding";
 
@@ -23,9 +33,11 @@ export function OnboardingWizardPanel({
   successHref = "/kyc",
 }: OnboardingWizardPanelProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [currentStepId, setCurrentStepId] = useState<OnboardingStepId>("personal");
   const [data, setData] = useState<OnboardingWizardData>(onboardingDefaultData);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const currentIndex = onboardingSteps.findIndex((step) => step.id === currentStepId);
   const isFirstStep = currentIndex === 0;
@@ -51,11 +63,42 @@ export function OnboardingWizardPanel({
   };
 
   const handleFinalSubmit = async (consent: OnboardingWizardData["consent"]) => {
+    const nextData = { ...data, consent };
+    setData(nextData);
+    setSubmitError(null);
+
+    if (!isApiGender(nextData.personal.gender)) {
+      setSubmitError("Gender is required before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
-    setData((current) => ({ ...current, consent }));
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setIsSubmitting(false);
-    router.push(successHref);
+    try {
+      noteUnusedKycBusinessInfo(nextData.business);
+      const created = await createKycCustomer(mapPersonalToCreateKycDto(nextData.personal));
+      const customerId = extractCustomerId(created);
+      if (!customerId) {
+        throw new Error(
+          "Customer was created but no id was returned. Check Core Platform create response shape.",
+        );
+      }
+
+      const documentDtos = await mapKycDocumentsToDtos(nextData.documents);
+      for (const dto of documentDtos) {
+        await createKycDocument(customerId, dto);
+      }
+
+      toastSuccess("Customer submitted for verification");
+      await queryClient.invalidateQueries({ queryKey: customerKeys.kycList });
+      router.push(`/kyc/${customerId}/account-purpose`);
+    } catch (error) {
+      toastError(error, "Failed to submit customer onboarding");
+      setSubmitError(
+        error instanceof Error ? error.message : "Failed to submit customer onboarding",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -101,6 +144,12 @@ export function OnboardingWizardPanel({
           <OnboardingConsentStep defaultValues={data.consent} onSubmit={handleFinalSubmit} />
         ) : null}
       </div>
+
+      {submitError ? (
+        <p className="text-sm text-[color:var(--state-error)]" role="alert">
+          {submitError}
+        </p>
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <button

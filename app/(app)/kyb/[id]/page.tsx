@@ -1,6 +1,4 @@
-import { notFound } from "next/navigation";
-import { KybDetailPanel } from "@/components/kyb/detail/KybDetailPanel";
-import { getKybDetailById } from "@/lib/data/kyb-detail";
+import { KybDetailContainer } from "@/components/kyb/KybDetailContainer";
 
 type KybDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -8,11 +6,5 @@ type KybDetailPageProps = {
 
 export default async function KybDetailPage({ params }: KybDetailPageProps) {
   const { id } = await params;
-  const detail = getKybDetailById(id);
-
-  if (!detail) {
-    notFound();
-  }
-
-  return <KybDetailPanel detail={detail} />;
+  return <KybDetailContainer customerId={id} />;
 }

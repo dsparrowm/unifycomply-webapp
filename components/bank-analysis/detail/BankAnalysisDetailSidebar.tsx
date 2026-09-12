@@ -8,7 +8,8 @@ type BankAnalysisDetailSidebarProps = {
 export function BankAnalysisDetailSidebar({
   detail,
 }: BankAnalysisDetailSidebarProps) {
-  const { profile, networkMetrics } = detail;
+  const { profile, networkMetrics, riskBanner } = detail;
+  const isHighRisk = riskBanner.tone === "high";
 
   const profileRows = [
     ["Entity Type", profile.entityType],
@@ -18,7 +19,11 @@ export function BankAnalysisDetailSidebar({
   ] as const;
 
   const networkRows = [
-    ["Alerts", networkMetrics.alerts.toString(), "success"],
+    [
+      "Alerts",
+      networkMetrics.alerts.toString(),
+      isHighRisk ? "error" : "success",
+    ],
     ["Shared Account", `${networkMetrics.sharedAccounts} Accounts`, "info"],
     ["Total Transaction", networkMetrics.totalTransactions.toString(), "info"],
     ["Network Depth", `${networkMetrics.networkDepth} Levels`, "info"],
@@ -30,14 +35,35 @@ export function BankAnalysisDetailSidebar({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-[color:var(--text-primary)]">
           Risk Analysis
         </h2>
-        <div className="mt-5 rounded-lg border border-[color:var(--accent-primary-hover)] bg-[color:var(--accent-primary-subtle)] p-4">
-          <p className="font-semibold uppercase text-[color:var(--accent-primary-hover)]">
-            Alerts: {networkMetrics.alerts}
+        <div
+          className={
+            isHighRisk
+              ? "mt-5 rounded-lg border border-[color:var(--state-warning)] bg-[color:var(--state-warning-soft)] p-4"
+              : "mt-5 rounded-lg border border-[color:var(--accent-primary-hover)] bg-[color:var(--accent-primary-subtle)] p-4"
+          }
+        >
+          <p
+            className={
+              isHighRisk
+                ? "font-semibold uppercase text-[color:var(--state-warning)]"
+                : "font-semibold uppercase text-[color:var(--accent-primary-hover)]"
+            }
+          >
+            Alerts: {riskBanner.alerts}
           </p>
-          <p className="mt-5 text-sm text-[color:var(--text-light)]">
-            {networkMetrics.alerts === 0
-              ? "No active alerts or suspicious activity detected"
-              : `${networkMetrics.alerts} active alerts require compliance review`}
+          {riskBanner.title ? (
+            <p className="mt-3 text-sm font-semibold text-[color:var(--text-primary)]">
+              {riskBanner.title}
+            </p>
+          ) : null}
+          <p
+            className={
+              riskBanner.title
+                ? "mt-1 text-sm text-[color:var(--text-muted)]"
+                : "mt-5 text-sm text-[color:var(--text-light)]"
+            }
+          >
+            {riskBanner.description}
           </p>
         </div>
       </section>
@@ -93,7 +119,9 @@ export function BankAnalysisDetailSidebar({
                 className={
                   tone === "success"
                     ? "rounded-full bg-[color:var(--state-success-soft)] px-2.5 py-1 font-medium text-[color:var(--state-success)]"
-                    : "rounded-full bg-[color:var(--state-info-soft)] px-2.5 py-1 font-medium text-[color:var(--state-info)]"
+                    : tone === "error"
+                      ? "rounded-full bg-[color:var(--state-error-soft)] px-2.5 py-1 font-medium text-[color:var(--state-error)]"
+                      : "rounded-full bg-[color:var(--state-info-soft)] px-2.5 py-1 font-medium text-[color:var(--state-info)]"
                 }
               >
                 {value}

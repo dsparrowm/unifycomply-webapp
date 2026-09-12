@@ -1,6 +1,4 @@
-import { notFound } from "next/navigation";
-import { KycDetailPanel } from "@/components/kyc/KycDetailPanel";
-import { getKycDetailById } from "@/lib/data/kyc-detail";
+import { KycDetailContainer } from "@/components/kyc/KycDetailContainer";
 
 type KycDetailPageProps = {
   params: Promise<{ id: string }>;
@@ -8,11 +6,5 @@ type KycDetailPageProps = {
 
 export default async function KycDetailPage({ params }: KycDetailPageProps) {
   const { id } = await params;
-  const detail = getKycDetailById(id);
-
-  if (!detail) {
-    notFound();
-  }
-
-  return <KycDetailPanel detail={detail} />;
+  return <KycDetailContainer customerId={id} />;
 }

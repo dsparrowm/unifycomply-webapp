@@ -1,11 +1,18 @@
 import type { KycDetail } from "@/types/kyc";
+import { cn } from "@/lib/utils";
 
 type KycBiometricVerificationProps = {
   detail: KycDetail;
 };
 
+function isFailedLiveness(status: string) {
+  return status.toLowerCase() === "failed";
+}
+
 export function KycBiometricVerification({ detail }: KycBiometricVerificationProps) {
   const progress = detail.matchScore;
+  const failed = isFailedLiveness(detail.livenessStatus);
+  const ringColor = failed ? "var(--state-error)" : "var(--accent-primary-hover)";
 
   return (
     <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-6 shadow-sm">
@@ -17,7 +24,7 @@ export function KycBiometricVerification({ detail }: KycBiometricVerificationPro
         <div
           className="relative flex h-[200px] w-[200px] items-center justify-center rounded-full"
           style={{
-            background: `conic-gradient(var(--accent-primary-hover) ${progress}%, var(--border-subtle) 0)`,
+            background: `conic-gradient(${ringColor} ${progress}%, var(--border-subtle) 0)`,
           }}
         >
           <div className="flex h-[168px] w-[168px] flex-col items-center justify-center rounded-full bg-[color:var(--bg-surface)]">
@@ -37,7 +44,14 @@ export function KycBiometricVerification({ detail }: KycBiometricVerificationPro
           </div>
           <div className="flex items-center justify-between rounded-lg border border-[color:var(--border-default)] px-3 py-3">
             <span className="text-sm text-[color:var(--text-primary)]">Liveness Detection</span>
-            <span className="rounded-md border border-[color:var(--accent-primary-hover)]/30 bg-[color:var(--accent-primary-soft)] px-2.5 py-1 text-sm font-medium text-[color:var(--state-success)]">
+            <span
+              className={cn(
+                "rounded-md border px-2.5 py-1 text-sm font-medium",
+                failed
+                  ? "border-[color:var(--state-error)]/30 bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]"
+                  : "border-[color:var(--accent-primary-hover)]/30 bg-[color:var(--accent-primary-soft)] text-[color:var(--state-success)]",
+              )}
+            >
               {detail.livenessStatus}
             </span>
           </div>

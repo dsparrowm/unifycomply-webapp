@@ -1,3 +1,4 @@
+import { kybBatchesMock } from "@/lib/data/kyb-batches";
 import type { KybListData, KybMetric, KybRecord } from "@/types/kyb";
 
 /** Populated list fixture aligned to Figma KYB list (frame 84). */
@@ -8,13 +9,12 @@ const kybRecordsMock: KybRecord[] = [
     businessName: "TechVentures LTD",
     businessType: "Private Limited Company",
     verificationType: "CAC",
-    countryCode: "NG",
     country: "Nigeria",
-    status: "pending",
-    priority: "critical",
-    riskScore: 4,
+    status: "approved",
+    priority: "low",
     assignedTo: null,
-    timeInQueue: "30mins",
+    riskScore: 0,
+    timeInQueue: "3h 20m",
     submittedAt: "2026-07-11",
   },
   {
@@ -22,14 +22,13 @@ const kybRecordsMock: KybRecord[] = [
     kybId: "#3065",
     businessName: "Acme Holdings",
     businessType: "Public Limited Company",
-    verificationType: "Memart",
-    countryCode: "NG",
+    verificationType: "Memorandum",
     country: "Nigeria",
     status: "in-review",
-    priority: "high",
-    riskScore: 3,
-    assignedTo: "Alimi Ayamikun",
-    timeInQueue: "2hrs 20mins",
+    priority: "medium",
+    assignedTo: "Alimi Ayomikun",
+    riskScore: 2,
+    timeInQueue: "1d 4h",
     submittedAt: "2026-07-10",
   },
   {
@@ -38,13 +37,12 @@ const kybRecordsMock: KybRecord[] = [
     businessName: "Sunrise Agro",
     businessType: "Partnership",
     verificationType: "TIN",
-    countryCode: "GH",
     country: "Ghana",
     status: "approved",
     priority: "medium",
-    riskScore: 2,
-    assignedTo: "Favour Soma",
-    timeInQueue: "1hr 05mins",
+    assignedTo: "Alimi Ayomikun",
+    riskScore: 1,
+    timeInQueue: "6h 12m",
     submittedAt: "2026-07-11",
   },
   {
@@ -52,11 +50,11 @@ const kybRecordsMock: KybRecord[] = [
     kybId: "#3063",
     businessName: "Vertex Capital",
     businessType: "Limited Liability Partnership",
-    verificationType: "Due Diligence",
-    countryCode: "NG",
-    country: "Nigeria",
-    status: "rejected",
+    verificationType: "CAC",
+    country: "Kenya",
+    status: "escalated",
     priority: "critical",
+    assignedTo: null,
     riskScore: 4,
     assignedTo: null,
     timeInQueue: "5hrs 10mins",
@@ -68,13 +66,12 @@ const kybRecordsMock: KybRecord[] = [
     businessName: "TechVentures Limited",
     businessType: "Private Limited Company",
     verificationType: "CAC",
-    countryCode: "NG",
     country: "Nigeria",
     status: "pending",
-    priority: "low",
-    riskScore: 0,
-    assignedTo: "Alimi Ayamikun",
-    timeInQueue: "45mins",
+    priority: "high",
+    assignedTo: null,
+    riskScore: 3,
+    timeInQueue: "2d 18h",
     submittedAt: "2026-07-08",
   },
   {
@@ -83,10 +80,10 @@ const kybRecordsMock: KybRecord[] = [
     businessName: "Greenfield Logistics",
     businessType: "Sole Proprietorship",
     verificationType: "TIN",
-    countryCode: "NG",
     country: "Nigeria",
     status: "approved",
     priority: "low",
+    assignedTo: "Tejumade Olomola",
     riskScore: 0,
     assignedTo: "Favour Soma",
     timeInQueue: "20mins",
@@ -97,11 +94,11 @@ const kybRecordsMock: KybRecord[] = [
     kybId: "#3060",
     businessName: "Cedar Properties",
     businessType: "Private Limited Company",
-    verificationType: "RC",
-    countryCode: "GH",
-    country: "Ghana",
+    verificationType: "CAC",
+    country: "South Africa",
     status: "rejected",
     priority: "high",
+    assignedTo: "Favour Soma",
     riskScore: 3,
     assignedTo: null,
     timeInQueue: "4hrs 02mins",
@@ -112,11 +109,11 @@ const kybRecordsMock: KybRecord[] = [
     kybId: "#3059",
     businessName: "Nova Energy Trading",
     businessType: "Public Limited Company",
-    verificationType: "Memart",
-    countryCode: "NG",
+    verificationType: "Due Diligence",
     country: "Nigeria",
     status: "pending",
-    priority: "medium",
+    priority: "low",
+    assignedTo: null,
     riskScore: 1,
     assignedTo: "Alimi Ayamikun",
     timeInQueue: "3hrs 15mins",
@@ -127,11 +124,11 @@ const kybRecordsMock: KybRecord[] = [
     kybId: "#3058",
     businessName: "Harbor Marine",
     businessType: "Private Limited Company",
-    verificationType: "Due Diligence",
-    countryCode: "NG",
+    verificationType: "Memorandum",
     country: "Nigeria",
     status: "in-review",
     priority: "critical",
+    assignedTo: null,
     riskScore: 4,
     assignedTo: null,
     timeInQueue: "6hrs 40mins",
@@ -142,11 +139,11 @@ const kybRecordsMock: KybRecord[] = [
     kybId: "#3057",
     businessName: "Summit Retail Africa",
     businessType: "Private Limited Company",
-    verificationType: "CAC",
-    countryCode: "NG",
+    verificationType: "SCUML",
     country: "Nigeria",
     status: "approved",
     priority: "low",
+    assignedTo: "Favour Soma",
     riskScore: 0,
     assignedTo: "Favour Soma",
     timeInQueue: "15mins",
@@ -161,7 +158,7 @@ const kybEmptyMetrics: KybMetric[] = [
   { id: "rejected", label: "Rejected verification", value: 0, tone: "error" },
 ];
 
-/** Metrics per Figma frame 84 — populated list reference. */
+/** Metrics per Figma frames 89 / 84 (`886:109281` / `886:108206`) — 12 / 4 / 4 / 4. */
 const kybPopulatedMetrics: KybMetric[] = [
   { id: "successful", label: "Successful verification", value: 12, tone: "info" },
   { id: "pending", label: "Pending Verification", value: 4, tone: "warning" },
@@ -169,15 +166,17 @@ const kybPopulatedMetrics: KybMetric[] = [
   { id: "rejected", label: "Rejected verification", value: 4, tone: "error" },
 ];
 
-/** Default empty list — Figma frame 79 (`886:106307`). */
+/** Default empty business list — Figma frame 77 (`886:105538`); 79 is the Status-filter overlay. */
 export const kybListDataEmpty: KybListData = {
   records: [],
+  batches: [],
   metrics: kybEmptyMetrics,
 };
 
-/** Populated list fixture — Figma frame 84 (`886:108206`). */
+/** Populated business-queue fixture — Figma frame 89 (`886:109281`). Batches = frame 84. */
 export const kybListDataPopulated: KybListData = {
   records: kybRecordsMock,
+  batches: kybBatchesMock,
   metrics: kybPopulatedMetrics,
 };
 

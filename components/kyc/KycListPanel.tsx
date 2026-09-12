@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { KycChooseActionModal } from "@/components/kyc/KycChooseActionModal";
 import { KycFilters, kycDefaultFilters } from "@/components/kyc/KycFilters";
 import { KycMetricCards } from "@/components/kyc/KycMetricCards";
 import { KycPageHeader } from "@/components/kyc/KycPageHeader";
@@ -20,7 +19,6 @@ export function KycListPanel({ data }: KycListPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<KycListFilters>(kycDefaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
-  const [actionModalOpen, setActionModalOpen] = useState(false);
 
   const filteredRecords = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -38,6 +36,7 @@ export function KycListPanel({ data }: KycListPanelProps) {
         record.country,
         record.status,
         record.priority,
+        record.assignedTo ?? "Unassigned",
         String(record.riskScore),
       ].some((value) => value.toLowerCase().includes(query)),
     );
@@ -63,17 +62,13 @@ export function KycListPanel({ data }: KycListPanelProps) {
   const emptyMessage =
     data.records.length === 0
       ? "No User Activity"
-      : filteredRecords.length === 0
-        ? "No customers match your filters"
-        : "No customers match your search";
+      : searchQuery.trim()
+        ? "No customers match your search"
+        : "No customers match your filters";
 
   return (
     <div className="flex flex-col gap-8">
-      <KycPageHeader onAddCustomer={() => setActionModalOpen(true)} />
-      <KycChooseActionModal
-        open={actionModalOpen}
-        onClose={() => setActionModalOpen(false)}
-      />
+      <KycPageHeader />
 
       <KycMetricCards metrics={data.metrics} />
 
