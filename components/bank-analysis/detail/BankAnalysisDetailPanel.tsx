@@ -4,10 +4,8 @@ import { useState } from "react";
 import { BankAnalysisAlertsPanel } from "@/components/bank-analysis/detail/BankAnalysisAlertsPanel";
 import { BankAnalysisCompliancePanel } from "@/components/bank-analysis/detail/BankAnalysisCompliancePanel";
 import { BankAnalysisDecisionHistoryPanel } from "@/components/bank-analysis/detail/BankAnalysisDecisionHistoryPanel";
-import { BankAnalysisDetailActions } from "@/components/bank-analysis/detail/BankAnalysisDetailActions";
 import { BankAnalysisDetailHeader } from "@/components/bank-analysis/detail/BankAnalysisDetailHeader";
 import { BankAnalysisDetailSidebar } from "@/components/bank-analysis/detail/BankAnalysisDetailSidebar";
-import { BankAnalysisEscalateModal } from "@/components/bank-analysis/detail/BankAnalysisEscalateModal";
 import {
   BankAnalysisDetailTabs,
   type BankAnalysisDetailTab,
@@ -38,26 +36,16 @@ export function BankAnalysisDetailPanel({
         activeDetailTab={activeTab}
         onDetailTabChange={setActiveTab}
       />
-      {feedback ? (
-        <div
-          role="status"
-          className="rounded-lg border border-[color:var(--state-success)]/30 bg-[color:var(--state-success-soft)] px-4 py-3 text-sm text-[color:var(--state-success)]"
-        >
-          {feedback}
-        </div>
-      ) : null}
       <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,801px)_minmax(320px,457px)]">
         {activeTab === "Bank Summary" ? <BankAnalysisSummaryPanel detail={detail} /> : null}
         {activeTab === "Network Intelligence" ? (
           <BankAnalysisNetworkPanel graph={detail.networkGraph} />
         ) : null}
-        {activeTab === "Alerts" ? <BankAnalysisAlertsPanel alerts={detail.alerts} /> : null}
+        {activeTab === "Alerts" ? <BankAnalysisAlertsPanel /> : null}
         {activeTab === "Compliance" ? (
           <BankAnalysisCompliancePanel sections={detail.complianceSections} />
         ) : null}
-        {activeTab === "Decision history" ? (
-          <BankAnalysisDecisionHistoryPanel entries={decisionHistory} />
-        ) : null}
+        {activeTab === "Decision history" ? <BankAnalysisDecisionHistoryPanel /> : null}
         <BankAnalysisDetailSidebar detail={detail} />
       </div>
 

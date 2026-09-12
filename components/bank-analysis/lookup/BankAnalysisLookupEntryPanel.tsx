@@ -17,43 +17,12 @@ import {
 import { cn } from "@/lib/utils";
 import type { BankAnalysisLookupBank, BankAnalysisLookupMode } from "@/types/bank-analysis";
 
-const bankAnalysisLookupSchema = z
-  .object({
-    mode: z.enum(["single", "batch"]),
-    country: z.string().min(1, "Select a country to continue."),
-    app: z.string().min(1, "Select an app to continue."),
-    bank: z.string().min(1, "Select a bank to continue."),
-    accountNumber: z.string(),
-    batchName: z.string(),
-    fileName: z.string(),
-  })
-  .superRefine((values, context) => {
-    if (values.mode === "single" && !values.accountNumber.trim()) {
-      context.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["accountNumber"],
-        message: "Enter an account number to continue.",
-      });
-    }
-
-    if (values.mode === "batch") {
-      if (!values.batchName.trim()) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["batchName"],
-          message: "Enter a batch name to continue.",
-        });
-      }
-
-      if (!values.fileName) {
-        context.addIssue({
-          code: z.ZodIssueCode.custom,
-          path: ["fileName"],
-          message: "Upload an xlsx file to continue.",
-        });
-      }
-    }
-  });
+const bankAnalysisLookupSchema = z.object({
+  country: z.string().min(1, "Select a country to continue."),
+  app: z.string().min(1, "Select an app to continue."),
+  bank: z.string().min(1, "Select a bank to continue."),
+  accountNumber: z.string(),
+});
 
 type BankAnalysisLookupValues = z.infer<typeof bankAnalysisLookupSchema>;
 type OpenDropdown = "country" | "app" | "bank" | null;
@@ -66,8 +35,6 @@ export function BankAnalysisLookupEntryPanel({
   mode = "single",
 }: BankAnalysisLookupEntryPanelProps) {
   const router = useRouter();
-  const [mode, setMode] = useState<BankAnalysisLookupMode>(initialMode);
-  const [bulkFile, setBulkFile] = useState<File | null>(null);
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
   const [batchFile, setBatchFile] = useState<File | null>(null);
   const [batchError, setBatchError] = useState<string | null>(null);
@@ -77,18 +44,15 @@ export function BankAnalysisLookupEntryPanel({
     handleSubmit,
     watch,
     setValue,
-    clearErrors,
+    setError,
     formState: { errors },
   } = useForm<BankAnalysisLookupValues>({
     resolver: zodResolver(bankAnalysisLookupSchema),
     defaultValues: {
-      mode: initialMode,
       country: "",
       app: "",
       bank: "",
       accountNumber: "",
-      batchName: "",
-      fileName: "",
     },
   });
 
@@ -101,7 +65,12 @@ export function BankAnalysisLookupEntryPanel({
   };
 
   const onSubmit = handleSubmit((values) => {
-    router.push(values.mode === "batch" ? "/bank-analysis/batch" : "/bank-analysis/ba-run-1");
+    if (!values.accountNumber.trim()) {
+      setError("accountNumber", { message: "Enter an account number to continue." });
+      return;
+    }
+
+    router.push("/bank-analysis/ba-run-1");
   });
 
   const onBatchSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -129,8 +98,7 @@ export function BankAnalysisLookupEntryPanel({
     errors.country?.message ??
     errors.app?.message ??
     errors.bank?.message ??
-    errors.accountNumber?.message ??
-    errors.batchName?.message;
+    errors.accountNumber?.message;
 
   return (
     <div className="flex flex-col gap-10">
@@ -150,11 +118,7 @@ export function BankAnalysisLookupEntryPanel({
             </p>
           </div>
 
-          <div
-            role="tablist"
-            aria-label="Bank verification mode"
-            className="inline-flex w-full max-w-[384px] gap-6"
-          >
+          <div className="inline-flex w-full max-w-[384px] gap-6">
             {(
               [
                 { id: "single", label: "Single Lookup" },
