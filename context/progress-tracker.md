@@ -272,6 +272,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 
 ## Session Notes
 
+- 2026-09-13: Fixed Vercel `pnpm run build` — unused vars, missing Codex API type aliases, KYB onboarding page back on the wizard, list/detail mapper fields for live customers
 - 2026-07-26: MFA enable modal shows authenticator QR from `keyUri` (vendored Nayuki qrcodegen) plus copyable secret
 - 2026-07-26: Added global toast system (`ToastViewport` + `runAction`) for settings mutations, password change, MFA enable/disable, domain switch, and API key rotate
 - 2026-07-26: Auth polish — Google OAuth BFF (`/api/auth/google` + intent exchange), MFA challenge detection hardened, MFA paste + copy polish, auth redirect guard hydration skeletons

@@ -345,19 +345,6 @@ function severityTextClass(severity: string) {
   return "text-[color:var(--state-success)]";
 }
 
-function categoryTextClass(category: TmTxCategory) {
-  switch (category) {
-    case "stop-payment":
-      return "text-[color:var(--state-warning)]";
-    case "tm-blocked":
-      return "text-[color:var(--state-error)]";
-    case "cumulative-frequency":
-      return "text-[color:var(--state-purple)]";
-    default:
-      return "text-[color:var(--state-success)]";
-  }
-}
-
 function PartyCard({
   title,
   party,

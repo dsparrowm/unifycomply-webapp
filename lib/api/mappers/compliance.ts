@@ -57,6 +57,7 @@ export function mapKycRecord(
     status,
     priority: priorityFromRisk(customer.riskScore),
     riskScore,
+    assignedTo: null,
     timeInQueue: formatTimeInQueue(customer.statusChangedAt ?? customer.createdAt),
     submittedAt: customer.createdAt,
   };
@@ -141,6 +142,8 @@ export function mapKybRecord(customer: ApiKybCustomer): KybRecord {
     status,
     priority: priorityFromRisk(customer.riskScore),
     riskScore,
+    verificationType: "Due Diligence",
+    assignedTo: null,
     timeInQueue: formatTimeInQueue(customer.statusChangedAt ?? customer.createdAt),
     submittedAt: customer.createdAt,
   };
@@ -150,6 +153,7 @@ export function mapKybListData(customers: ApiKybCustomer[]): KybListData {
   const records = customers.map(mapKybRecord);
   return {
     records,
+    batches: [],
     metrics: records.length === 0 ? emptyMetrics() : metricsFromStatuses(records),
   };
 }
@@ -158,7 +162,7 @@ function mapShareholders(shareholders: ApiKybShareholder[]): KybShareCapitalData
   return {
     sectionStatus: shareholders.length > 0 ? "Submitted" : "None on file",
     shareholders: shareholders.map((shareholder) => ({
-      id: shareholder.id,
+      id: shareholder.id ?? `${shareholder.firstName}-${shareholder.lastName}`,
       name: [shareholder.firstName, shareholder.lastName].filter(Boolean).join(" "),
       type: shareholder.type === "corporate" ? "corporate" : "individual",
       shares: shareholder.shareCountTotal ?? 0,
@@ -181,6 +185,7 @@ function mapDocuments(documents: ApiComplianceDocument[]): KybSubmittedDocuments
           : document.status === "rejected"
             ? "rejected"
             : "pending",
+      previewSrc: document.url ?? "/assets/kyb/certificate-of-incorporation.jpg",
     })),
   };
 }

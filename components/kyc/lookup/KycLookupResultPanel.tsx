@@ -78,7 +78,7 @@ export function KycLookupResultPanel({
 
       {activeTab === "aml-screening" ? <KycAmlScreeningPanel amlScreening={view.amlScreening} /> : null}
 
-      {activeTab === "address" ? <KycLookupAddressTab result={result} /> : null}
+      {activeTab === "address" ? <KycLookupAddressTab result={view.result} /> : null}
 
       {activeTab === "ip-device" ? (
         <KycLookupPlaceholderTab

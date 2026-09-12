@@ -545,3 +545,255 @@ export type StartKybVerificationDto = {
   customerId: string;
   verificationTypes: ApiVerificationTypeSelection[];
 };
+
+/** Compatibility aliases for the Codex compliance client still on this branch. */
+export type CreateTenantOnboardingDto = {
+  name: string;
+  registrationNumber: string;
+  countryCode: string;
+  timezone: string;
+};
+
+export type ApiPublicOption = {
+  value: string;
+  label: string;
+  meta?: Record<string, string>;
+};
+
+export type ApiPublicOptionSet = {
+  key: string;
+  description: string;
+  options: ApiPublicOption[];
+};
+
+export type ApiTenantOnboardingData = {
+  user: ApiUser;
+  tenant: {
+    id: string;
+    name: string;
+  };
+  userAccess: ApiUserAccess[];
+  currentAccess?: ApiUserAccess | null;
+  access?: ApiAccessTokens;
+  domain?: ApiDomain;
+};
+
+export type ApiCustomerLifecycleStatus = ApiCustomerStatus;
+
+export type ApiCustomerGender = ApiGender;
+
+export type ApiCustomerAddress = {
+  houseNo?: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  stateCode?: string;
+  country?: string;
+  countryCode?: string;
+  zipCode?: string;
+  formatted?: string;
+};
+
+export type ApiCustomerLifecycleEvent = {
+  id: string;
+  createdAt: string;
+  fromStatus?: ApiCustomerLifecycleStatus | null;
+  toStatus: ApiCustomerLifecycleStatus;
+  actor?: string;
+  reasons?: string[];
+  riskScore?: number | null;
+};
+
+export type ApiKycCustomer = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  countryCode?: string | null;
+  dob?: string | null;
+  address?: ApiCustomerAddress | null;
+  gender?: ApiCustomerGender | null;
+  status?: ApiCustomerLifecycleStatus;
+  statusReasons?: string[];
+  statusChangedAt?: string | null;
+  statusRunId?: string | null;
+  riskScore?: number | null;
+  lifecycle?: ApiCustomerLifecycleEvent[];
+};
+
+export type ApiKybCustomer = {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  businessName: string;
+  businessType?: string | null;
+  countryCode?: string | null;
+  address?: ApiCustomerAddress | null;
+  registrationDate?: string | null;
+  industry?: string | null;
+  contactEmail?: string | null;
+  contactPhone?: string | null;
+  website?: string | null;
+  status?: ApiCustomerLifecycleStatus;
+  statusReasons?: string[];
+  statusChangedAt?: string | null;
+  statusRunId?: string | null;
+  riskScore?: number | null;
+};
+
+export type ApiComplianceDocument = {
+  id: string;
+  createdAt: string;
+  type: string;
+  category?: string | null;
+  url?: string | null;
+  idNumber?: string | null;
+  issueDate?: string | null;
+  expiryDate?: string | null;
+  status?: string;
+};
+
+export type ApiKybShareholder = ApiKybShareholderRecord & {
+  firstName: string;
+  lastName: string;
+  sharePercentage?: number;
+  shareCountTotal?: number;
+  type?: "individual" | "corporate";
+  email?: string | null;
+  phone?: string | null;
+  countryCode?: string | null;
+  role?: string | null;
+  dateAppointed?: string | null;
+};
+
+export type CreateKycCustomerDto = {
+  firstName: string;
+  lastName: string;
+  dob: string;
+  countryCode: string;
+  gender: ApiCustomerGender;
+  address: ApiCustomerAddress;
+  email: string;
+  phone: string;
+};
+
+export type CreateKybCustomerDto = {
+  countryCode: string;
+  businessName: string;
+  registrationDate: string;
+  contactEmail: string;
+  contactPhone: string;
+  address: ApiCustomerAddress;
+  industry?: string;
+  website?: string;
+};
+export type CreateComplianceDocumentDto = {
+  type: string;
+  idNumber?: string;
+  issueDate?: string;
+  expiryDate?: string;
+  file?: string;
+};
+
+export type StartVerificationDto = {
+  customerId: string;
+  verificationTypes: string[];
+};
+
+export type ApiVerificationReason = {
+  code: string;
+  severity?: "info" | "warning" | "blocking";
+  message: string;
+  field?: string;
+  evidence?: Record<string, unknown>;
+};
+
+export type ApiVerificationTask = {
+  id: string;
+  verificationType: string;
+  outcome: string;
+  reasons?: ApiVerificationReason[];
+  providerKey?: string | null;
+  providerReference?: string | null;
+  completedAt?: string | null;
+};
+
+export type ApiVerificationRun = {
+  id: string;
+  status?: string;
+  outcome?: string | null;
+  customerId?: string;
+  workflowId?: string;
+  profileType?: string;
+  reasons?: ApiVerificationReason[];
+  startedAt?: string | null;
+  completedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ApiVerificationRunBundle = {
+  run: ApiVerificationRun;
+  tasks: ApiVerificationTask[];
+};
+
+export type ApiVerificationWorkflow = {
+  id: string;
+  status?: string;
+  verificationType?: string;
+  profileType?: string;
+  priority?: string;
+  riskScore?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ApiRiskContribution = {
+  code?: string;
+  message?: string;
+  points?: number;
+  factorSlug?: string | null;
+  label?: string;
+  detail?: string;
+};
+
+export type ApiRiskAssessment = {
+  score: number;
+  band?: string;
+  priority?: string;
+  canApprove?: boolean;
+  requiresEscalation?: boolean;
+  decision?: string;
+  contributions?: ApiRiskContribution[];
+  decidedAt?: string;
+};
+
+export type ApiVerificationEvent = {
+  id: string;
+  action: string;
+  actor?: string;
+  fromStatus?: string | null;
+  toStatus?: string;
+  detail?: Record<string, unknown>;
+  createdAt?: string;
+};
+
+export type ApiVerificationStart = {
+  workflow?: ApiVerificationWorkflow;
+  run?: ApiVerificationRunBundle;
+  mandatoryAdded?: string[];
+  workflowId?: string;
+  id?: string;
+  status?: string;
+};
+
+export type ApiVerificationDetail = {
+  workflow: ApiVerificationWorkflow;
+  run?: ApiVerificationRunBundle | null;
+  risk?: ApiRiskAssessment | null;
+  events?: ApiVerificationEvent[];
+};
