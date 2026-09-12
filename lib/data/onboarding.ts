@@ -32,6 +32,14 @@ export const onboardingCountryOptions = [
   { label: "South Africa", value: "South Africa" },
 ];
 
+export const onboardingCountryCodeOptions = [
+  { label: "Select country", value: "" },
+  { label: "Nigeria", value: "NG" },
+  { label: "Ghana", value: "GH" },
+  { label: "Kenya", value: "KE" },
+  { label: "South Africa", value: "ZA" },
+];
+
 export const onboardingDefaultData: OnboardingWizardData = {
   personal: {
     firstName: "",
@@ -54,6 +62,9 @@ export const onboardingDefaultData: OnboardingWizardData = {
     country: "",
   },
   documents: {
+    idNumber: "",
+    issueDate: "",
+    expiryDate: "",
     idFront: null,
     idBack: null,
     selfie: null,

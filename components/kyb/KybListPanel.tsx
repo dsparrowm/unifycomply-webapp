@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { KybBatchTable } from "@/components/kyb/KybBatchTable";
-import { KybChooseActionModal } from "@/components/kyb/KybChooseActionModal";
 import { KybFilters, kybDefaultFilters } from "@/components/kyb/KybFilters";
 import { KybMetricCards } from "@/components/kyb/KybMetricCards";
 import { KybPageHeader } from "@/components/kyb/KybPageHeader";
@@ -25,7 +24,6 @@ export function KybListPanel({ data, initialSearchMode }: KybListPanelProps) {
     searchMode: initialSearchMode ?? kybDefaultFilters.searchMode,
   });
   const [currentPage, setCurrentPage] = useState(1);
-  const [actionModalOpen, setActionModalOpen] = useState(false);
 
   const isBulkSearch = filters.searchMode === "bulk-search";
 
@@ -111,11 +109,7 @@ export function KybListPanel({ data, initialSearchMode }: KybListPanelProps) {
 
   return (
     <div className="flex flex-col gap-8">
-      <KybPageHeader onAddBusiness={() => setActionModalOpen(true)} />
-      <KybChooseActionModal
-        open={actionModalOpen}
-        onClose={() => setActionModalOpen(false)}
-      />
+      <KybPageHeader />
 
       <KybMetricCards metrics={data.metrics} />
 

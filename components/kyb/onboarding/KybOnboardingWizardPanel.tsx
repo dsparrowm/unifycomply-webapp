@@ -55,7 +55,6 @@ type KybOnboardingWizardPanelProps = {
 
 export function KybOnboardingWizardPanel({
   backHref = "/kyb",
-  successHref = "/kyb",
 }: KybOnboardingWizardPanelProps) {
   const router = useRouter();
   const queryClient = useQueryClient();

@@ -150,8 +150,8 @@ export async function mapKycDocumentsToDtos(
  * Business step is retained in the KYC wizard UI (Figma/roadmap) but is not part of
  * CreateTenantKycDto. Logged as product open question — not sent on KYC create.
  */
-export function noteUnusedKycBusinessInfo(_business: OnboardingBusinessInfo): void {
-  // Intentionally unused until product decides dual-create vs relocate to KYB.
+export function noteUnusedKycBusinessInfo(business: OnboardingBusinessInfo): void {
+  void business;
 }
 
 export function mapKybFormToCreateDto(data: KybOnboardingFormData): CreateTenantKybDto {

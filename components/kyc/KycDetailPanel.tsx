@@ -73,19 +73,19 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
         </div>
       ) : null}
 
-      {activeTab === "risk-analysis" ? (
+      {activeTab === "risk-analysis" && detail.riskAnalysis ? (
         <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
       ) : null}
 
-      {activeTab === "aml-screening" ? (
+      {activeTab === "aml-screening" && detail.amlScreening ? (
         <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
       ) : null}
 
-      {activeTab === "ip-device" ? (
+      {activeTab === "ip-device" && detail.ipDevice ? (
         <KycIpDevicePanel ipDevice={detail.ipDevice} />
       ) : null}
 
-      {activeTab === "liveness" ? (
+      {activeTab === "liveness" && detail.liveness ? (
         <KycLivenessPanel liveness={detail.liveness} />
       ) : null}
 

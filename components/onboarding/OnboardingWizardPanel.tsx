@@ -30,7 +30,6 @@ type OnboardingWizardPanelProps = {
 
 export function OnboardingWizardPanel({
   backHref = "/kyc",
-  successHref = "/kyc",
 }: OnboardingWizardPanelProps) {
   const router = useRouter();
   const queryClient = useQueryClient();

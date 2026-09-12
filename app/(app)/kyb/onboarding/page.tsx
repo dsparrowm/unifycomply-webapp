@@ -1,5 +1,5 @@
-import { CreateKybForm } from "@/components/kyb/CreateKybForm";
+import { KybOnboardingWizardPanel } from "@/components/kyb/onboarding/KybOnboardingWizardPanel";
 
 export default function KybOnboardingPage() {
-  return <CreateKybForm />;
+  return <KybOnboardingWizardPanel />;
 }
