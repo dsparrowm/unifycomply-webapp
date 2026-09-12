@@ -25,6 +25,10 @@ const statusConfig: Record<
     label: "Escalated",
     className: "bg-[color:var(--accent-primary-soft)] text-[color:var(--accent-primary)]",
   },
+  resubmission: {
+    label: "Resubmission",
+    className: "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]",
+  },
 };
 
 type KycStatusBadgeProps = {

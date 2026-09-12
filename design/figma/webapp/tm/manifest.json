@@ -1,0 +1,1227 @@
+{
+  "source_zips": [
+    "/mnt/c/Users/Davis/Downloads/\ud83e\udeaaUnifycomply.zip",
+    "/mnt/c/Users/Davis/Downloads/\ud83e\udeaaUnifycomply (1).zip"
+  ],
+  "staged": 198,
+  "unique": 184,
+  "duplicates_removed": 14,
+  "kept": 184,
+  "zip1_unique_hashes": 55,
+  "zip2_unique_hashes": 130,
+  "shared_hashes": 1,
+  "new_in_zip2": 129,
+  "duplicate_sets": [
+    {
+      "kept": "zip2/Transaction monitoring/Real-time-15.png",
+      "dest": "Transaction monitoring/Real-time-15.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-15.png",
+        "zip1/Transaction monitoring/Real-time-14.png"
+      ],
+      "count": 3
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-18.png",
+      "dest": "Transaction monitoring/Real-time-18.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-17.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-20.png",
+      "dest": "Transaction monitoring/Real-time-20.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-19.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-26.png",
+      "dest": "Transaction monitoring/Real-time-26.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-25.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-29.png",
+      "dest": "Transaction monitoring/Real-time-29.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-28.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-32.png",
+      "dest": "Transaction monitoring/Real-time-32.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-31.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-35.png",
+      "dest": "Transaction monitoring/Real-time-35.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-34.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-37.png",
+      "dest": "Transaction monitoring/Real-time-37.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-38.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-40.png",
+      "dest": "Transaction monitoring/Real-time-40.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-41.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/Real-time-43.png",
+      "dest": "Transaction monitoring/Real-time-43.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/Real-time-44.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip1/Transaction monitoring/TM Category-7.png",
+      "dest": "Transaction monitoring/TM Category-7.png",
+      "duplicates_of": [
+        "zip1/Transaction monitoring/TM Category-6.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip2/Transaction monitoring/TM Category-8.png",
+      "dest": "Transaction monitoring/TM Category-8__a0ae569f.png",
+      "duplicates_of": [
+        "zip2/Transaction monitoring/TM Category-10.png"
+      ],
+      "count": 2
+    },
+    {
+      "kept": "zip2/Transaction monitoring/TM Category-9.png",
+      "dest": "Transaction monitoring/TM Category-9__5ae754c1.png",
+      "duplicates_of": [
+        "zip2/Transaction monitoring/TM Category-11.png"
+      ],
+      "count": 2
+    }
+  ],
+  "files": [
+    {
+      "dest": "Frame 1618868365.png",
+      "hash": "c055d4db13a6",
+      "from": "zip1/Frame 1618868365.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-1.png",
+      "hash": "1d624a0be421",
+      "from": "zip1/Transaction monitoring/PND-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-2.png",
+      "hash": "5141d3beba58",
+      "from": "zip1/Transaction monitoring/PND-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-3.png",
+      "hash": "5a7356c07ea1",
+      "from": "zip1/Transaction monitoring/PND-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-4.png",
+      "hash": "a7f1042c37ce",
+      "from": "zip1/Transaction monitoring/PND-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-5.png",
+      "hash": "46d3431bfd78",
+      "from": "zip1/Transaction monitoring/PND-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND.png",
+      "hash": "3d36f02f0b68",
+      "from": "zip1/Transaction monitoring/PND.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-1.png",
+      "hash": "0dd3fac61dbc",
+      "from": "zip1/Transaction monitoring/Real-time-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-10.png",
+      "hash": "d93f2641ab3a",
+      "from": "zip1/Transaction monitoring/Real-time-10.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-11.png",
+      "hash": "0d94953dd0e3",
+      "from": "zip1/Transaction monitoring/Real-time-11.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-12.png",
+      "hash": "53588eb2aaae",
+      "from": "zip1/Transaction monitoring/Real-time-12.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-13.png",
+      "hash": "2a348cf50475",
+      "from": "zip1/Transaction monitoring/Real-time-13.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-15.png",
+      "hash": "ad13f75ad49b",
+      "from": "zip2/Transaction monitoring/Real-time-15.png",
+      "dupes": 2
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-16.png",
+      "hash": "b373dca9854e",
+      "from": "zip1/Transaction monitoring/Real-time-16.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-18.png",
+      "hash": "80e555570c67",
+      "from": "zip1/Transaction monitoring/Real-time-18.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-20.png",
+      "hash": "d75a8cbaf324",
+      "from": "zip1/Transaction monitoring/Real-time-20.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-2.png",
+      "hash": "82f634caa09b",
+      "from": "zip1/Transaction monitoring/Real-time-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-21.png",
+      "hash": "60337b7bdc96",
+      "from": "zip1/Transaction monitoring/Real-time-21.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-22.png",
+      "hash": "487182a4c238",
+      "from": "zip1/Transaction monitoring/Real-time-22.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-23.png",
+      "hash": "357aced783c9",
+      "from": "zip1/Transaction monitoring/Real-time-23.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-24.png",
+      "hash": "ed890f0a00e6",
+      "from": "zip1/Transaction monitoring/Real-time-24.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-26.png",
+      "hash": "9d69d477a378",
+      "from": "zip1/Transaction monitoring/Real-time-26.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-27.png",
+      "hash": "630da90cdc1e",
+      "from": "zip1/Transaction monitoring/Real-time-27.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-29.png",
+      "hash": "7052488f48b6",
+      "from": "zip1/Transaction monitoring/Real-time-29.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-3.png",
+      "hash": "35dbb49c378a",
+      "from": "zip1/Transaction monitoring/Real-time-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-30.png",
+      "hash": "d6b4ebeae6b6",
+      "from": "zip1/Transaction monitoring/Real-time-30.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-32.png",
+      "hash": "a0f2593c22bf",
+      "from": "zip1/Transaction monitoring/Real-time-32.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-33.png",
+      "hash": "72b4ef29afdf",
+      "from": "zip1/Transaction monitoring/Real-time-33.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-35.png",
+      "hash": "b78322e9bfcd",
+      "from": "zip1/Transaction monitoring/Real-time-35.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-36.png",
+      "hash": "8c417a246538",
+      "from": "zip1/Transaction monitoring/Real-time-36.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-37.png",
+      "hash": "6c1a03263cd7",
+      "from": "zip1/Transaction monitoring/Real-time-37.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-39.png",
+      "hash": "158da948e347",
+      "from": "zip1/Transaction monitoring/Real-time-39.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-4.png",
+      "hash": "7e9aec785814",
+      "from": "zip1/Transaction monitoring/Real-time-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-40.png",
+      "hash": "7cc0bbd042fb",
+      "from": "zip1/Transaction monitoring/Real-time-40.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-42.png",
+      "hash": "b55d6c389788",
+      "from": "zip1/Transaction monitoring/Real-time-42.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-43.png",
+      "hash": "559161cc3512",
+      "from": "zip1/Transaction monitoring/Real-time-43.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-45.png",
+      "hash": "6e5a49b609d5",
+      "from": "zip1/Transaction monitoring/Real-time-45.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-46.png",
+      "hash": "20844d1d3689",
+      "from": "zip1/Transaction monitoring/Real-time-46.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-47.png",
+      "hash": "59b213bb83d0",
+      "from": "zip1/Transaction monitoring/Real-time-47.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-5.png",
+      "hash": "07cbaf4eab8f",
+      "from": "zip1/Transaction monitoring/Real-time-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-6.png",
+      "hash": "1ce9cfa1abbf",
+      "from": "zip1/Transaction monitoring/Real-time-6.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-7.png",
+      "hash": "9aa8795989b0",
+      "from": "zip1/Transaction monitoring/Real-time-7.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-8.png",
+      "hash": "3d9f5d959d6f",
+      "from": "zip1/Transaction monitoring/Real-time-8.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-9.png",
+      "hash": "a1e3092ff960",
+      "from": "zip1/Transaction monitoring/Real-time-9.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time.png",
+      "hash": "008bdf234b4e",
+      "from": "zip1/Transaction monitoring/Real-time.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-1.png",
+      "hash": "c43a297683a2",
+      "from": "zip1/Transaction monitoring/TM Category-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-10.png",
+      "hash": "88b8c4f05cf2",
+      "from": "zip1/Transaction monitoring/TM Category-10.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-2.png",
+      "hash": "50acd4fdfb9e",
+      "from": "zip1/Transaction monitoring/TM Category-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-3.png",
+      "hash": "5beb1d634729",
+      "from": "zip1/Transaction monitoring/TM Category-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-4.png",
+      "hash": "e538853543a2",
+      "from": "zip1/Transaction monitoring/TM Category-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-5.png",
+      "hash": "cd450fc71d44",
+      "from": "zip1/Transaction monitoring/TM Category-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-7.png",
+      "hash": "c32755b51818",
+      "from": "zip1/Transaction monitoring/TM Category-7.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-8.png",
+      "hash": "59936c80c71b",
+      "from": "zip1/Transaction monitoring/TM Category-8.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-9.png",
+      "hash": "70a18b2a1c7a",
+      "from": "zip1/Transaction monitoring/TM Category-9.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category.png",
+      "hash": "d8b45baa30f7",
+      "from": "zip1/Transaction monitoring/TM Category.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/10.png",
+      "hash": "eea68da38477",
+      "from": "zip2/SAR Rationale/10.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/11.png",
+      "hash": "1af74a42c645",
+      "from": "zip2/SAR Rationale/11.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/12.png",
+      "hash": "d5594cc926a5",
+      "from": "zip2/SAR Rationale/12.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/13.png",
+      "hash": "8ca170ae82ba",
+      "from": "zip2/SAR Rationale/13.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/14.png",
+      "hash": "af8c46ccd113",
+      "from": "zip2/SAR Rationale/14.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/16.png",
+      "hash": "33c79c0bd001",
+      "from": "zip2/SAR Rationale/16.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/17.png",
+      "hash": "b95eca03db63",
+      "from": "zip2/SAR Rationale/17.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/19.png",
+      "hash": "5f7e47558789",
+      "from": "zip2/SAR Rationale/19.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/22.png",
+      "hash": "52703c27425a",
+      "from": "zip2/SAR Rationale/22.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/23.png",
+      "hash": "59fa65511005",
+      "from": "zip2/SAR Rationale/23.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/24.png",
+      "hash": "9b2c0b487906",
+      "from": "zip2/SAR Rationale/24.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/8.png",
+      "hash": "a3c18b15e9f5",
+      "from": "zip2/SAR Rationale/8.png",
+      "dupes": 0
+    },
+    {
+      "dest": "SAR Rationale/9.png",
+      "hash": "60648c06931d",
+      "from": "zip2/SAR Rationale/9.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-1.png",
+      "hash": "ee46047a3a76",
+      "from": "zip2/TM rules setting-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-10.png",
+      "hash": "351ab1d0a752",
+      "from": "zip2/TM rules setting-10.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-11.png",
+      "hash": "041f1310784c",
+      "from": "zip2/TM rules setting-11.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-12.png",
+      "hash": "0ac13d60fcad",
+      "from": "zip2/TM rules setting-12.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-13.png",
+      "hash": "f5139cf27557",
+      "from": "zip2/TM rules setting-13.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-2.png",
+      "hash": "b2e21a321f6a",
+      "from": "zip2/TM rules setting-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-3.png",
+      "hash": "c385f835b196",
+      "from": "zip2/TM rules setting-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-4.png",
+      "hash": "c09b183eaaed",
+      "from": "zip2/TM rules setting-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-5.png",
+      "hash": "e0784603f29d",
+      "from": "zip2/TM rules setting-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-6.png",
+      "hash": "48af1f257b89",
+      "from": "zip2/TM rules setting-6.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-7.png",
+      "hash": "418a03277c89",
+      "from": "zip2/TM rules setting-7.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-8.png",
+      "hash": "053a14082eef",
+      "from": "zip2/TM rules setting-8.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting-9.png",
+      "hash": "ac7ded3cddd8",
+      "from": "zip2/TM rules setting-9.png",
+      "dupes": 0
+    },
+    {
+      "dest": "TM rules setting.png",
+      "hash": "8a2c0169dc14",
+      "from": "zip2/TM rules setting.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-1__9e4ec490.png",
+      "hash": "9e4ec4909d6d",
+      "from": "zip2/Transaction monitoring/PND-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-2__f4d8adf5.png",
+      "hash": "f4d8adf5add5",
+      "from": "zip2/Transaction monitoring/PND-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-3__5a82c8c2.png",
+      "hash": "5a82c8c2ae89",
+      "from": "zip2/Transaction monitoring/PND-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-4__d0425454.png",
+      "hash": "d0425454a347",
+      "from": "zip2/Transaction monitoring/PND-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-5__bf907faf.png",
+      "hash": "bf907faf5939",
+      "from": "zip2/Transaction monitoring/PND-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-6.png",
+      "hash": "29bb73932d0e",
+      "from": "zip2/Transaction monitoring/PND-6.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND-7.png",
+      "hash": "9efb60c0f207",
+      "from": "zip2/Transaction monitoring/PND-7.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/PND__a8ce2808.png",
+      "hash": "a8ce2808b6a4",
+      "from": "zip2/Transaction monitoring/PND.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-1__c82f6ac2.png",
+      "hash": "c82f6ac28c2a",
+      "from": "zip2/Transaction monitoring/Real-time-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-10__f7907332.png",
+      "hash": "f790733272b1",
+      "from": "zip2/Transaction monitoring/Real-time-10.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-11__c529eaef.png",
+      "hash": "c529eaef5258",
+      "from": "zip2/Transaction monitoring/Real-time-11.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-12__7775396f.png",
+      "hash": "7775396f3520",
+      "from": "zip2/Transaction monitoring/Real-time-12.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-13__0d5b87e7.png",
+      "hash": "0d5b87e7549a",
+      "from": "zip2/Transaction monitoring/Real-time-13.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-14.png",
+      "hash": "3212559bfb53",
+      "from": "zip2/Transaction monitoring/Real-time-14.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-16__14774443.png",
+      "hash": "14774443a414",
+      "from": "zip2/Transaction monitoring/Real-time-16.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-17.png",
+      "hash": "48ebb4d808a6",
+      "from": "zip2/Transaction monitoring/Real-time-17.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-18__fb66ef7c.png",
+      "hash": "fb66ef7c42e4",
+      "from": "zip2/Transaction monitoring/Real-time-18.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-19.png",
+      "hash": "3f38dfe1753a",
+      "from": "zip2/Transaction monitoring/Real-time-19.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-2__7f11b0ca.png",
+      "hash": "7f11b0caed6b",
+      "from": "zip2/Transaction monitoring/Real-time-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-20__9bae95c0.png",
+      "hash": "9bae95c08056",
+      "from": "zip2/Transaction monitoring/Real-time-20.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-21__5414b812.png",
+      "hash": "5414b812c738",
+      "from": "zip2/Transaction monitoring/Real-time-21.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-22__6539bab0.png",
+      "hash": "6539bab0d591",
+      "from": "zip2/Transaction monitoring/Real-time-22.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-23__18eea99a.png",
+      "hash": "18eea99ab0e7",
+      "from": "zip2/Transaction monitoring/Real-time-23.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-24__54fc3be0.png",
+      "hash": "54fc3be07327",
+      "from": "zip2/Transaction monitoring/Real-time-24.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-25.png",
+      "hash": "03ba252d156e",
+      "from": "zip2/Transaction monitoring/Real-time-25.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-26__0454fae2.png",
+      "hash": "0454fae2ddd7",
+      "from": "zip2/Transaction monitoring/Real-time-26.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-27__22b6603a.png",
+      "hash": "22b6603a7184",
+      "from": "zip2/Transaction monitoring/Real-time-27.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-28.png",
+      "hash": "6a1c3c9dd40b",
+      "from": "zip2/Transaction monitoring/Real-time-28.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-29__ce138008.png",
+      "hash": "ce138008d4fa",
+      "from": "zip2/Transaction monitoring/Real-time-29.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-3__e89f9745.png",
+      "hash": "e89f9745ba7a",
+      "from": "zip2/Transaction monitoring/Real-time-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-30__a2a83cdb.png",
+      "hash": "a2a83cdba240",
+      "from": "zip2/Transaction monitoring/Real-time-30.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-31.png",
+      "hash": "8c97f20a7dae",
+      "from": "zip2/Transaction monitoring/Real-time-31.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-32__e4ca4bdb.png",
+      "hash": "e4ca4bdbf031",
+      "from": "zip2/Transaction monitoring/Real-time-32.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-33__88b1ce98.png",
+      "hash": "88b1ce988e3f",
+      "from": "zip2/Transaction monitoring/Real-time-33.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-34.png",
+      "hash": "3e6892628712",
+      "from": "zip2/Transaction monitoring/Real-time-34.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-35__f0abf1e4.png",
+      "hash": "f0abf1e4f24f",
+      "from": "zip2/Transaction monitoring/Real-time-35.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-36__08eebbc1.png",
+      "hash": "08eebbc1638f",
+      "from": "zip2/Transaction monitoring/Real-time-36.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-37__742798cf.png",
+      "hash": "742798cfe23d",
+      "from": "zip2/Transaction monitoring/Real-time-37.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-38.png",
+      "hash": "b8c6ec5b9b44",
+      "from": "zip2/Transaction monitoring/Real-time-38.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-39__fc8af56a.png",
+      "hash": "fc8af56a6d79",
+      "from": "zip2/Transaction monitoring/Real-time-39.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-4__1c45f8e8.png",
+      "hash": "1c45f8e80846",
+      "from": "zip2/Transaction monitoring/Real-time-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-40__3139f884.png",
+      "hash": "3139f884ac99",
+      "from": "zip2/Transaction monitoring/Real-time-40.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-41.png",
+      "hash": "c2e0d9a5e2b8",
+      "from": "zip2/Transaction monitoring/Real-time-41.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-42__4c6ebe72.png",
+      "hash": "4c6ebe72d615",
+      "from": "zip2/Transaction monitoring/Real-time-42.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-43__595dd3a9.png",
+      "hash": "595dd3a91d6e",
+      "from": "zip2/Transaction monitoring/Real-time-43.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-44.png",
+      "hash": "e1b77eb7317f",
+      "from": "zip2/Transaction monitoring/Real-time-44.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-45__e334bb32.png",
+      "hash": "e334bb3253c2",
+      "from": "zip2/Transaction monitoring/Real-time-45.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-46__32da8d40.png",
+      "hash": "32da8d4020c9",
+      "from": "zip2/Transaction monitoring/Real-time-46.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-47__ae143816.png",
+      "hash": "ae1438165062",
+      "from": "zip2/Transaction monitoring/Real-time-47.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-48.png",
+      "hash": "54bbad4114e2",
+      "from": "zip2/Transaction monitoring/Real-time-48.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-49.png",
+      "hash": "ae60dd8e2226",
+      "from": "zip2/Transaction monitoring/Real-time-49.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-5__d202dcb9.png",
+      "hash": "d202dcb940cf",
+      "from": "zip2/Transaction monitoring/Real-time-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-50.png",
+      "hash": "a4bed057f1d2",
+      "from": "zip2/Transaction monitoring/Real-time-50.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-51.png",
+      "hash": "499396d0f83e",
+      "from": "zip2/Transaction monitoring/Real-time-51.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-52.png",
+      "hash": "f0fdb07f9ef5",
+      "from": "zip2/Transaction monitoring/Real-time-52.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-53.png",
+      "hash": "0f1b4dd25464",
+      "from": "zip2/Transaction monitoring/Real-time-53.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-54.png",
+      "hash": "4e08b1e46fb0",
+      "from": "zip2/Transaction monitoring/Real-time-54.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-55.png",
+      "hash": "a24bc13d37e7",
+      "from": "zip2/Transaction monitoring/Real-time-55.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-56.png",
+      "hash": "ab47c77e8c4c",
+      "from": "zip2/Transaction monitoring/Real-time-56.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-57.png",
+      "hash": "3f4fde289710",
+      "from": "zip2/Transaction monitoring/Real-time-57.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-58.png",
+      "hash": "f154bc760d2e",
+      "from": "zip2/Transaction monitoring/Real-time-58.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-59.png",
+      "hash": "6729accdab2c",
+      "from": "zip2/Transaction monitoring/Real-time-59.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-6__3c4b721a.png",
+      "hash": "3c4b721ad1fd",
+      "from": "zip2/Transaction monitoring/Real-time-6.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-60.png",
+      "hash": "294df08a4980",
+      "from": "zip2/Transaction monitoring/Real-time-60.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-61.png",
+      "hash": "f1b132e80f42",
+      "from": "zip2/Transaction monitoring/Real-time-61.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-62.png",
+      "hash": "9ad013629ee2",
+      "from": "zip2/Transaction monitoring/Real-time-62.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-63.png",
+      "hash": "77e614705cb4",
+      "from": "zip2/Transaction monitoring/Real-time-63.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-64.png",
+      "hash": "bd4a97fff1c9",
+      "from": "zip2/Transaction monitoring/Real-time-64.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-65.png",
+      "hash": "47a3c4bcacb1",
+      "from": "zip2/Transaction monitoring/Real-time-65.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-66.png",
+      "hash": "1f72c4f70d09",
+      "from": "zip2/Transaction monitoring/Real-time-66.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-67.png",
+      "hash": "96e1d3738e7c",
+      "from": "zip2/Transaction monitoring/Real-time-67.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-68.png",
+      "hash": "2b5cb949bfa0",
+      "from": "zip2/Transaction monitoring/Real-time-68.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-69.png",
+      "hash": "907c33d5aeac",
+      "from": "zip2/Transaction monitoring/Real-time-69.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-7__a5ab1bd5.png",
+      "hash": "a5ab1bd5fc32",
+      "from": "zip2/Transaction monitoring/Real-time-7.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-70.png",
+      "hash": "67e7154eb04c",
+      "from": "zip2/Transaction monitoring/Real-time-70.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-71.png",
+      "hash": "948cd0b0e1bd",
+      "from": "zip2/Transaction monitoring/Real-time-71.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-72.png",
+      "hash": "32623a33550f",
+      "from": "zip2/Transaction monitoring/Real-time-72.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-73.png",
+      "hash": "0a993e58f7c7",
+      "from": "zip2/Transaction monitoring/Real-time-73.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-74.png",
+      "hash": "27d799d87021",
+      "from": "zip2/Transaction monitoring/Real-time-74.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-75.png",
+      "hash": "7cbb26d5916a",
+      "from": "zip2/Transaction monitoring/Real-time-75.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-76.png",
+      "hash": "90567bf0f799",
+      "from": "zip2/Transaction monitoring/Real-time-76.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-77.png",
+      "hash": "5bc2cd2cf4cc",
+      "from": "zip2/Transaction monitoring/Real-time-77.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-78.png",
+      "hash": "4b244197cd6e",
+      "from": "zip2/Transaction monitoring/Real-time-78.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-79.png",
+      "hash": "43c27ac46b3b",
+      "from": "zip2/Transaction monitoring/Real-time-79.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-8__a62062b9.png",
+      "hash": "a62062b98691",
+      "from": "zip2/Transaction monitoring/Real-time-8.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-80.png",
+      "hash": "890e5eeb50b7",
+      "from": "zip2/Transaction monitoring/Real-time-80.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-81.png",
+      "hash": "4b1039c1d503",
+      "from": "zip2/Transaction monitoring/Real-time-81.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time-9__10dc2d4f.png",
+      "hash": "10dc2d4f3978",
+      "from": "zip2/Transaction monitoring/Real-time-9.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/Real-time__f6ec8bce.png",
+      "hash": "f6ec8bce558d",
+      "from": "zip2/Transaction monitoring/Real-time.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-1__34a52c31.png",
+      "hash": "34a52c3103c4",
+      "from": "zip2/Transaction monitoring/TM Category-1.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-8__a0ae569f.png",
+      "hash": "a0ae569f0935",
+      "from": "zip2/Transaction monitoring/TM Category-8.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-9__5ae754c1.png",
+      "hash": "5ae754c1f38a",
+      "from": "zip2/Transaction monitoring/TM Category-9.png",
+      "dupes": 1
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-12.png",
+      "hash": "7e723c74140b",
+      "from": "zip2/Transaction monitoring/TM Category-12.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-13.png",
+      "hash": "c6a4e738e323",
+      "from": "zip2/Transaction monitoring/TM Category-13.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-14.png",
+      "hash": "e0a8f10365b3",
+      "from": "zip2/Transaction monitoring/TM Category-14.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-2__8b85b75b.png",
+      "hash": "8b85b75bda53",
+      "from": "zip2/Transaction monitoring/TM Category-2.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-3__b31df64a.png",
+      "hash": "b31df64ac65c",
+      "from": "zip2/Transaction monitoring/TM Category-3.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-4__2732c810.png",
+      "hash": "2732c81006c7",
+      "from": "zip2/Transaction monitoring/TM Category-4.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-5__25b1cc4d.png",
+      "hash": "25b1cc4dd06f",
+      "from": "zip2/Transaction monitoring/TM Category-5.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-6.png",
+      "hash": "3d151379146f",
+      "from": "zip2/Transaction monitoring/TM Category-6.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category-7__e0470448.png",
+      "hash": "e0470448369c",
+      "from": "zip2/Transaction monitoring/TM Category-7.png",
+      "dupes": 0
+    },
+    {
+      "dest": "Transaction monitoring/TM Category__620d499b.png",
+      "hash": "620d499bdaf9",
+      "from": "zip2/Transaction monitoring/TM Category.png",
+      "dupes": 0
+    }
+  ]
+}

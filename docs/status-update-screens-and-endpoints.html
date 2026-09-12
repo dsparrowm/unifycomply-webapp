@@ -86,18 +86,29 @@
   <h1>Unifycomply — Frontend Status Update</h1>
   <div class="meta">
     <p><strong>Author:</strong> Davies Aniefiok</p>
-    <p><strong>Date:</strong> 20 July 2026</p>
-    <p><strong>Scope:</strong> WebApp frontend (Next.js) — screens/modules completed and API usage</p>
+    <p><strong>Date:</strong> 12 September 2026</p>
+    <p><strong>Scope:</strong> WebApp frontend (Next.js App Router + BFF) — screens completed and API usage</p>
     <p><strong>Live site:</strong> <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a></p>
+    <p><strong>Upstream API:</strong> <a href="https://unifycomply-api.rokxier.com/v1/docs" target="_blank" rel="noopener noreferrer">https://unifycomply-api.rokxier.com/v1/docs</a></p>
   </div>
 
   <hr />
 
   <h2>Summary</h2>
   <p>
-    Milestone 1 (Foundation) is complete. Milestone 2 (KYC Orchestration) is in progress,
-    with most KYC/KYB and bank analysis screens delivered. No live backend endpoints have
-    been consumed yet — the UI runs on typed mock data until API contracts are provided.
+    Milestone 1 (Foundation) is complete, including live auth and tenant settings.
+  </p>
+  <p>
+    Milestone 2 (KYC Orchestration) <strong>Figma unique UI is closed</strong> for KYC, KYB, AML, and Bank Analysis.
+    Live Core Platform traffic now powers auth, settings, and KYC/KYB <strong>create + list/detail + account purpose + start verification</strong>.
+    Perform Lookup, Approve/Reject/Escalate, AML, bank analysis, overview charts, and audit logs remain on mocks because those OpenAPI contracts are missing.
+  </p>
+  <p>
+    Milestone 3 (Transaction Monitoring) UI is <strong>built and parked</strong> (gated while the active milestone is 2). M4–M5 are not started.
+  </p>
+  <p>
+    The browser talks only to this app’s BFF (<code>/api/*</code>). JWTs stay in httpOnly cookies.
+    Figma remains the UI contract — we map API payloads in the BFF / <code>lib/api</code> mappers and do not reshape screens to match DTOs.
   </p>
   <p>
     You can view the deployed WebApp here:
@@ -109,106 +120,294 @@
   <h3>Milestone 1 — Foundation (complete)</h3>
   <table>
     <thead>
-      <tr><th>Area</th><th>Screens / modules</th></tr>
+      <tr><th>Area</th><th>Screens / modules</th><th>Data</th></tr>
     </thead>
     <tbody>
       <tr>
         <td>Authentication</td>
-        <td>Sign-in, register, forgot/reset password, MFA, verify email, tenant selection</td>
+        <td>Sign-in, register, forgot/reset password, MFA, verify email, Google callback, tenant / access switch</td>
+        <td><strong>Live</strong></td>
       </tr>
       <tr>
         <td>App shell</td>
-        <td>Sidebar, header, sandbox/production toggle, global search, RBAC nav gating</td>
+        <td>Sidebar, header, sandbox/production toggle (domain switch), global search, RBAC nav gating</td>
+        <td><strong>Live</strong> (toggle + session)</td>
       </tr>
       <tr>
         <td>Dashboard</td>
         <td>Overview dashboard</td>
+        <td>Mock</td>
       </tr>
       <tr>
         <td>Tenant admin / Settings</td>
-        <td>Profile, business information, team management, roles &amp; permissions, security, audit logs, approvals, PEP settings, notifications, compliance rules</td>
+        <td>Profile, business information, team management, roles &amp; permissions, security/MFA, approvals, PEP settings, notifications, compliance rules, API keys</td>
+        <td><strong>Live</strong></td>
+      </tr>
+      <tr>
+        <td>Settings</td>
+        <td>Audit logs</td>
+        <td>Mock (no OpenAPI route)</td>
       </tr>
       <tr>
         <td>Placeholders</td>
-        <td>Billing, API keys</td>
+        <td>Billing</td>
+        <td>Placeholder</td>
       </tr>
     </tbody>
   </table>
 
-  <h3>Milestone 2 — KYC Orchestration (in progress)</h3>
+  <h3>Milestone 2 — KYC Orchestration (Figma unique UI closed)</h3>
   <table>
     <thead>
-      <tr><th>Area</th><th>Screens / modules</th><th>Routes</th></tr>
+      <tr><th>Area</th><th>Screens / modules</th><th>Routes</th><th>Data</th></tr>
     </thead>
     <tbody>
       <tr>
         <td>KYC list</td>
-        <td>Metrics, filters, search, table, pagination</td>
+        <td>Metrics, filters, search, table, pagination, Add Customer</td>
         <td><code>/kyc</code></td>
+        <td><strong>Live</strong> <code>GET /customers/kyc</code></td>
       </tr>
       <tr>
         <td>KYC detail</td>
-        <td>Document viewer, risk/biometric/timeline panels, AML tab, decision modals</td>
+        <td>Document viewer, extracted fields, risk/biometric/timeline, AML/IP/liveness tabs, decision modals</td>
         <td><code>/kyc/[id]</code></td>
+        <td><strong>Live</strong> identity + documents; rich panels still mock</td>
+      </tr>
+      <tr>
+        <td>KYC account purpose</td>
+        <td>Purpose / source of funds (API-derived; no Figma)</td>
+        <td><code>/kyc/[id]/account-purpose</code></td>
+        <td><strong>Live</strong></td>
+      </tr>
+      <tr>
+        <td>KYC start verification</td>
+        <td>Check picker from <code>available-checks</code> (API-derived; no Figma)</td>
+        <td><code>/kyc/[id]/start-verification</code></td>
+        <td><strong>Live</strong></td>
       </tr>
       <tr>
         <td>KYC Perform Lookup</td>
-        <td>Single + bulk lookup entry and result</td>
+        <td>Single + bulk entry and result</td>
         <td><code>/kyc/lookup</code>, <code>/kyc/lookup/result</code></td>
+        <td>Mock (no lookup API)</td>
       </tr>
       <tr>
         <td>Customer onboarding</td>
-        <td>Five-step wizard (personal → business → documents → review → consent)</td>
+        <td>Five-step wizard → create customer + documents → account purpose</td>
         <td><code>/kyc/onboarding</code></td>
+        <td><strong>Live</strong> create</td>
       </tr>
       <tr>
         <td>KYB list</td>
-        <td>Metrics, filters, search, table, pagination</td>
+        <td>Business queue + Bulk Search batch-file table</td>
         <td><code>/kyb</code></td>
+        <td><strong>Live</strong> businesses; batches mock</td>
       </tr>
       <tr>
         <td>KYB detail</td>
-        <td>Business Overview, Risk Score, Directors &amp; Officers, Shareholders, Documents</td>
+        <td>Business Overview, risk, directors, shareholders, documents, compliance checks, decision modals</td>
         <td><code>/kyb/[id]</code></td>
+        <td><strong>Live</strong> identity + documents + shareholders; directors/compliance mock</td>
+      </tr>
+      <tr>
+        <td>KYB account purpose / start verification</td>
+        <td>Same API-derived pair as KYC</td>
+        <td><code>/kyb/[id]/account-purpose</code>, <code>/kyb/[id]/start-verification</code></td>
+        <td><strong>Live</strong></td>
+      </tr>
+      <tr>
+        <td>KYB onboarding</td>
+        <td>Validate Document intake (API-derived; no Figma)</td>
+        <td><code>/kyb/onboarding</code></td>
+        <td><strong>Live</strong> create</td>
       </tr>
       <tr>
         <td>KYB Perform Lookup</td>
-        <td>Single + bulk lookup entry and result</td>
+        <td>Single + bulk entry and result</td>
         <td><code>/kyb/lookup</code>, <code>/kyb/lookup/result</code></td>
+        <td>Mock</td>
+      </tr>
+      <tr>
+        <td>KYB Batch Lookup</td>
+        <td>Batch result</td>
+        <td><code>/kyb/batch/[id]</code></td>
+        <td>Mock</td>
+      </tr>
+      <tr>
+        <td>AML Screening</td>
+        <td>List, lookup, Search Result, Batch Lookup, case detail, escalate modal</td>
+        <td><code>/aml-screening</code> and nested routes</td>
+        <td>Mock (no AML OpenAPI)</td>
       </tr>
       <tr>
         <td>Bank analysis</td>
-        <td>List with metrics, filters, New Lookup modal</td>
-        <td><code>/bank-analysis</code></td>
+        <td>List, Single Lookup + Bulk Analysis, Batch Lookup, five-tab detail, escalate</td>
+        <td><code>/bank-analysis</code> and nested routes</td>
+        <td>Mock (no bank OpenAPI)</td>
       </tr>
       <tr>
         <td>Placeholders</td>
-        <td>AML Screening, Packages, Request</td>
-        <td><code>/aml-screening</code>, <code>/packages</code>, <code>/request</code></td>
+        <td>Packages, Request</td>
+        <td><code>/packages</code>, <code>/request</code></td>
+        <td>No Figma section frames</td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Outstanding (Milestone 2)</h2>
+  <h3>Milestone 3 — Transaction Monitoring (UI complete, parked)</h3>
+  <p>Built on mocks; routes exist but are gated while the active milestone is 2.</p>
   <table>
     <thead>
-      <tr><th>Item</th><th>Status</th></tr>
+      <tr><th>Area</th><th>Routes</th></tr>
     </thead>
     <tbody>
       <tr>
-        <td>AML Screening list UI</td>
-        <td>Not started</td>
+        <td>TM Overview, Transactions list/detail, Account Statement, SAR rationale</td>
+        <td><code>/transaction-monitoring</code>, <code>/transactions</code>, <code>/transactions/[id]</code>, account-statement, sar-rationale</td>
+      </tr>
+      <tr>
+        <td>Queues</td>
+        <td><code>/tm-not-blocked</code>, <code>/stop-payment</code>, <code>/cumulative-frequency</code>, <code>/tm-blocked</code></td>
+      </tr>
+      <tr>
+        <td>Rules + Adopt Template</td>
+        <td><code>/rules</code>, <code>/rules/[id]</code></td>
       </tr>
     </tbody>
   </table>
 
-  <h2>Endpoints consumed</h2>
-  <p><strong>None.</strong></p>
-  <p>
-    This repository is frontend-only. All screens use typed mock fixtures under
-    <code>lib/data/</code>. No live backend APIs have been integrated. API wiring is
-    deferred until OpenAPI contracts are provided.
-  </p>
+  <h2>Outstanding</h2>
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Owner</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>KYB shareholder create/edit</td>
+        <td>Frontend</td>
+        <td>Next (API exists; no Figma — will build API-derived)</td>
+      </tr>
+      <tr>
+        <td>Document requirements checklist</td>
+        <td>Frontend</td>
+        <td>Next (<code>GET …/documents/requirements</code>)</td>
+      </tr>
+      <tr>
+        <td>Verification run history on the case</td>
+        <td>Frontend</td>
+        <td>Next (<code>GET /verifications/{workflowId}</code>)</td>
+      </tr>
+      <tr>
+        <td>Flag status on existing alert UI</td>
+        <td>Frontend</td>
+        <td>Next (<code>PATCH …/flags/{flagId}</code>)</td>
+      </tr>
+      <tr>
+        <td>Tenant apps on the existing App dropdown</td>
+        <td>Frontend</td>
+        <td>Next (<code>GET /tenants/apps</code>)</td>
+      </tr>
+      <tr>
+        <td>Perform Lookup + bulk xlsx</td>
+        <td>Backend</td>
+        <td>UI done; <strong>no OpenAPI</strong></td>
+      </tr>
+      <tr>
+        <td>Approve / Reject / Escalate / Resubmit</td>
+        <td>Backend</td>
+        <td>UI done; <strong>no OpenAPI</strong> (or confirm flags are the only decision API)</td>
+      </tr>
+      <tr>
+        <td>Rich OCR / liveness / IP / AML read models</td>
+        <td>Backend</td>
+        <td>Detail tabs still use score templates</td>
+      </tr>
+      <tr>
+        <td>AML + bank analysis + overview + audit logs</td>
+        <td>Backend</td>
+        <td>UI done or mocked; <strong>no OpenAPI</strong></td>
+      </tr>
+      <tr>
+        <td>Packages / Request / Pre-KYC screens</td>
+        <td>Design</td>
+        <td>Sidebar labels only; no section frames</td>
+      </tr>
+      <tr>
+        <td>KYC wizard Business step vs <code>POST /customers/kyc</code></td>
+        <td>Product</td>
+        <td>UI collects it; DTO has no business fields</td>
+      </tr>
+      <tr>
+        <td>Officer queue = customers vs workflows</td>
+        <td>Product</td>
+        <td>List is customers today</td>
+      </tr>
+      <tr>
+        <td>Maker–checker, ongoing refresh, offboarding</td>
+        <td>Design + product</td>
+        <td>Not in M2 Figma</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Endpoints consumed (via BFF)</h2>
+  <p>Browser → <code>/api/*</code> → Core Platform <code>https://unifycomply-api.rokxier.com</code>.</p>
+
+  <h3>Auth (live)</h3>
+  <table>
+    <thead>
+      <tr><th>BFF / upstream</th><th>Used by</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>POST /v1/auth/sign-in</code>, <code>/sign-up</code>, <code>/refresh</code></td><td>Sign-in / register</td></tr>
+      <tr><td><code>POST /v1/auth/mfa/validate</code>, <code>/mfa/status</code>, <code>/mfa/setup</code>, <code>/mfa/enable</code>, <code>/mfa/disable</code></td><td>MFA</td></tr>
+      <tr><td><code>POST /v1/auth/access/switch</code>, <code>GET /v1/auth/access</code>, <code>GET /v1/auth/user</code></td><td>Tenant / session</td></tr>
+      <tr><td><code>POST /v1/auth/forgot-password</code>, <code>/forgot-password/complete</code></td><td>Reset password</td></tr>
+      <tr><td><code>POST /v1/auth/email/verify</code>, <code>/email/verify/complete</code></td><td>Verify email</td></tr>
+      <tr><td><code>PUT /v1/auth/password</code></td><td>Change password</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Tenant settings (live)</h3>
+  <table>
+    <thead>
+      <tr><th>Upstream</th><th>Used by</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>GET/PUT /v1/users/me/profiles</code></td><td>Settings → Profile</td></tr>
+      <tr><td><code>GET/PUT /v1/tenants/settings/business-information</code></td><td>Business information</td></tr>
+      <tr><td><code>GET /v1/public/misc/business-industries</code>, <code>/employee-counts</code></td><td>Settings dropdowns</td></tr>
+      <tr><td><code>GET/POST /v1/tenants/settings/teams</code>, resend / revoke</td><td>Teams</td></tr>
+      <tr><td><code>GET/POST /v1/tenants/settings/roles-permissions</code> (+ options, update, delete)</td><td>Roles</td></tr>
+      <tr><td><code>GET /v1/tenants/settings/api-key</code>, <code>POST …/rotate</code></td><td>API keys</td></tr>
+      <tr><td><code>GET/PUT</code> risk-factor, risk-score-threshold, pep-tier, notification-preferences, compliance-rules</td><td>Approvals / PEP / notifications / rules</td></tr>
+      <tr><td><code>POST /v1/tenants/settings/domain/switch</code></td><td>Sandbox / Production toggle</td></tr>
+    </tbody>
+  </table>
+
+  <h3>KYC / KYB / verifications (live)</h3>
+  <table>
+    <thead>
+      <tr><th>Upstream</th><th>Used by</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>GET/POST /v1/customers/kyc</code></td><td>KYC list, onboarding create</td></tr>
+      <tr><td><code>GET /v1/customers/kyc/{id}</code></td><td>KYC detail</td></tr>
+      <tr><td><code>GET/POST /v1/customers/kyc/{id}/documents</code></td><td>Detail + wizard upload</td></tr>
+      <tr><td><code>GET/PUT /v1/customers/kyc/{id}/account-purpose</code></td><td>Account purpose (404 = not declared)</td></tr>
+      <tr><td><code>GET/POST /v1/customers/kyb</code></td><td>KYB list, onboarding create</td></tr>
+      <tr><td><code>GET /v1/customers/kyb/{id}</code></td><td>KYB detail</td></tr>
+      <tr><td><code>GET/POST /v1/customers/kyb/{id}/documents</code></td><td>Detail + wizard upload</td></tr>
+      <tr><td><code>GET /v1/customers/kyb/{id}/shareholders</code></td><td>KYB Shareholders tab (read)</td></tr>
+      <tr><td><code>GET/PUT /v1/customers/kyb/{id}/account-purpose</code></td><td>KYB account purpose</td></tr>
+      <tr><td><code>GET /v1/verifications/available-checks</code></td><td>Start verification picker</td></tr>
+      <tr><td><code>POST /v1/verifications/kyc</code>, <code>/v1/verifications/kyb</code></td><td>Start verification</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Still mock (no OpenAPI or not wired)</h3>
+  <p>Lookup/bulk, approve/reject/escalate/resubmit, AML, bank analysis, overview charts, audit logs, TM, Packages/Request.</p>
 
   <h2>Milestone status overview</h2>
   <table>
@@ -216,9 +415,9 @@
       <tr><th>Milestone</th><th>Status</th></tr>
     </thead>
     <tbody>
-      <tr><td>M1 — Foundation</td><td>Complete</td></tr>
-      <tr><td>M2 — KYC Orchestration</td><td>In progress (active)</td></tr>
-      <tr><td>M3 — Transaction Monitoring</td><td>Not started (blocked)</td></tr>
+      <tr><td>M1 — Foundation</td><td><strong>Complete</strong> (auth + settings live)</td></tr>
+      <tr><td>M2 — KYC Orchestration</td><td><strong>Active</strong> — Figma unique UI closed; live KYC/KYB as above</td></tr>
+      <tr><td>M3 — Transaction Monitoring</td><td><strong>UI complete, parked</strong> (gated)</td></tr>
       <tr><td>M4 — SAR &amp; Case Management</td><td>Not started (blocked)</td></tr>
       <tr><td>M5 — Optimisation</td><td>Not started (blocked)</td></tr>
     </tbody>

@@ -1,7 +1,7 @@
 {
   "figmaFileKey": "gJgHsHV3Jt9wYKJfstVdWB",
   "figmaUrl": "https://www.figma.com/design/gJgHsHV3Jt9wYKJfstVdWB/%F0%9F%AA%AAUnifycomply",
-  "lastSyncedAt": "2026-07-01",
+  "lastSyncedAt": "2026-09-12",
   "scope": "WebApp page (1:2) only — Landing Page built elsewhere",
   "pages": [
     {
@@ -44,7 +44,7 @@
           "nodeId": "886:53858",
           "route": "/kyc",
           "representativeFrame": "886:70409",
-          "notes": "Customer KYC list and detail screens"
+          "notes": "Full section cached 2026-09-12 — 74 unique PNGs in design/figma/webapp/kyc/; gaps in kyc/README.md"
         },
         {
           "name": "KYB COMPLIANCE",
@@ -63,7 +63,7 @@
           "name": "AML SCREENING",
           "nodeId": "886:134392",
           "route": "/aml-screening",
-          "notes": null
+          "notes": "Full cache: design/figma/webapp/aml/ (63 unique / 67 exported, 2026-09-12 AML.zip)"
         },
         {
           "name": "Transaction Monitoring",
@@ -118,47 +118,57 @@
           "name": "Customer // KYC // 79",
           "nodeId": "886:70409",
           "section": "KYC COMPLIANCE",
-          "file": "design/figma/webapp/kyc-list.png",
+          "file": "design/figma/webapp/kyc/079.png",
           "route": "/kyc",
           "featureSpec": "context/feature-specs/03-kyc-compliance.md",
           "priority": 1,
-          "notes": "Default empty KYC list — metrics 0, table 'No User Activity'"
+          "notes": "Default empty KYC list — metrics 0, table 'No User Activity'. Full section: design/figma/webapp/kyc/"
         },
         {
           "name": "Customer // KYC // 86",
           "nodeId": "886:73019",
           "section": "KYC COMPLIANCE",
-          "file": null,
+          "file": "design/figma/webapp/kyc/086.png",
           "route": "/kyc",
           "featureSpec": "context/feature-specs/03-kyc-compliance.md",
           "priority": 2,
-          "notes": "Populated KYC list reference — metrics 12/6/2/1, table rows + pagination"
+          "notes": "Populated KYC list — metrics 12/6/2/1 + Assigned To column"
         },
         {
-          "name": "Customer // KYB // 79",
-          "nodeId": "886:106307",
+          "name": "Customer // KYB // 77",
+          "nodeId": "886:105538",
           "section": "KYB COMPLIANCE",
-          "file": null,
+          "file": "design/figma/webapp/kyb/077.png",
           "route": "/kyb",
           "featureSpec": "context/feature-specs/04-kyb-compliance.md",
           "priority": 1,
-          "notes": "Default empty KYB list — metrics 0, table 'No User Activity'"
+          "notes": "Empty KYB business list — Assigned To column, No User Activity. Full section: design/figma/webapp/kyb/"
         },
         {
           "name": "Customer // KYB // 84",
           "nodeId": "886:108206",
           "section": "KYB COMPLIANCE",
-          "file": null,
+          "file": "design/figma/webapp/kyb/084.png",
           "route": "/kyb",
           "featureSpec": "context/feature-specs/04-kyb-compliance.md",
           "priority": 2,
-          "notes": "Populated KYB list reference — metrics 12/4/4/4, table rows + pagination"
+          "notes": "Batch-file queue (not the business list) — Batch ID, File Name, Created By, Assigned To, Total"
+        },
+        {
+          "name": "Customer // KYB // 89",
+          "nodeId": "886:109281",
+          "section": "KYB COMPLIANCE",
+          "file": "design/figma/webapp/kyb/089.png",
+          "route": "/kyb",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 2,
+          "notes": "Populated KYB business queue — Verification Type + Assigned To, metrics 12/4/4/4"
         },
         {
           "name": "Customer // KYB // 85",
           "nodeId": "886:108577",
           "section": "KYB COMPLIANCE",
-          "file": null,
+          "file": "design/figma/webapp/kyb/085.png",
           "route": "/kyb/lookup",
           "featureSpec": "context/feature-specs/04-kyb-compliance.md",
           "priority": 3,
@@ -168,27 +178,37 @@
           "name": "Customer // KYB // 88",
           "nodeId": "886:109104",
           "section": "KYB COMPLIANCE",
-          "file": null,
+          "file": "design/figma/webapp/kyb/088.png",
           "route": "/kyb/lookup",
           "featureSpec": "context/feature-specs/04-kyb-compliance.md",
           "priority": 4,
-          "notes": "Perform Lookup bulk mode with xlsx upload"
+          "notes": "Perform Lookup — CAC Advance filled (RC Number + Business Type). Not bulk xlsx."
         },
         {
           "name": "Customer // KYB // 93",
           "nodeId": "886:110808",
           "section": "KYB COMPLIANCE",
-          "file": null,
+          "file": "design/figma/webapp/kyb/093.png",
           "route": "/kyb/[id]",
           "featureSpec": "context/feature-specs/04-kyb-compliance.md",
           "priority": 5,
           "notes": "KYB detail Business Overview — TechVentures Nigeria Limited baseline"
         },
         {
+          "name": "Customer // KYB // 137",
+          "nodeId": "886:124831",
+          "section": "KYB COMPLIANCE",
+          "file": "design/figma/webapp/kyb/137.png",
+          "route": "/kyb",
+          "featureSpec": "context/feature-specs/04-kyb-compliance.md",
+          "priority": 6,
+          "notes": "Batch Lookup result — KYB / Batch Lookup / techventures, Total Business 12"
+        },
+        {
           "name": "Bank Analysis // 11",
           "nodeId": "886:161366",
           "section": "BANK ANALYSIS",
-          "file": null,
+          "file": "design/figma/webapp/bank/011.png",
           "route": "/bank-analysis",
           "featureSpec": "context/feature-specs/07-bank-analysis.md",
           "priority": 2,
@@ -198,11 +218,21 @@
           "name": "Bank Analysis // 16",
           "nodeId": "886:163331",
           "section": "BANK ANALYSIS",
-          "file": null,
+          "file": "design/figma/webapp/bank/016.png",
           "route": "/bank-analysis",
           "featureSpec": "context/feature-specs/07-bank-analysis.md",
           "priority": 3,
           "notes": "Populated bank analysis list — metrics 20/8/12/3, table rows + pagination"
+        },
+        {
+          "name": "Bank Analysis // 18",
+          "nodeId": "886:164117",
+          "section": "BANK ANALYSIS",
+          "file": "design/figma/webapp/bank/018.png",
+          "route": "/bank-analysis/batch/[id]",
+          "featureSpec": "context/feature-specs/07-bank-analysis.md",
+          "priority": 4,
+          "notes": "Batch Lookup result — Bank Analysis / Batch Lookup / techventures, metrics 20/8/12/3"
         }
       ]
     }

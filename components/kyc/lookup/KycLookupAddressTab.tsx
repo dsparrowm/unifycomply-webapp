@@ -30,11 +30,11 @@ export function KycLookupAddressTab({ result }: KycLookupAddressTabProps) {
       </div>
 
       <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-6">
-        <label htmlFor="address-notes" className="text-sm font-medium text-[color:var(--text-primary)]">
-          Notes
+        <label htmlFor="address-comment" className="text-sm font-medium text-[color:var(--text-primary)]">
+          Comment
         </label>
         <textarea
-          id="address-notes"
+          id="address-comment"
           readOnly
           value={result.notes}
           className="mt-2 min-h-48 w-full resize-none rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-muted)] px-3.5 py-2.5 text-sm text-[color:var(--text-primary)]"

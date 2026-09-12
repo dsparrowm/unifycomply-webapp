@@ -42,7 +42,12 @@ export function OnboardingIdentityReviewStep({ data }: OnboardingIdentityReviewS
         <ReviewItem label="Email" value={personal.email} />
         <ReviewItem label="Phone" value={personal.phone} />
         <ReviewItem label="Date of birth" value={personal.dateOfBirth} />
+        <ReviewItem label="Gender" value={personal.gender || "—"} />
         <ReviewItem label="Nationality" value={personal.nationality} />
+        <ReviewItem
+          label="Address"
+          value={`${personal.houseNo} ${personal.street}, ${personal.city}, ${personal.state} ${personal.zipCode}`}
+        />
       </ReviewSection>
 
       <ReviewSection title="Business information">

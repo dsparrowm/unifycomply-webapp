@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
 import { KybApproveModal } from "@/components/kyb/detail/KybApproveModal";
 import { KybBusinessOverviewTab } from "@/components/kyb/detail/KybBusinessOverviewTab";
 import { KybDetailHeader } from "@/components/kyb/detail/KybDetailHeader";
@@ -37,6 +38,7 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
   return (
     <div className="flex flex-col gap-6 pb-4">
       <KybDetailHeader detail={detail} status={status} />
+      <CustomerIntakeLinks kind="kyb" customerId={detail.id} />
       <KybDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "business-overview" ? (

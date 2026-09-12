@@ -34,6 +34,9 @@
   --state-error-soft: #fee2e2;
   --state-info: #2563eb;
   --state-info-soft: #dbeafe;
+  /* TM Cumulative Frequency (Figma Real-time / TM Category) */
+  --state-purple: #7c3aed;
+  --state-purple-soft: #ede9fe;
   --sidebar-width: 293px;
   --auth-panel-bg: #050505;
   --auth-panel-subtext: #8b95a5;

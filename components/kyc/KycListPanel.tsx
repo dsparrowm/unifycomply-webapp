@@ -36,6 +36,7 @@ export function KycListPanel({ data }: KycListPanelProps) {
         record.country,
         record.status,
         record.priority,
+        record.assignedTo ?? "Unassigned",
         String(record.riskScore),
       ].some((value) => value.toLowerCase().includes(query)),
     );

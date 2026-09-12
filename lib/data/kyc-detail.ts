@@ -187,6 +187,23 @@ const passedLiveness: KycLivenessData = {
   ],
 };
 
+const failedLiveness: KycLivenessData = {
+  overallStatusLabel: "Failed",
+  livenessStatus: "Failed",
+  livenessStatusNote: "Liveness check did not pass",
+  confidenceScore: "20.0%",
+  confidenceNote: "Low Confidence",
+  completionTime: "12 Seconds",
+  attemptsLabel: "2 attempts",
+  checks: [
+    { id: "face", label: "Face Detection", status: "passed" },
+    { id: "real-person", label: "Real Person (Live Person Verified)", status: "failed" },
+    { id: "mask", label: "No Mask Detected", status: "passed" },
+    { id: "eyes", label: "Eyes Open", status: "failed" },
+    { id: "facing", label: "Facing Camera", status: "passed" },
+  ],
+};
+
 const reviewLiveness: KycLivenessData = {
   overallStatusLabel: "Review",
   livenessStatus: "Review",
@@ -467,7 +484,7 @@ function buildTimeline(record: KycRecord, templateTimeline: KycTimelineEvent[]):
   }));
 }
 
-function buildDetailFromRecord(record: KycRecord): KycDetail {
+export function buildKycDetailFromRecord(record: KycRecord): KycDetail {
   const score = Math.min(RISK_SCORE_MAX, Math.max(0, record.riskScore)) as RiskScore;
   const template = kycDetailByScore[score];
   const amlScreening: KycAmlScreeningData = {
@@ -489,7 +506,7 @@ function buildDetailFromRecord(record: KycRecord): KycDetail {
     countryLabel: `Country: ${record.country}`,
   };
 
-  return {
+  const detail: KycDetail = {
     id: record.id,
     kycId: record.kycId,
     customerName: record.customerName,
@@ -520,10 +537,21 @@ function buildDetailFromRecord(record: KycRecord): KycDetail {
     documentRiskTier: template.documentRiskTier,
     documentAlert: template.documentAlert,
   };
+
+  if (record.status !== "resubmission") {
+    return detail;
+  }
+
+  return {
+    ...detail,
+    matchScore: 20,
+    livenessStatus: "Failed",
+    liveness: failedLiveness,
+  };
 }
 
 const detailById = new Map<string, KycDetail>(
-  kycListDataPopulated.records.map((record) => [record.id, buildDetailFromRecord(record)]),
+  kycListDataPopulated.records.map((record) => [record.id, buildKycDetailFromRecord(record)]),
 );
 
 export function getKycDetailById(id: string): KycDetail | undefined {

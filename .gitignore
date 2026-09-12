@@ -32,6 +32,10 @@ yarn-error.log*
 # env files
 .env*.local
 
+# Local agent secrets (credentials) — do not commit
+.cursor/rules/*.local.mdc
+context/local-secrets.md
+
 # typescript
 *.tsbuildinfo
 node_modules

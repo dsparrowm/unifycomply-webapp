@@ -34,6 +34,8 @@ All components use CSS custom properties from `app/globals.css`.
 | Warning | `--state-warning` | `#F59E0B` |
 | Error | `--state-error` | `#FF383C` |
 | Info | `--state-info` | `#2563EB` |
+| Purple (TM Cumul. Freq / AI risk) | `--state-purple` | `#7C3AED` |
+| Purple soft | `--state-purple-soft` | `#EDE9FE` |
 
 ### Auth card layout (register / verify-email)
 

@@ -49,7 +49,10 @@ export function BankAnalysisChooseActionModal({
       id: "batch",
       label: "Batch Lookup",
       icon: Layers,
-      onClick: onClose,
+      onClick: () => {
+        onClose();
+        router.push("/bank-analysis/lookup?mode=batch");
+      },
     },
   ];
 

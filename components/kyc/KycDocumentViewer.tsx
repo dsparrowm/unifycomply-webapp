@@ -22,9 +22,14 @@ const compareImages = {
 
 type KycDocumentViewerProps = {
   matchScore?: number;
+  /** Failed biometric compare — Figma 119: Request Resubmission + {n}% Match Score. */
+  failedMatch?: boolean;
 };
 
-export function KycDocumentViewer({ matchScore = 94 }: KycDocumentViewerProps) {
+export function KycDocumentViewer({
+  matchScore = 94,
+  failedMatch = false,
+}: KycDocumentViewerProps) {
   const [activeView, setActiveView] = useState<DocumentView>("ID Front");
   const [compareMode, setCompareMode] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -95,7 +100,7 @@ export function KycDocumentViewer({ matchScore = 94 }: KycDocumentViewerProps) {
             className="flex flex-col items-center gap-6 transition-transform duration-200"
             style={{ transform: `scale(${zoom})` }}
           >
-            <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+            <div className="flex items-center justify-center gap-4 sm:gap-6">
               <div className="overflow-hidden rounded-lg shadow-md">
                 <Image
                   src={compareImages.passport}
@@ -121,9 +126,19 @@ export function KycDocumentViewer({ matchScore = 94 }: KycDocumentViewerProps) {
               </div>
             </div>
 
-            <p className="text-2xl font-semibold text-[color:var(--accent-primary-hover)] sm:text-3xl">
-              {matchScore}% Biometric Match Score
-            </p>
+            <div
+              className={cn(
+                "text-center text-2xl font-semibold sm:text-3xl",
+                failedMatch
+                  ? "text-[color:var(--state-warning)]"
+                  : "text-[color:var(--accent-primary-hover)]",
+              )}
+            >
+              {failedMatch ? (
+                <p className="text-xl font-semibold sm:text-2xl">Request Resubmission</p>
+              ) : null}
+              <p className={failedMatch ? "mt-1" : undefined}>{matchScore}% Match Score</p>
+            </div>
           </div>
         </div>
       ) : (

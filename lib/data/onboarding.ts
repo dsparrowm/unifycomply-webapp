@@ -16,12 +16,6 @@ export const onboardingNationalityOptions = [
   { label: "South Africa", value: "South Africa" },
 ];
 
-export const onboardingGenderOptions = [
-  { label: "Select gender", value: "" },
-  { label: "Male", value: "male" },
-  { label: "Female", value: "female" },
-];
-
 export const onboardingBusinessTypeOptions = [
   { label: "Select business type", value: "" },
   { label: "Private Limited Company", value: "Private Limited Company" },
@@ -38,14 +32,6 @@ export const onboardingCountryOptions = [
   { label: "South Africa", value: "South Africa" },
 ];
 
-export const onboardingCountryCodeOptions = [
-  { label: "Select country", value: "" },
-  { label: "Nigeria", value: "NG" },
-  { label: "Ghana", value: "GH" },
-  { label: "Kenya", value: "KE" },
-  { label: "South Africa", value: "ZA" },
-];
-
 export const onboardingDefaultData: OnboardingWizardData = {
   personal: {
     firstName: "",
@@ -55,6 +41,7 @@ export const onboardingDefaultData: OnboardingWizardData = {
     dateOfBirth: "",
     nationality: "",
     gender: "",
+    houseNo: "",
     street: "",
     city: "",
     state: "",
@@ -67,9 +54,6 @@ export const onboardingDefaultData: OnboardingWizardData = {
     country: "",
   },
   documents: {
-    idNumber: "",
-    issueDate: "",
-    expiryDate: "",
     idFront: null,
     idBack: null,
     selfie: null,
@@ -80,3 +64,9 @@ export const onboardingDefaultData: OnboardingWizardData = {
     accuracyDeclaration: false,
   },
 };
+
+export const onboardingGenderOptions = [
+  { label: "Select gender", value: "" },
+  { label: "Male", value: "male" },
+  { label: "Female", value: "female" },
+];

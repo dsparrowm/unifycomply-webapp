@@ -1,22 +1,13 @@
-"use client";
+import { KybListContainer } from "@/components/kyb/KybListContainer";
 
-import { QueryGate } from "@/components/feedback/QueryGate";
-import { KybListPanel } from "@/components/kyb/KybListPanel";
-import { kybListDataEmpty } from "@/lib/data/kyb";
-import { useKybList } from "@/lib/hooks/use-compliance";
+type KybPageProps = {
+  searchParams: Promise<{ mode?: string }>;
+};
 
-export default function KybPage() {
-  const query = useKybList();
+export default async function KybPage({ searchParams }: KybPageProps) {
+  const { mode } = await searchParams;
 
   return (
-    <QueryGate
-      isLoading={query.isLoading}
-      isError={query.isError}
-      error={query.error}
-      title="Could not load KYB customers"
-      onRetry={() => void query.refetch()}
-    >
-      <KybListPanel data={query.data ?? kybListDataEmpty} />
-    </QueryGate>
+    <KybListContainer initialSearchMode={mode === "bulk" ? "bulk-search" : undefined} />
   );
 }

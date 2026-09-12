@@ -12,7 +12,8 @@ export type KycVerificationStatus =
   | "pending"
   | "rejected"
   | "in-review"
-  | "escalated";
+  | "escalated"
+  | "resubmission";
 
 export type KycPriority = "low" | "medium" | "high" | "critical";
 
@@ -64,6 +65,8 @@ export type KycRecord = {
   priority: KycPriority;
   /** Composite risk score on the 0–4 scale (Settings → Approvals). */
   riskScore: number;
+  /** Reviewer display name, or `null` for Figma **Unassigned**. */
+  assignedTo: string | null;
   timeInQueue: string;
   submittedAt: string;
 };

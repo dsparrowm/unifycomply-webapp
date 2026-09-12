@@ -17,22 +17,50 @@ export type KybListFilters = KycListFilters;
 
 export type KybFilterOption<T extends string = string> = KycFilterOption<T>;
 
+export type KybVerificationType =
+  | "CAC"
+  | "TIN"
+  | "Memorandum"
+  | "Due Diligence"
+  | "SCUML";
+
 export type KybRecord = {
   id: string;
   kybId: string;
   businessName: string;
   businessType: string;
+  verificationType: KybVerificationType;
   country: string;
   status: KybVerificationStatus;
   priority: KybPriority;
+  assignedTo: string | null;
   /** Composite risk score on the 0–4 scale (Settings → Approvals). */
   riskScore: number;
   timeInQueue: string;
   submittedAt: string;
 };
 
+export type KybBatchRecord = {
+  id: string;
+  batchId: string;
+  fileName: string;
+  createdAt: string;
+  createdBy: string;
+  assignedTo: string | null;
+  country: string;
+  status: KybVerificationStatus;
+  total: number;
+};
+
 export type KybListData = {
   metrics: KybMetric[];
+  records: KybRecord[];
+  batches: KybBatchRecord[];
+};
+
+export type KybBatchResult = {
+  batch: KybBatchRecord;
+  lookupSlug: string;
   records: KybRecord[];
 };
 
@@ -119,6 +147,7 @@ export type KybSubmittedDocument = {
   name: string;
   uploadedAt: string;
   status: KybSubmittedDocumentStatus;
+  previewSrc: string;
 };
 
 export type KybSubmittedDocumentsData = {

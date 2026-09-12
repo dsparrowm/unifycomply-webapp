@@ -6,6 +6,7 @@ import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPan
 import { KycLookupBackHeader } from "@/components/kyc/lookup/KycLookupBackHeader";
 import { KycLookupBvnCard } from "@/components/kyc/lookup/KycLookupBvnCard";
 import { KycLookupFooterActions } from "@/components/kyc/lookup/KycLookupFooterActions";
+import { KycLookupAddressTab } from "@/components/kyc/lookup/KycLookupAddressTab";
 import { KycLookupPlaceholderTab } from "@/components/kyc/lookup/KycLookupPlaceholderTab";
 import { KycLookupSummaryPanel } from "@/components/kyc/lookup/KycLookupSummaryPanel";
 import { KycLookupTabs } from "@/components/kyc/lookup/KycLookupTabs";
@@ -76,6 +77,8 @@ export function KycLookupResultPanel({
       ) : null}
 
       {activeTab === "aml-screening" ? <KycAmlScreeningPanel amlScreening={view.amlScreening} /> : null}
+
+      {activeTab === "address" ? <KycLookupAddressTab result={result} /> : null}
 
       {activeTab === "ip-device" ? (
         <KycLookupPlaceholderTab

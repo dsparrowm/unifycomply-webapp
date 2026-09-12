@@ -4,32 +4,56 @@ import { AlertTriangle } from "lucide-react";
 import { isApprovalBlocked } from "@/lib/kyc/risk-score";
 import { cn } from "@/lib/utils";
 
+export type KycDetailFooterVariant = "standard" | "resubmission-primary";
+
 type KycDetailFooterActionsProps = {
   riskScore: number;
-  /** When set from the API, overrides score-based threshold. */
-  canApprove?: boolean;
-  requiresEscalation?: boolean;
+  variant?: KycDetailFooterVariant;
   onRequestResubmission: () => void;
   onReject: () => void;
   onApprove: () => void;
   onEscalate: () => void;
 };
 
+const footerShellClassName =
+  "sticky bottom-0 z-10 -mx-4 mt-2 border-t border-[color:var(--border-default)] bg-[color:var(--bg-base)] px-4 py-4 sm:-mx-6 sm:px-6";
+
 export function KycDetailFooterActions({
   riskScore,
-  canApprove,
-  requiresEscalation,
+  variant = "standard",
   onRequestResubmission,
   onReject,
   onApprove,
   onEscalate,
 }: KycDetailFooterActionsProps) {
-  const approvalBlocked =
-    canApprove === false || requiresEscalation === true || isApprovalBlocked(riskScore);
+  const approvalBlocked = isApprovalBlocked(riskScore);
+
+  if (variant === "resubmission-primary") {
+    return (
+      <div className={footerShellClassName}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={onReject}
+            className="h-11 min-w-[135px] rounded-lg border border-[color:var(--state-error)] bg-[color:var(--bg-surface)] px-5 text-sm font-medium text-[color:var(--state-error)] transition-colors hover:bg-[color:var(--state-error-soft)]"
+          >
+            Reject
+          </button>
+          <button
+            type="button"
+            onClick={onRequestResubmission}
+            className="h-11 min-w-[190px] rounded-lg bg-[color:var(--accent-primary)] px-5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary-hover)]"
+          >
+            Request Resubmission
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (approvalBlocked) {
     return (
-      <div className="sticky bottom-0 z-10 -mx-4 mt-2 border-t border-[color:var(--border-default)] bg-[color:var(--bg-base)] px-4 py-4 sm:-mx-6 sm:px-6">
+      <div className={footerShellClassName}>
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-start gap-2.5">
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[color:var(--state-warning)]" />
@@ -60,7 +84,7 @@ export function KycDetailFooterActions({
   }
 
   return (
-    <div className="sticky bottom-0 z-10 -mx-4 mt-2 border-t border-[color:var(--border-default)] bg-[color:var(--bg-base)] px-4 py-4 sm:-mx-6 sm:px-6">
+    <div className={footerShellClassName}>
       <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
         <button
           type="button"

@@ -11,7 +11,8 @@ type KycDetailHeaderProps = {
 };
 
 export function KycDetailHeader({ detail, status }: KycDetailHeaderProps) {
-  const showExportReport = status === "approved" || status === "rejected";
+  const showExportReport =
+    status === "approved" || status === "rejected" || status === "resubmission";
 
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

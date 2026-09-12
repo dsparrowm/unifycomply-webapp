@@ -93,6 +93,8 @@ export const ROLE_PERMISSIONS: Record<TenantRole, readonly NavPermission[]> = {
   admin: ALL_PERMISSIONS,
   "compliance-manager": [
     ...CUSTOMER_OPERATIONS,
+    ...TRANSACTION_MONITORING,
+    "nav.rules",
     "nav.settings",
     "nav.billing",
     "settings.profile",
@@ -105,6 +107,8 @@ export const ROLE_PERMISSIONS: Record<TenantRole, readonly NavPermission[]> = {
   "compliance-officer": [
     "nav.overview",
     ...CUSTOMER_OPERATIONS.filter((permission) => permission !== "nav.overview"),
+    ...TRANSACTION_MONITORING,
+    "nav.rules",
     "nav.settings",
     "settings.profile",
     "settings.security",

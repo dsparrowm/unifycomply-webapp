@@ -16,6 +16,7 @@ the Figma **WebApp** page (`1:2`) using mock data. Backend services and the publ
 2. Match Figma with pixel-faithful layout and interaction patterns
 3. Use mock data for modules without API contracts; auth and tenant settings are live via BFF
 4. Enforce role-based navigation and action gating in the UI
+5. When integrating APIs, preserve Figma UI — map in BFF/`lib/api` or raise a blocker; do not redesign screens for DTOs
 
 ## User Roles (RBAC)
 
@@ -43,10 +44,10 @@ Navigation and actions must respect the role model defined in `mvp-roadmap.md`.
 | ---- | ------------- | --------- | --------------- |
 | Onboarding / Auth | ONBOARDING - COMPLIANCE OFFICER | M1 | `/sign-in`, `/register`, `/mfa`, … |
 | Overview | OVERVIEW PAGE | M1 | `/overview` |
-| KYC | KYC COMPLIANCE | M2 | `/kyc`, `/kyc/[id]`, `/customers`, … |
-| KYB | KYB COMPLIANCE | M2 | `/kyb`, `/kyb/onboarding`, `/kyb/[id]`, … |
-| Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/[id]` |
-| AML Screening | AML SCREENING | M2 | `/aml-screening` |
+| KYC | KYC COMPLIANCE | M2 | `/kyc`, `/kyc/[id]`, `/kyc/[id]/account-purpose`, `/kyc/[id]/start-verification`, … |
+| KYB | KYB COMPLIANCE | M2 | `/kyb`, `/kyb/[id]`, `/kyb/[id]/account-purpose`, `/kyb/[id]/start-verification`, … |
+| Bank Analysis | BANK ANALYSIS | M2 | `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/batch/[id]`, `/bank-analysis/[id]` |
+| AML Screening | AML SCREENING | M2 | `/aml-screening`, `/aml-screening/lookup`, `/aml-screening/lookup/result`, `/aml-screening/batch/[id]`, `/aml-screening/[id]` |
 | Transaction Monitoring | Transaction Monitoring | M3 | `/transaction-monitoring`, `/transactions`, … |
 | Compliance / SAR | Sidebar: SAR Report, PND Watchlist, Rules, Risk Score | M4 | `/sar`, `/cases`, … |
 | Settings | SETTINGS | M1 | `/settings`, `/users`, `/roles`, `/api-keys` |
@@ -76,8 +77,8 @@ See `context/mvp-roadmap.md` for frontend scope. Summary:
 | Milestone | Frontend focus |
 | --------- | -------------- |
 | **M1** | Design system, auth UI, app shell, tenant admin, overview |
-| **M2** | KYC/KYB, onboarding wizard, compliance queue, bank analysis, AML |
-| **M3** | Monitoring dashboard, alerts, transaction explorer, rules |
+| **M2 (active)** | KYC/KYB, onboarding wizard, compliance queue, bank analysis, AML |
+| **M3** | Monitoring dashboard, alerts, transaction explorer, rules (UI complete, parked) |
 | **M4** | Case management, SAR editor, AI review, reports |
 | **M5** | Performance, accessibility, production hardening |
 
@@ -91,13 +92,14 @@ See `context/mvp-roadmap.md` for frontend scope. Summary:
 ## Out of Scope
 
 - **Landing Page** (Figma page `1:3`) — built in another repository
-- **M3–M5 features** until the active milestone in `lib/constants/milestones.ts` reaches that milestone (currently **M2**)
+- **M4–M5 features** until the active milestone in `lib/constants/milestones.ts` reaches that milestone (currently **M2**). M3 TM UI is built and parked.
 - Backend implementation (separate repository / team)
 - KYC / KYB / AML / bank-analysis API integration until those OpenAPI routes exist
 
 ## Backend (consumed by this frontend)
 
-- **Docs:** https://unifycomply.svr.monolith.ng/v1/docs
+- **Base URL:** `https://unifycomply-api.rokxier.com` (`API_BASE_URL`, server-only)
+- **Docs:** https://unifycomply-api.rokxier.com/v1/docs
 - **Integration style:** Next.js BFF (`app/api/`) + httpOnly JWT cookies
-- **Live:** authentication, tenant settings, user profile, domain switch
-- **Mock:** KYC, KYB, AML, bank analysis, overview, audit logs
+- **Live:** authentication, tenant settings, user profile, domain switch, KYC/KYB create + list/detail + account purpose + start verification
+- **Mock:** KYC/KYB lookup, rich verification panels, AML, bank analysis, overview, audit logs, **transaction monitoring**

@@ -3,26 +3,6 @@ import type { BankAnalysisListFilters, BankAnalysisRun } from "@/types/bank-anal
 
 const HIGH_RISK_THRESHOLD = defaultApprovalThresholds.approvalBlockThreshold;
 
-const statusFilterMap: Record<
-  Exclude<BankAnalysisListFilters["status"], "all">,
-  BankAnalysisRun["status"]
-> = {
-  success: "completed",
-  pending: "pending",
-  "in-review": "in-review",
-  failed: "failed",
-};
-
-const priorityFilterMap: Record<
-  Exclude<BankAnalysisListFilters["priority"], "all">,
-  BankAnalysisRun["priority"]
-> = {
-  urgent: "critical",
-  high: "high",
-  medium: "medium",
-  standard: "low",
-};
-
 function startOfDay(date: Date) {
   const value = new Date(date);
   value.setHours(0, 0, 0, 0);
@@ -83,15 +63,15 @@ export function filterBankAnalysisRuns(runs: BankAnalysisRun[], filters: BankAna
       return false;
     }
 
-    if (filters.status !== "all" && run.status !== statusFilterMap[filters.status]) {
+    if (filters.status !== "all" && run.status !== filters.status) {
       return false;
     }
 
-    if (filters.priority !== "all" && run.priority !== priorityFilterMap[filters.priority]) {
+    if (filters.assignee !== "all" && run.assignedTo !== filters.assignee) {
       return false;
     }
 
-    if (filters.bank !== "all" && run.bankKey !== filters.bank) {
+    if (filters.type !== "all" && run.type !== filters.type) {
       return false;
     }
 

@@ -42,6 +42,8 @@ Entry: `KycChooseActionModal` → **Validate Document** → `/kyc/onboarding`
 ## Data
 
 Mock client state in `OnboardingWizardPanel`; defaults in `lib/data/onboarding.ts`.
+**Live submit (2026-09-11):** Consent → `POST /api/v1/customers/kyc` + document uploads via BFF.
+Business step remains in the UI but is **not** sent (no fields on create DTO).
 
 ## Design note
 
@@ -53,7 +55,7 @@ No pixel-specific WebApp frame node IDs were available in `design/manifest.json`
 - [x] Validate Document routes to wizard
 - [x] Document upload UI (front, back, selfie)
 - [x] Review step shows entered data
-- [x] Submit redirects to `/kyc` (mock)
+- [x] Submit redirects to `/kyc/{id}/account-purpose` then start verification
 - [ ] Figma frame alignment when exports exist
 
 ## Out of scope

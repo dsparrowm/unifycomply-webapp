@@ -20,6 +20,7 @@ type KybFiltersProps = {
   onFiltersChange: (filters: KybListFilters) => void;
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  searchModeLabel?: string;
 };
 
 export function KybFilters({
@@ -27,6 +28,7 @@ export function KybFilters({
   onFiltersChange,
   searchQuery,
   onSearchChange,
+  searchModeLabel = "Type",
 }: KybFiltersProps) {
   const [openFilter, setOpenFilter] = useState<KybFilterKey | null>(null);
 
@@ -70,7 +72,7 @@ export function KybFilters({
         />
 
         <KycFilterDropdown
-          label="Single entity"
+          label={searchModeLabel}
           options={kybSearchModeFilterOptions}
           value={filters.searchMode}
           onChange={(value) => updateFilter("searchMode", value)}

@@ -8,6 +8,7 @@ const tabs: { id: KycLookupTab; label: string }[] = [
   { id: "risk-analysis", label: "Risk Score Analysis" },
   { id: "validation", label: "Validation Information" },
   { id: "aml-screening", label: "AML Screening" },
+  { id: "address", label: "Address Information" },
   { id: "ip-device", label: "Ip & Device Information" },
 ];
 

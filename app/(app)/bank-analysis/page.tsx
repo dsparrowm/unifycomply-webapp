@@ -1,6 +1,19 @@
 import { BankAnalysisListPanel } from "@/components/bank-analysis/BankAnalysisListPanel";
-import { bankAnalysisListDataPopulated } from "@/lib/data/bank-analysis";
+import {
+  bankAnalysisListDataEmpty,
+  bankAnalysisListDataPopulated,
+} from "@/lib/data/bank-analysis";
 
-export default function BankAnalysisPage() {
-  return <BankAnalysisListPanel data={bankAnalysisListDataPopulated} />;
+type BankAnalysisPageProps = {
+  searchParams: Promise<{ empty?: string }>;
+};
+
+export default async function BankAnalysisPage({ searchParams }: BankAnalysisPageProps) {
+  const { empty } = await searchParams;
+
+  return (
+    <BankAnalysisListPanel
+      data={empty === "1" ? bankAnalysisListDataEmpty : bankAnalysisListDataPopulated}
+    />
+  );
 }

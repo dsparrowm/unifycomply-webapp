@@ -16,7 +16,7 @@ export function BankAnalysisPageHeader({ onNewLookup }: BankAnalysisPageHeaderPr
         onClick={onNewLookup}
         className="inline-flex shrink-0 items-center justify-center rounded-lg bg-[color:var(--accent-primary-hover)] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
       >
-        New Lookup
+        Run a Check
       </button>
     </div>
   );

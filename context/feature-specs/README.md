@@ -83,5 +83,9 @@ Mock data shape (required for v1).
 | `03-kyc-compliance.md` | KYC list, lookup, detail (frames 79–156) | In progress |
 | `04-kyb-compliance.md` | KYB list + Perform Lookup + detail (frames 79–88, 93) | In progress — list + lookup + detail done |
 | `05-customer-onboarding-wizard.md` | KYC customer onboarding wizard (`/kyc/onboarding`) | Done — pending Figma frame export |
-| `07-bank-analysis.md` | Bank analysis list, Single Lookup, and five-tab detail | In progress — Batch Lookup/escalation deferred |
+| `07-bank-analysis.md` | Bank analysis list, lookup, Batch Lookup, five-tab detail, escalate | Unique UI closed on mocks |
 | `08-aml-screening.md` | Standalone AML screening (`/aml-screening`) | Placeholder route only |
+| `09-m2-api-ui-flow-gap.md` | M2 Core Platform API ↔ UI flow comparison + backlog | Living analysis (2026-09-11) |
+| `10-kyb-business-onboarding.md` | KYB Validate Document intake (`/kyb/onboarding`) | Done (API-derived) |
+| `11-transaction-monitoring-overview.md` | TM Overview dashboard (`/transaction-monitoring`) | Done — empty default; queues placeholder |
+| `12-account-purpose-and-verification.md` | Account purpose + start verification | Done (API-derived / no Figma) |

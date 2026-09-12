@@ -1,0 +1,275 @@
+{
+  "final_count": 132,
+  "removed_same_name": 52,
+  "removed_identical_hash": 0,
+  "by_group": {
+    "TM rules setting": 14,
+    "other": 1,
+    "Real-time": 82,
+    "TM Category": 14,
+    "PND": 8,
+    "SAR Rationale": 13
+  },
+  "removed_details": [
+    {
+      "kept": "Transaction monitoring/Real-time-6.png",
+      "removed": "Transaction monitoring/Real-time-6__3c4b721a.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-4.png",
+      "removed": "Transaction monitoring/TM Category-4__2732c810.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-32__e4ca4bdb.png",
+      "removed": "Transaction monitoring/Real-time-32.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-12__7775396f.png",
+      "removed": "Transaction monitoring/Real-time-12.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-40.png",
+      "removed": "Transaction monitoring/Real-time-40__3139f884.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-9__10dc2d4f.png",
+      "removed": "Transaction monitoring/Real-time-9.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category.png",
+      "removed": "Transaction monitoring/TM Category__620d499b.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-5__25b1cc4d.png",
+      "removed": "Transaction monitoring/TM Category-5.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-7.png",
+      "removed": "Transaction monitoring/TM Category-7__e0470448.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-36.png",
+      "removed": "Transaction monitoring/Real-time-36__08eebbc1.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time__f6ec8bce.png",
+      "removed": "Transaction monitoring/Real-time.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-20__9bae95c0.png",
+      "removed": "Transaction monitoring/Real-time-20.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-3__e89f9745.png",
+      "removed": "Transaction monitoring/Real-time-3.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-23__18eea99a.png",
+      "removed": "Transaction monitoring/Real-time-23.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-24__54fc3be0.png",
+      "removed": "Transaction monitoring/Real-time-24.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-8.png",
+      "removed": "Transaction monitoring/Real-time-8__a62062b9.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/PND-1.png",
+      "removed": "Transaction monitoring/PND-1__9e4ec490.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-29__ce138008.png",
+      "removed": "Transaction monitoring/Real-time-29.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-2__7f11b0ca.png",
+      "removed": "Transaction monitoring/Real-time-2.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-9.png",
+      "removed": "Transaction monitoring/TM Category-9__5ae754c1.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/PND.png",
+      "removed": "Transaction monitoring/PND__a8ce2808.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-27__22b6603a.png",
+      "removed": "Transaction monitoring/Real-time-27.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-1.png",
+      "removed": "Transaction monitoring/TM Category-1__34a52c31.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-18.png",
+      "removed": "Transaction monitoring/Real-time-18__fb66ef7c.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-47.png",
+      "removed": "Transaction monitoring/Real-time-47__ae143816.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-21__5414b812.png",
+      "removed": "Transaction monitoring/Real-time-21.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-45.png",
+      "removed": "Transaction monitoring/Real-time-45__e334bb32.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-22.png",
+      "removed": "Transaction monitoring/Real-time-22__6539bab0.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/PND-5.png",
+      "removed": "Transaction monitoring/PND-5__bf907faf.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-37.png",
+      "removed": "Transaction monitoring/Real-time-37__742798cf.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-33__88b1ce98.png",
+      "removed": "Transaction monitoring/Real-time-33.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-42.png",
+      "removed": "Transaction monitoring/Real-time-42__4c6ebe72.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-26__0454fae2.png",
+      "removed": "Transaction monitoring/Real-time-26.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-35__f0abf1e4.png",
+      "removed": "Transaction monitoring/Real-time-35.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-30__a2a83cdb.png",
+      "removed": "Transaction monitoring/Real-time-30.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-3.png",
+      "removed": "Transaction monitoring/TM Category-3__b31df64a.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-7__a5ab1bd5.png",
+      "removed": "Transaction monitoring/Real-time-7.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-4.png",
+      "removed": "Transaction monitoring/Real-time-4__1c45f8e8.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-16.png",
+      "removed": "Transaction monitoring/Real-time-16__14774443.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/PND-2__f4d8adf5.png",
+      "removed": "Transaction monitoring/PND-2.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-5__d202dcb9.png",
+      "removed": "Transaction monitoring/Real-time-5.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-43.png",
+      "removed": "Transaction monitoring/Real-time-43__595dd3a9.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-2.png",
+      "removed": "Transaction monitoring/TM Category-2__8b85b75b.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-10__f7907332.png",
+      "removed": "Transaction monitoring/Real-time-10.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-46.png",
+      "removed": "Transaction monitoring/Real-time-46__32da8d40.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/PND-3__5a82c8c2.png",
+      "removed": "Transaction monitoring/PND-3.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-11__c529eaef.png",
+      "removed": "Transaction monitoring/Real-time-11.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-1.png",
+      "removed": "Transaction monitoring/Real-time-1__c82f6ac2.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-13__0d5b87e7.png",
+      "removed": "Transaction monitoring/Real-time-13.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/Real-time-39.png",
+      "removed": "Transaction monitoring/Real-time-39__fc8af56a.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/TM Category-8.png",
+      "removed": "Transaction monitoring/TM Category-8__a0ae569f.png",
+      "reason": "same-name-keep-largest"
+    },
+    {
+      "kept": "Transaction monitoring/PND-4.png",
+      "removed": "Transaction monitoring/PND-4__d0425454.png",
+      "reason": "same-name-keep-largest"
+    }
+  ]
+}

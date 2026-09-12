@@ -1,15 +1,14 @@
-"use client";
+import { AmlListPanel } from "@/components/aml/AmlListPanel";
+import { amlListDataEmpty, amlListDataPopulated } from "@/lib/data/aml-screening";
 
-import { ShieldCheck } from "lucide-react";
-import { RoutePlaceholderPanel } from "@/components/placeholders/RoutePlaceholderPanel";
+type AmlScreeningPageProps = {
+  searchParams: Promise<{ empty?: string }>;
+};
 
-export default function AmlScreeningPage() {
+export default async function AmlScreeningPage({ searchParams }: AmlScreeningPageProps) {
+  const { empty } = await searchParams;
+
   return (
-    <RoutePlaceholderPanel
-      title="AML Screening"
-      subtitle="Anti-money laundering compliance screening"
-      description="Standalone AML screening list and workflows will be added in the next M2 unit. KYC and KYB detail tabs already include AML screening panels."
-      icon={ShieldCheck}
-    />
+    <AmlListPanel data={empty === "1" ? amlListDataEmpty : amlListDataPopulated} />
   );
 }

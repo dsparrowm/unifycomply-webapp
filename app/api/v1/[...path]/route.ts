@@ -58,12 +58,19 @@ async function proxy(request: Request, context: RouteContext) {
       body = text ? JSON.parse(text) : undefined;
     }
 
+    const extraHeaders: Record<string, string> = {};
+    const appId = request.headers.get("x-app-id");
+    if (appId) {
+      extraHeaders["x-app-id"] = appId;
+    }
+
     const { response, bodyText } = await upstreamFetchRaw({
       method,
       path: upstreamPath,
       query,
       body,
       auth: needsAuth,
+      extraHeaders: Object.keys(extraHeaders).length > 0 ? extraHeaders : undefined,
     });
 
     if (response.ok && bodyText) {

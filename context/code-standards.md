@@ -94,3 +94,12 @@ types/             ← shared TypeScript types
 - Name components after their Figma frame or section where practical
 - When a frame is ambiguous, note it in the feature spec and `progress-tracker.md`
   before implementing
+
+## API integration (UI first)
+
+- Figma / existing UI is the contract; OpenAPI is an integration input
+- Map API ↔ view models in `lib/api/` (and BFF) — do not change UI to match DTO shape
+- If the backend cannot power a designed screen without UI changes: **do not change the
+  UI**. Log a blocker in `context/progress-tracker.md` and escalate to the user
+- Partial wiring is OK (live where possible; mock/disabled for gaps) when tracked as an issue
+- See `.cursor/rules/ui-first-api-integration.mdc`

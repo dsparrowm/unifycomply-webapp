@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { EmptyState } from "@/components/feedback/EmptyState";
 import { KycAmlScreeningPanel } from "@/components/kyc/detail/KycAmlScreeningPanel";
 import { KycApproveModal } from "@/components/kyc/detail/KycApproveModal";
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
@@ -11,10 +10,13 @@ import { KycLivenessPanel } from "@/components/kyc/detail/KycLivenessPanel";
 import { KycRejectModal } from "@/components/kyc/detail/KycRejectModal";
 import { KycRequestResubmissionModal } from "@/components/kyc/detail/KycRequestResubmissionModal";
 import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPanel";
+import { KycBiometricVerification } from "@/components/kyc/KycBiometricVerification";
 import { KycDocumentAlertCard } from "@/components/kyc/KycDocumentAlertCard";
 import { KycDocumentRiskTierCard } from "@/components/kyc/KycDocumentRiskTierCard";
+import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
 import { KycDetailHeader } from "@/components/kyc/KycDetailHeader";
 import { KycDetailTabs } from "@/components/kyc/KycDetailTabs";
+import { KycDocumentViewer } from "@/components/kyc/KycDocumentViewer";
 import { KycExtractedInformation } from "@/components/kyc/KycExtractedInformation";
 import { KycRiskAnalysisCard } from "@/components/kyc/KycRiskAnalysisCard";
 import { KycVerificationTimeline } from "@/components/kyc/KycVerificationTimeline";
@@ -26,15 +28,12 @@ type KycDetailPanelProps = {
 
 type KycDetailModal = "approve" | "reject" | "resubmission" | "escalate" | null;
 
-const unavailableCopy = "This panel is not returned by the current Core Platform API.";
-
 export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<KycDetailTab>("document");
   const [status, setStatus] = useState<KycVerificationStatus>(initialDetail.status);
   const [activeModal, setActiveModal] = useState<KycDetailModal>(null);
 
   const detail = { ...initialDetail, status };
-  const { availability } = detail;
 
   function closeModal() {
     setActiveModal(null);
@@ -43,17 +42,18 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   return (
     <div className="flex flex-col gap-6 pb-4">
       <KycDetailHeader detail={detail} status={status} />
+      <CustomerIntakeLinks kind="kyc" customerId={detail.id} />
       <KycDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "document" ? (
         <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_457px]">
           <div className="space-y-6">
-            {availability.documentPreview ? null : (
-              <EmptyState
-                title="Document images unavailable"
-                description="Uploaded files are stored by the API, but preview URLs are not exposed on this customer record yet."
-              />
-            )}
+            <KycDocumentViewer
+              matchScore={detail.matchScore}
+              failedMatch={
+                status === "resubmission" || detail.livenessStatus === "Failed"
+              }
+            />
             <KycExtractedInformation
               fields={detail.extractedFields}
               statusLabel={detail.extractionStatus}
@@ -67,53 +67,31 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
               <KycRiskAnalysisCard detail={detail} />
             )}
             {detail.documentAlert ? <KycDocumentAlertCard alert={detail.documentAlert} /> : null}
-            {availability.biometric ? null : (
-              <EmptyState title="Biometric match unavailable" description={unavailableCopy} />
-            )}
+            <KycBiometricVerification detail={detail} />
             <KycVerificationTimeline events={detail.timeline} />
           </div>
         </div>
       ) : null}
 
       {activeTab === "risk-analysis" ? (
-        availability.riskAnalysis && detail.riskAnalysis ? (
-          <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
-        ) : (
-          <EmptyState title="Risk analysis unavailable" description={unavailableCopy} />
-        )
+        <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
       ) : null}
 
       {activeTab === "aml-screening" ? (
-        availability.amlScreening && detail.amlScreening ? (
-          <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
-        ) : (
-          <EmptyState
-            title="AML screening unavailable"
-            description="No verification screening payload is linked to this customer yet."
-          />
-        )
+        <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
       ) : null}
 
       {activeTab === "ip-device" ? (
-        availability.ipDevice && detail.ipDevice ? (
-          <KycIpDevicePanel ipDevice={detail.ipDevice} />
-        ) : (
-          <EmptyState title="IP and device data unavailable" description={unavailableCopy} />
-        )
+        <KycIpDevicePanel ipDevice={detail.ipDevice} />
       ) : null}
 
       {activeTab === "liveness" ? (
-        availability.liveness && detail.liveness ? (
-          <KycLivenessPanel liveness={detail.liveness} />
-        ) : (
-          <EmptyState title="Liveness data unavailable" description={unavailableCopy} />
-        )
+        <KycLivenessPanel liveness={detail.liveness} />
       ) : null}
 
       <KycDetailFooterActions
         riskScore={detail.riskScore}
-        canApprove={detail.canApprove}
-        requiresEscalation={detail.requiresEscalation}
+        variant={status === "resubmission" ? "resubmission-primary" : "standard"}
         onRequestResubmission={() => setActiveModal("resubmission")}
         onReject={() => setActiveModal("reject")}
         onApprove={() => setActiveModal("approve")}
@@ -141,7 +119,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
         open={activeModal === "resubmission"}
         onClose={closeModal}
         onConfirm={() => {
-          setStatus("pending");
+          setStatus("resubmission");
           closeModal();
         }}
       />

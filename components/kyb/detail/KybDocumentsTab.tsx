@@ -1,5 +1,10 @@
-import { KybDetailSectionHeader } from "@/components/kyb/detail/KybDetailSectionHeader";
+"use client";
+
+import { useState } from "react";
 import { Check, Download, Eye, FileText } from "lucide-react";
+import { KybDetailSectionHeader } from "@/components/kyb/detail/KybDetailSectionHeader";
+import { KybDocumentViewerModal } from "@/components/kyb/detail/KybDocumentViewerModal";
+import { downloadKybDocument } from "@/lib/kyb/download-document";
 import type { KybSubmittedDocument, KybSubmittedDocumentsData } from "@/types/kyb";
 
 type KybDocumentsTabProps = {
@@ -31,7 +36,13 @@ function DocumentStatusBadge({ status }: { status: KybSubmittedDocument["status"
   );
 }
 
-function KybDocumentRow({ document }: { document: KybSubmittedDocument }) {
+type KybDocumentRowProps = {
+  document: KybSubmittedDocument;
+  onView: () => void;
+  onDownload: () => void;
+};
+
+function KybDocumentRow({ document, onView, onDownload }: KybDocumentRowProps) {
   return (
     <article className="flex flex-col gap-4 rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-4">
@@ -55,6 +66,7 @@ function KybDocumentRow({ document }: { document: KybSubmittedDocument }) {
         <button
           type="button"
           aria-label={`View ${document.name}`}
+          onClick={onView}
           className="flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--bg-muted)] hover:text-[color:var(--text-primary)]"
         >
           <Eye className="h-4 w-4" />
@@ -62,6 +74,7 @@ function KybDocumentRow({ document }: { document: KybSubmittedDocument }) {
         <button
           type="button"
           aria-label={`Download ${document.name}`}
+          onClick={onDownload}
           className="flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--bg-muted)] hover:text-[color:var(--text-primary)]"
         >
           <Download className="h-4 w-4" />
@@ -72,20 +85,34 @@ function KybDocumentRow({ document }: { document: KybSubmittedDocument }) {
 }
 
 export function KybDocumentsTab({ documents }: KybDocumentsTabProps) {
+  const [viewerDocument, setViewerDocument] = useState<KybSubmittedDocument | null>(null);
   const documentCount = documents.documents.length;
 
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
-      <KybDetailSectionHeader
-        title={`Submitted Documents (${documentCount})`}
-        status={documents.sectionStatus}
-      />
+    <>
+      <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
+        <KybDetailSectionHeader
+          title={`Submitted Documents (${documentCount})`}
+          status={documents.sectionStatus}
+        />
 
-      <div className="space-y-4 p-6">
-        {documents.documents.map((document) => (
-          <KybDocumentRow key={document.id} document={document} />
-        ))}
+        <div className="space-y-4 p-6">
+          {documents.documents.map((document) => (
+            <KybDocumentRow
+              key={document.id}
+              document={document}
+              onView={() => setViewerDocument(document)}
+              onDownload={() => downloadKybDocument(document)}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+
+      <KybDocumentViewerModal
+        open={viewerDocument !== null}
+        submittedDocument={viewerDocument}
+        onClose={() => setViewerDocument(null)}
+      />
+    </>
   );
 }

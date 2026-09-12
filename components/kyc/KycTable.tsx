@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { KycRecord } from "@/types/kyc";
+import { KycAssignedToCell } from "@/components/kyc/KycAssignedToCell";
 import { KycPriorityBadge, KycStatusBadge } from "@/components/kyc/KycStatusBadge";
 
 const columns = [
@@ -9,6 +10,7 @@ const columns = [
   "Country",
   "Status",
   "Priority",
+  "Assigned To",
   "Risk Score",
   "Time in Queue",
 ] as const;
@@ -92,6 +94,12 @@ export function KycTable({
                   </td>
                   <td className="px-4 py-4">
                     <KycPriorityBadge priority={record.priority} />
+                  </td>
+                  <td className="px-4 py-4">
+                    <KycAssignedToCell
+                      assignedTo={record.assignedTo}
+                      customerName={record.customerName}
+                    />
                   </td>
                   <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
                     {record.riskScore}

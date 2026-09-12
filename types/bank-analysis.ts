@@ -2,7 +2,9 @@ import type { KycFilterOption, KycMetric, KycPriority } from "@/types/kyc";
 
 export type BankAnalysisMetric = KycMetric;
 
-export type BankAnalysisRunStatus = "completed" | "pending" | "in-review" | "failed";
+export type BankAnalysisRunStatus = "clear" | "flagged" | "in-review" | "blocked";
+
+export type BankAnalysisRunType = "batch" | "organization" | "individual" | "manual";
 
 export type BankAnalysisPriority = KycPriority;
 
@@ -19,10 +21,10 @@ export type BankAnalysisDateFilter =
 
 export type BankAnalysisStatusFilter =
   | "all"
-  | "success"
-  | "pending"
+  | "clear"
+  | "flagged"
   | "in-review"
-  | "failed";
+  | "blocked";
 
 export type BankAnalysisPriorityFilter = "all" | "urgent" | "high" | "medium" | "standard";
 
@@ -40,28 +42,34 @@ export type BankAnalysisLookupBank = Exclude<BankAnalysisBankFilter, "all">;
 export type BankAnalysisListFilters = {
   date: BankAnalysisDateFilter;
   status: BankAnalysisStatusFilter;
-  priority: BankAnalysisPriorityFilter;
-  bank: BankAnalysisBankFilter;
+  assignee: BankAnalysisAssigneeFilter;
+  type: BankAnalysisTypeFilter;
   more: BankAnalysisMoreFilter;
 };
+
+export type BankAnalysisAssigneeFilter =
+  | "all"
+  | "Alimi Ayomikun"
+  | "Tejumade Olomola"
+  | "Favour Soma";
+
+export type BankAnalysisTypeFilter = "all" | BankAnalysisRunType;
 
 export type BankAnalysisFilterOption<T extends string = string> = KycFilterOption<T>;
 
 export type BankAnalysisRun = {
   id: string;
-  analysisId: string;
-  entityName: string;
-  accountNumber: string;
-  bank: string;
-  bankKey: BankAnalysisBankFilter;
-  country: string;
-  status: BankAnalysisRunStatus;
-  alertsGenerated: number;
+  runId: string;
+  fullName: string;
+  date: string;
+  type: BankAnalysisRunType;
+  accounts: number;
+  analyst: string;
+  assignedTo: string | null;
+  alerts: number;
   riskScore: number;
-  priority: BankAnalysisPriority;
-  dateRun: string;
+  status: BankAnalysisRunStatus;
   submittedAt: string;
-  detailAvailable?: boolean;
 };
 
 export type BankAnalysisListData = {
@@ -101,6 +109,19 @@ export type BankAnalysisNetworkMetrics = {
   sharedAccounts: number;
   totalTransactions: number;
   networkDepth: number;
+};
+
+export type BankAnalysisEscalateSummary = {
+  riskScore: number;
+  sanction: boolean;
+  warningEnforcement: boolean;
+};
+
+export type BankAnalysisRiskBanner = {
+  alerts: number;
+  title: string | null;
+  description: string;
+  tone: "clear" | "high";
 };
 
 export type BankAnalysisLinkedEntity = {
@@ -170,6 +191,9 @@ export type BankAnalysisComplianceSection = {
 export type BankAnalysisDetail = {
   id: string;
   customerName: string;
+  riskScore: number;
+  escalateSummary: BankAnalysisEscalateSummary;
+  riskBanner: BankAnalysisRiskBanner;
   accountPortfolio: number;
   linkedEntities: number;
   accounts: BankAnalysisAccount[];
@@ -180,4 +204,39 @@ export type BankAnalysisDetail = {
   complianceSections: BankAnalysisComplianceSection[];
   profile: BankAnalysisProfile;
   networkMetrics: BankAnalysisNetworkMetrics;
+};
+
+export type BankAnalysisLookupMode = "single" | "batch";
+
+export type BankAnalysisBatchEntityType = "individual" | "organization";
+
+export type BankAnalysisBatchStatus = BankAnalysisRunStatus;
+
+export type BankAnalysisBatchTypeFilter = BankAnalysisTypeFilter;
+
+export type BankAnalysisBatchStatusFilter = BankAnalysisStatusFilter;
+
+export type BankAnalysisBatchAssigneeFilter = BankAnalysisAssigneeFilter;
+
+export type BankAnalysisBatchFilters = BankAnalysisListFilters;
+
+export type BankAnalysisBatchEntity = {
+  id: string;
+  runId: string;
+  fullName: string;
+  date: string;
+  entityType: BankAnalysisBatchEntityType;
+  accounts: number;
+  assignedTo: string | null;
+  alerts: number;
+  riskScore: number;
+  status: BankAnalysisBatchStatus;
+  submittedAt: string;
+};
+
+export type BankAnalysisBatchResult = {
+  id: string;
+  lookupSlug: string;
+  metrics: BankAnalysisMetric[];
+  records: BankAnalysisBatchEntity[];
 };

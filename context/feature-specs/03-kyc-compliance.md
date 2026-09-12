@@ -2,7 +2,7 @@
 
 **Milestone:** M2  
 **Figma section:** KYC COMPLIANCE (`886:53858`)  
-**Status:** In progress — list, lookup, detail, and populated list default
+**Status:** In progress — resume M2 gaps from `design/figma/webapp/kyc/`
 
 Read `AGENTS.md` before starting.
 
@@ -13,14 +13,16 @@ Read `AGENTS.md` before starting.
 - Representative list frame (empty): `886:70409` — `Customer // KYC // 79`
 - Representative list frame (populated): `886:73019` — `Customer // KYC // 86`
 
-The KYC section contains **78 frames** (`Customer // KYC // 79` … `156`). Frames are state variants and flow steps — not separate routes. Implement behaviour as UI states, not 78 pages.
+The KYC section contains **78 frames** (`Customer // KYC // 79` … `156`). **74 unique** PNGs are cached in `design/figma/webapp/kyc/` (4 exact pixel duplicates dropped: 127=126, 145=144, 151=150, 156=155). Frames are state variants and flow steps — not separate routes. Implement behaviour as UI states, not 78 pages.
+
+Per-frame status: `design/figma/webapp/kyc/manifest.json`. Gaps: `design/figma/webapp/kyc/README.md`.
 
 ## Route
 
 | Route | Purpose | Status |
 | ----- | ------- | ------ |
-| `/kyc` | KYC customer list | Done — populated default (frame 86); empty fixture reserved |
-| `/kyc/[id]` | Verification detail / dashboard | Done — tabs + decision modals |
+| `/kyc` | KYC customer list | Done — live `GET /customers/kyc`; empty = **No User Activity** |
+| `/kyc/[id]` | Verification detail / dashboard | Done — live customer + documents; unsupported panels stay on score templates |
 | `/kyc/lookup` | Perform lookup (BVN, etc.) | Done — entry + result (frames 90–94) |
 
 App shell is provided by `app/(app)/layout.tsx`.
@@ -37,16 +39,18 @@ App shell is provided by `app/(app)/layout.tsx`.
 | 82 | `886:71529` | Priorities filter dropdown open | **Done** |
 | 83 | `886:71902` | Single entity dropdown — **Single entity search** / **Bulk search** | **Done** |
 | 84–85 | `886:72275`, `886:72648` | More filters / combined filter menus | **Done** (high-risk option) |
-| 86 | `886:73019` | **Populated list** — metrics `12` / `6` / `2` / `1`, table rows + pagination | Mock fixture ready (`kycListDataPopulated`) |
-| 87–90 | `886:73375` … `886:74524` | List variants (production banner, row interactions) | Not started |
-| 115 | `886:81117` | List with **Perform Lookup** tab/action visible | **Done** — Add Customer choose-action modal |
+| 86 | `886:73019` | **Populated list** — metrics `12` / `6` / `2` / `1`, table rows + pagination + **Assigned To** | **Done** — `KycAssignedToCell` (`kyc/086.png`) |
+| 87–89, 95, 116, 124–126 | — | Production / Y-row populated list clones (same Assigned To column) | **Done** — same column as 86 |
+| 90 | `886:74524` | Perform Lookup — Single Verification | **Done** |
+| 115 | `886:81117` | Sandbox empty list — third metric **In Review** | Kept **High Risk Alert** — frames 79 and 86 agree; 115 is a Figma label conflict |
 
 **List UI elements (all list frames):**
 
 - Header: **KYC** + subtitle **Know your customers** + **Add Customer** CTA
 - Metric cards: Successful verification, Pending Verification, High Risk Alert, Rejected verification
 - Filter bar: Date, Status, Priorities, Single entity, More filters, Search, Export Report
-- Table columns: KYC ID, Customer Name, Document Type, Country, Status, Priority, Risk Score, Time in Queue
+- Table columns: KYC ID, Customer Name, Document Type, Country, Status, Priority, **Assigned To**, Risk Score, Time in Queue
+- Assigned To: **Unassigned** or reviewer name + chevron (`KycAssignedToCell`; mock reviewers from Figma)
 - Empty copy: **No User Activity** (exact Figma string)
 
 ### B — Perform lookup
@@ -54,7 +58,8 @@ App shell is provided by `app/(app)/layout.tsx`.
 | Frames | Node IDs (sample) | State | Implementation |
 | ------ | ----------------- | ----- | -------------- |
 | 91 | `886:74699` | BVN lookup results — tabs, BVN card, summary panel, footer actions | **Done** — `/kyc/lookup/result` |
-| 92–94 | `886:74948` … `886:75456` | BVN lookup + address information tab | In progress — address tab (frame 92) |
+| 92–93 | `886:74948` … | BVN lookup + **Address Information** tab + **Comment** | **Done** — tab on `/kyc/lookup/result`; label is Comment |
+| 94 | — | Populated list clone (not a lookup frame) | Covered by list + Assigned To |
 | 109 | `886:79838` | Bulk verification entry — Batch Name, Bulk Upload (xlsx) | **Done** — bulk mode on `/kyc/lookup` |
 | 110–114 | `886:80028` … `886:80735` | Lookup type dropdown menus | **Done** — entry form lookup type dropdown |
 
@@ -64,9 +69,11 @@ App shell is provided by `app/(app)/layout.tsx`.
 | ------ | ----------------- | ----- | -------------- |
 | 96–100 | `886:76212` … `886:77640` | Detail: **National ID + Selfie** — e.g. FAVOUR PETER SOMA; risk summary | **Done** — frame 96 aligned to reference screenshot |
 | 101–108 | `886:77994` … `886:79601` | Screening: **No matches found**, **No Mask Detected** | **Done** — AML + liveness tab panels |
-| 116–123 | `886:86959` … `886:89201` | Detail variants (sandbox/production rows) | Not started |
-| 124–156 | `886:89439` … `886:99713` | Approve / reject / escalate / review branches | **Done** — footer actions + confirmation modals |
-| 143 | `886:96317` | Full scrollable detail (tall frame — all sections) | Reference for detail layout |
+| 117, 120–123 | — | Resubmission-primary footer (Reject + Request Resubmission only) | **Done** — `status: resubmission`; fixture `/kyc/kyc-record-8` |
+| 118 | — | Request Document Re-submission modal | **Done** |
+| 119 | — | Compare with Selfie — 20% match + resubmission footer | **Done** — Request Resubmission + `{n}% Match Score`; fixture `/kyc/kyc-record-8` |
+| 124–156 | `886:89439` … `886:99713` | Approve / reject / escalate / review branches (124–126 are list clones) | **Done** for decision UI; list clones share Assigned To gap |
+| 143 | `886:96317` | AML PEP match expanded | **Done** |
 
 Detail frames repeat at multiple Y offsets in Figma (`771`, `3214`, `5657`, `8158`, `10558`, `13059`, `15963`) — same flows in sandbox vs production / workflow branches.
 
@@ -115,6 +122,7 @@ Do not show populated list until Add Customer or lookup flow adds records (futur
 | `KycMetricCards` | Four verification metric cards |
 | `KycFilters` | Filter bar + search + export |
 | `KycTable` | Data table or empty state |
+| `KycAssignedToCell` | Assigned To dropdown (Unassigned / reviewer) |
 | `KycPagination` | Table pagination (populated only) |
 | `KycListPanel` | Composes list screen |
 | `KycDetailPanel` | Verification detail dashboard |
@@ -153,5 +161,6 @@ Do not show populated list until Add Customer or lookup flow adds records (futur
 
 ## Related docs
 
-- `design/manifest.json` — frame `886:70409` (empty), `886:73019` (populated)
+- `design/figma/webapp/kyc/` — full section cache + `manifest.json`
+- `design/manifest.json` — frame `886:70409` (empty `079.png`), `886:73019` (populated `086.png`)
 - `context/ui-context.md` — tokens from KYC list frame `886:70409`

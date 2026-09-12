@@ -3,6 +3,7 @@ import { buildKybDirectorsData } from "@/lib/data/kyb-directors";
 import { buildKybShareCapitalData } from "@/lib/data/kyb-shareholders";
 import { buildKybComplianceChecksData } from "@/lib/data/kyb-compliance-checks";
 import { buildKybSubmittedDocumentsData } from "@/lib/data/kyb-documents";
+import { getKybBatchResultRecords } from "@/lib/data/kyb-batch-results";
 import { kybListDataPopulated } from "@/lib/data/kyb";
 import { clampRiskScore, getRiskScoreLabel, type RiskScore } from "@/lib/kyc/risk-score";
 import type { KybDetail, KybRecord, KybRiskFactor } from "@/types/kyb";
@@ -129,7 +130,7 @@ function buildBusinessContact(record: KybRecord) {
   };
 }
 
-function buildDetailFromRecord(record: KybRecord): KybDetail {
+export function buildKybDetailFromRecord(record: KybRecord): KybDetail {
   const score = clampRiskScore(record.riskScore);
   const isTechVentures = record.id === "kyb-record-5";
   const contact = isTechVentures ? techVenturesTemplate : buildBusinessContact(record);
@@ -179,7 +180,10 @@ function buildDetailFromRecord(record: KybRecord): KybDetail {
 }
 
 const detailById = new Map<string, KybDetail>(
-  kybListDataPopulated.records.map((record) => [record.id, buildDetailFromRecord(record)]),
+  [...kybListDataPopulated.records, ...getKybBatchResultRecords()].map((record) => [
+    record.id,
+    buildKybDetailFromRecord(record),
+  ]),
 );
 
 export function getKybDetailById(id: string): KybDetail | undefined {

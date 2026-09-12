@@ -10,8 +10,11 @@ import {
   BankAnalysisDetailTabs,
   type BankAnalysisDetailTab,
 } from "@/components/bank-analysis/detail/BankAnalysisDetailTabs";
+import { BankAnalysisEscalateModal } from "@/components/bank-analysis/detail/BankAnalysisEscalateModal";
 import { BankAnalysisNetworkPanel } from "@/components/bank-analysis/detail/BankAnalysisNetworkPanel";
 import { BankAnalysisSummaryPanel } from "@/components/bank-analysis/detail/BankAnalysisSummaryPanel";
+import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
+import { isApprovalBlocked } from "@/lib/kyc/risk-score";
 import type { BankAnalysisDetail } from "@/types/bank-analysis";
 
 type BankAnalysisDetailPanelProps = {
@@ -22,6 +25,8 @@ export function BankAnalysisDetailPanel({
   detail,
 }: BankAnalysisDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<BankAnalysisDetailTab>("Bank Summary");
+  const [escalateOpen, setEscalateOpen] = useState(false);
+  const showEscalateFooter = isApprovalBlocked(detail.riskScore);
 
   return (
     <div className="mx-auto flex max-w-[1327px] flex-col gap-6 pb-6">
@@ -43,6 +48,23 @@ export function BankAnalysisDetailPanel({
         {activeTab === "Decision history" ? <BankAnalysisDecisionHistoryPanel /> : null}
         <BankAnalysisDetailSidebar detail={detail} />
       </div>
+
+      {showEscalateFooter ? (
+        <KycDetailFooterActions
+          riskScore={detail.riskScore}
+          onRequestResubmission={() => undefined}
+          onReject={() => undefined}
+          onApprove={() => undefined}
+          onEscalate={() => setEscalateOpen(true)}
+        />
+      ) : null}
+
+      <BankAnalysisEscalateModal
+        open={escalateOpen}
+        summary={detail.escalateSummary}
+        onClose={() => setEscalateOpen(false)}
+        onConfirm={() => setEscalateOpen(false)}
+      />
     </div>
   );
 }

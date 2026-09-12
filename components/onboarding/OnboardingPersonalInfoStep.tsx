@@ -18,15 +18,12 @@ const personalInfoSchema = z.object({
   phone: z.string().min(1, "Phone number is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   nationality: z.string().min(1, "Nationality is required"),
-  gender: z
-    .enum(["male", "female", ""])
-    .refine((value) => value === "male" || value === "female", {
-      message: "Gender is required",
-    }),
+  gender: z.union([z.literal("male"), z.literal("female")]),
+  houseNo: z.string().min(1, "House / building number is required"),
   street: z.string().min(1, "Street is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
-  zipCode: z.string().min(1, "Zip code is required"),
+  zipCode: z.string().min(1, "Postal / ZIP code is required"),
 });
 
 type OnboardingPersonalInfoStepProps = {
@@ -43,7 +40,7 @@ export function OnboardingPersonalInfoStep({
     handleSubmit,
     formState: { errors },
   } = useForm<OnboardingPersonalInfo>({
-    resolver: zodResolver(personalInfoSchema),
+    resolver: zodResolver(personalInfoSchema) as never,
     defaultValues,
   });
 
@@ -79,21 +76,40 @@ export function OnboardingPersonalInfoStep({
           {...register("dateOfBirth")}
         />
         <SettingsSelect
-          label="Nationality"
-          options={onboardingNationalityOptions}
-          error={errors.nationality?.message}
-          {...register("nationality")}
-        />
-        <SettingsSelect
           label="Gender"
           options={onboardingGenderOptions}
           error={errors.gender?.message}
           {...register("gender")}
         />
+        <SettingsSelect
+          label="Nationality"
+          options={onboardingNationalityOptions}
+          error={errors.nationality?.message}
+          {...register("nationality")}
+        />
+      </div>
+
+      <div>
+        <h3 className="text-sm font-semibold text-[color:var(--text-primary)]">Residential address</h3>
+        <p className="mt-1 text-sm text-[color:var(--text-muted)]">
+          Required to create the customer record on the Core Platform.
+        </p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-2">
+        <SettingsField
+          label="House / building no."
+          error={errors.houseNo?.message}
+          {...register("houseNo")}
+        />
         <SettingsField label="Street" error={errors.street?.message} {...register("street")} />
         <SettingsField label="City" error={errors.city?.message} {...register("city")} />
         <SettingsField label="State" error={errors.state?.message} {...register("state")} />
-        <SettingsField label="Zip code" error={errors.zipCode?.message} {...register("zipCode")} />
+        <SettingsField
+          label="Postal / ZIP code"
+          error={errors.zipCode?.message}
+          {...register("zipCode")}
+        />
       </div>
     </form>
   );
