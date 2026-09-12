@@ -96,16 +96,9 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
 
       <KybApproveModal
         open={activeModal === "approve"}
-        subject={{
-          businessName: detail.businessName,
-          reference: detail.verificationType,
-          riskScore: detail.riskScore,
-        }}
+        detail={detail}
         onClose={closeModal}
-        onConfirm={() => {
-          setStatus("approved");
-          closeModal();
-        }}
+        onConfirm={() => setStatus("approved")}
       />
 
       <KybRejectModal

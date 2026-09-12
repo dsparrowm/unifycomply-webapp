@@ -1,5 +1,4 @@
 import type {
-  BankAnalysisBatchResult,
   BankAnalysisDetail,
   BankAnalysisListData,
   BankAnalysisRun,
@@ -432,7 +431,6 @@ const bankAnalysisDetails: BankAnalysisDetail[] = [
         { from: "first-bank", to: "business-bottom", dashed: true },
       ],
     },
-    alerts: [],
     complianceSections: [
       {
         id: "transaction-threshold",
@@ -494,17 +492,6 @@ const bankAnalysisDetails: BankAnalysisDetail[] = [
             status: "No Match",
           },
         ],
-      },
-    ],
-    decisionHistory: [
-      {
-        id: "ba-run-1-completed",
-        type: "analysis-completed",
-        title: "Bank analysis completed",
-        description:
-          "Account activity, linked entities, network relationships, and compliance checks were reviewed.",
-        actor: "UnifyComply Analysis Engine",
-        timestamp: "11 Jul 2026, 09:42",
       },
     ],
     profile: {

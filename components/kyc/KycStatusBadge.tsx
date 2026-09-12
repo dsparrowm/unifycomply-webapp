@@ -11,7 +11,7 @@ const statusConfig: Record<
   },
   pending: {
     label: "Pending",
-    className: "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]",
+    className: "bg-[color:var(--state-info-soft)] text-[color:var(--state-info)]",
   },
   rejected: {
     label: "Rejected",

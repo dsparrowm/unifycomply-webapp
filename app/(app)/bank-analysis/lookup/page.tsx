@@ -1,5 +1,4 @@
 import { BankAnalysisLookupEntryPanel } from "@/components/bank-analysis/lookup/BankAnalysisLookupEntryPanel";
-import type { BankAnalysisLookupMode } from "@/types/bank-analysis";
 
 type BankAnalysisLookupPageProps = {
   searchParams: Promise<{ mode?: string }>;

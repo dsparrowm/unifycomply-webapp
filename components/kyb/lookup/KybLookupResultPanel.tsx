@@ -68,7 +68,7 @@ export function KybLookupResultPanel({ result }: KybLookupResultPanelProps) {
         />
       ) : null}
 
-      <KybLookupFooterActions result={result} />
+      <KybLookupFooterActions />
     </div>
   );
 }

@@ -3,10 +3,6 @@
 /.pnp
 .pnp.*
 .pnpm-store/
-/context
-/docs
-/design
-.vscode/
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

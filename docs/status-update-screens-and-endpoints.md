@@ -18,11 +18,9 @@ Milestone 3 (Transaction Monitoring) UI is **built and parked** (gated while `CU
 
 The browser talks only to this app’s BFF (`/api/*`). JWTs stay in httpOnly cookies. Figma remains the UI contract — we map API payloads in the BFF / `lib/api` mappers and do not reshape screens to match DTOs.
 
-Login and tenant settings talk to the real API through our BFF. The compliance screens stay on mocks until those contracts land.
+You can view the deployed WebApp here: [https://unifycomply-webapp-gfxl.vercel.app/](https://unifycomply-webapp-gfxl.vercel.app/)
 
-What’s changed since the last update (20 July): AML is no longer a placeholder, bank analysis now covers batch lookup and escalation, and auth/settings are live.
-
-We’re still gated on M2 (`CURRENT_MILESTONE = 2`). M3 doesn’t start until QA/UAT signs off.
+---
 
 ## Completed modules / screens
 
@@ -67,6 +65,7 @@ Built on mocks; routes exist but are gated while the active milestone is 2.
 | Queues | `/tm-not-blocked`, `/stop-payment`, `/cumulative-frequency`, `/tm-blocked` |
 | Rules + Adopt Template | `/rules`, `/rules/[id]` |
 
+---
 
 ## Outstanding
 
@@ -136,6 +135,7 @@ Browser → `/api/*` → Core Platform `https://unifycomply-api.rokxier.com`.
 
 Lookup/bulk, approve/reject/escalate/resubmit, AML, bank analysis, overview charts, audit logs, TM, Packages/Request.
 
+---
 
 ## Milestone status overview
 
@@ -149,4 +149,4 @@ Lookup/bulk, approve/reject/escalate/resubmit, AML, bank analysis, overview char
 
 ---
 
-Internal status note — supersedes the 20 July update.
+*Prepared for internal status reporting.*

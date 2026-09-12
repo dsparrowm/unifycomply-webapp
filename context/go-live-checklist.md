@@ -40,10 +40,10 @@ deployment of the frontend.
 ### Milestone 2 — KYC Orchestration
 
 - [x] Customer onboarding wizard completed
-- [x] Business onboarding decision documented — KYB Validate Document deferred because no dedicated WebApp frames exist
+- [ ] Business onboarding screens completed
 - [x] Document upload UI completed (onboarding wizard)
 - [x] Verification dashboard completed (KYC/KYB detail)
-- [x] Compliance queue represented by KYC/KYB list status filters (no separate Figma route)
+- [ ] Compliance queue — not a separate Figma screen; use KYC/KYB list status filters
 - [x] Risk score visualization completed
 - [x] Bank analysis list screen completed (`/bank-analysis`)
 - [x] Bank analysis Single Lookup entry completed (`/bank-analysis/lookup`)

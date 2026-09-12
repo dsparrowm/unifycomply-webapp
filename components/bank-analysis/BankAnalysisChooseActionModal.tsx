@@ -61,7 +61,7 @@ export function BankAnalysisChooseActionModal({
       <button
         type="button"
         aria-label="Close choose action dialog"
-        className="absolute inset-0 bg-[color:var(--text-primary)]/30 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-black/40"
         onClick={onClose}
       />
 

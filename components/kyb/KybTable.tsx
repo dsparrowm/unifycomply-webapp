@@ -43,8 +43,7 @@ export function KybTable({
               {columns.map((column) => (
                 <th
                   key={column}
-                  scope="col"
-                  className="whitespace-nowrap px-4 py-3 text-xs font-medium text-[color:var(--text-muted)]"
+                  className="px-4 py-3 text-xs font-medium text-[color:var(--text-muted)]"
                 >
                   {column}
                 </th>
@@ -72,7 +71,7 @@ export function KybTable({
               records.map((record) => (
                 <tr
                   key={record.id}
-                  className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] transition-colors last:border-b-0 hover:bg-[color:var(--bg-muted)]"
+                  className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] last:border-b-0"
                 >
                   <td className="px-4 py-4">
                     <input
@@ -108,33 +107,9 @@ export function KybTable({
                   </td>
                   <td className="px-4 py-4 text-[color:var(--text-primary)]">{record.country}</td>
                   <td className="px-4 py-4">
-                    <Link href={`/kyb/${record.id}`} className="block hover:opacity-80">
-                      <p className="font-medium text-[color:var(--text-primary)]">
-                        {record.businessName}
-                      </p>
-                      <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">
-                        {record.businessType}
-                      </p>
-                    </Link>
+                    <KycPriorityBadge priority={record.priority} />
                   </td>
-                  <td className="whitespace-nowrap px-4 py-4 text-[color:var(--text-primary)]">
-                    {record.verificationType}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-4">
-                    <KybListStatusBadge status={record.status} />
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-4 font-medium text-[color:var(--text-primary)]">
-                    {record.countryCode}
-                  </td>
-                  <td className="whitespace-nowrap px-4 py-4">
-                    <KybListPriorityBadge priority={record.priority} />
-                  </td>
-                  <td
-                    className={cn(
-                      "whitespace-nowrap px-4 py-4 text-center font-semibold",
-                      kybRiskScoreClassName(record.riskScore),
-                    )}
-                  >
+                  <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
                     {record.riskScore}
                   </td>
                   <td className="px-4 py-4">

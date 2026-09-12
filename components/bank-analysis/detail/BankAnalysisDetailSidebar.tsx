@@ -13,7 +13,7 @@ export function BankAnalysisDetailSidebar({
 
   const profileRows = [
     ["Entity Type", profile.entityType],
-    [profile.entityType === "Business" ? "Registration ID" : "BVN", profile.bvn],
+    ["BVN", profile.bvn],
     ["Email", profile.email],
     ["Phone", profile.phone],
   ] as const;

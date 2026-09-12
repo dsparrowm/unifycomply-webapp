@@ -42,7 +42,6 @@ export function KybListPanel({ data, initialSearchMode }: KybListPanelProps) {
         record.businessType,
         record.verificationType,
         record.country,
-        record.countryCode,
         record.status,
         record.priority,
         record.assignedTo ?? "Unassigned",

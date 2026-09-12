@@ -106,9 +106,7 @@ export function BankAnalysisFilters({
 
         <button
           type="button"
-          disabled
-          title="Report export is not connected in the mock-data build"
-          className="cursor-not-allowed rounded-lg bg-[color:var(--accent-primary)] px-4 py-2 text-sm font-medium text-white opacity-60"
+          className="rounded-lg bg-[color:var(--accent-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[color:var(--accent-primary-hover)]"
         >
           Export Report
         </button>

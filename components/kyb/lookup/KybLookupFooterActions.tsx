@@ -2,18 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { KybApproveModal } from "@/components/kyb/detail/KybApproveModal";
 import { KycRequestResubmissionModal } from "@/components/kyc/detail/KycRequestResubmissionModal";
-import type { KybRegistryLookupResult } from "@/types/kyb";
 
-type KybLookupFooterActionsProps = {
-  result: KybRegistryLookupResult;
-};
-
-export function KybLookupFooterActions({ result }: KybLookupFooterActionsProps) {
+export function KybLookupFooterActions() {
   const router = useRouter();
   const [resubmissionOpen, setResubmissionOpen] = useState(false);
-  const [approvalOpen, setApprovalOpen] = useState(false);
 
   return (
     <>
@@ -34,7 +27,6 @@ export function KybLookupFooterActions({ result }: KybLookupFooterActionsProps) 
         </button>
         <button
           type="button"
-          onClick={() => setApprovalOpen(true)}
           className="h-11 min-w-[135px] rounded-lg bg-[color:var(--accent-primary-hover)] px-5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
         >
           Approve
@@ -45,17 +37,6 @@ export function KybLookupFooterActions({ result }: KybLookupFooterActionsProps) 
         open={resubmissionOpen}
         onClose={() => setResubmissionOpen(false)}
         onConfirm={() => setResubmissionOpen(false)}
-      />
-      <KybApproveModal
-        open={approvalOpen}
-        variant="lookup"
-        subject={{
-          businessName: result.legalBusinessName,
-          reference: result.identifier,
-          riskScore: result.riskScore,
-        }}
-        onClose={() => setApprovalOpen(false)}
-        onConfirm={() => router.push("/kyb/kyb-record-5")}
       />
     </>
   );

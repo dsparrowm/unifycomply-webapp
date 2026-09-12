@@ -48,11 +48,6 @@
       margin: 1.25rem 0 0.5rem;
     }
     p { margin: 0.5rem 0 0.75rem; }
-    ul {
-      margin: 0.35rem 0 0.85rem;
-      padding-left: 1.25rem;
-    }
-    li { margin: 0.25rem 0; }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -84,7 +79,6 @@
     }
     @media print {
       body { padding: 0; max-width: none; }
-      a { color: inherit; text-decoration: none; }
     }
   </style>
 </head>
@@ -117,16 +111,8 @@
     Figma remains the UI contract — we map API payloads in the BFF / <code>lib/api</code> mappers and do not reshape screens to match DTOs.
   </p>
   <p>
-    Login and tenant settings talk to the real API through our BFF. The compliance screens stay on mocks until those contracts land.
-  </p>
-  <p>
-    What’s changed since the last update (20 July): AML is no longer a placeholder, bank analysis now covers batch lookup and escalation, and auth/settings are live.
-  </p>
-  <p>
-    We’re still gated on M2 (<code>CURRENT_MILESTONE = 2</code>). M3 doesn’t start until QA/UAT signs off.
-  </p>
-  <p>
-    Live build: <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a>
+    You can view the deployed WebApp here:
+    <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a>
   </p>
 
   <h2>Completed modules / screens</h2>
@@ -423,7 +409,6 @@
   <h3>Still mock (no OpenAPI or not wired)</h3>
   <p>Lookup/bulk, approve/reject/escalate/resubmit, AML, bank analysis, overview charts, audit logs, TM, Packages/Request.</p>
 
-
   <h2>Milestone status overview</h2>
   <table>
     <thead>
@@ -438,6 +423,6 @@
     </tbody>
   </table>
 
-  <p class="footer">Internal status note — supersedes the 20 July update.</p>
+  <p class="footer">Prepared for internal status reporting.</p>
 </body>
 </html>

@@ -436,11 +436,11 @@ export function KycLookupEntryPanel() {
 
             {error ? <p className="text-sm text-[color:var(--state-error)]">{error}</p> : null}
 
-            <div className="flex flex-col-reverse gap-3 pt-3 sm:flex-row sm:justify-end sm:gap-5">
+            <div className="flex justify-end gap-5 pt-3">
               <button
                 type="button"
                 onClick={() => router.push("/kyc")}
-                className="h-11 w-full rounded-lg bg-[color:var(--border-subtle)] px-6 text-sm font-medium text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--border-default)] sm:w-auto sm:min-w-[240px]"
+                className="h-11 min-w-[240px] rounded-lg bg-[color:var(--border-subtle)] px-6 text-sm font-medium text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--border-default)]"
               >
                 Cancel
               </button>

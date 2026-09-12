@@ -86,17 +86,9 @@ Same **0–4 risk score scale** as KYC and Settings → Approvals. Numeric score
 
 | Frames | Node IDs | State | Implementation |
 | ------ | -------- | ----- | -------------- |
-| 93 | `886:110808` | **Business Overview** — registry info, address/contact, activities, risk sidebar, decision footer | **Done** — `kyb-record-5` (TechVentures Limited, risk 0) |
-| 95 | (cache `customer-kyb-95.png`) | **Business Overview high-risk** — tier risk-factor cards, Urgent priority, escalate footer | **Done** — `kyb-record-1` (TechVentures Limited, risk 4) |
-| 112 | (cache `customer-kyb-112.png`) | **Compliance Checks flagged** — OFAC View Details expand, PEP/Warning flagged, escalate footer | **Done** — score 4 compliance fixture on `kyb-record-1` |
-| 134 | (cache `customer-kyb-134.png`) | **Compliance Checks cleared** — all No Match / Passed + Approve footer | **Done** — score 0 on `kyb-record-5` |
-| 122 | (cache `customer-kyb-122.png`) | **Business Overview cleared** — same composition as frame 93 | **Done** — covered by `kyb-record-5` |
-| 115 / 135 | (cache) | **Confirm Approval** modal — risk 1 / risk 0 circular badge + verification type | **Done** — `KybApproveModal` |
-| `frame-1618868336` | (cache) | **Directors PEP Match** cards — PEP Match + Verified pair | **Done** — score 1/2 directors fixture |
-| 133 | (cache) | Compliance Checks cleared + **Approved** header badge | Covered — same cleared compliance + status badge |
-| 88 / 91 / 119 | (cache) | Lookup entry / list variants | Covered by `/kyb/lookup` and list frame 84 |
+| 93 | `886:110808` | **Business Overview** — registry info, address/contact, activities, risk sidebar, footer actions | **Done** — `kyb-record-5` (TechVentures Nigeria Limited) |
 
-**Detail UI elements (frame 93 — cleared baseline):**
+**Detail UI elements (frame 93):**
 
 - Header: Back, **KYB / {business}** + status badge, Risk Score badge, **Export Report**
 - Tabs: Business Overview, Risk Score Analysis, Directors & Officers, Shareholders, Document, Compliance Checks
@@ -126,14 +118,10 @@ Same **0–4 risk score scale** as KYC and Settings → Approvals. Numeric score
 - [x] Perform Lookup result — registry card, summary panel, tabs, footer actions
 - [x] KYB detail route (`/kyb/[id]`) — frame 93 Business Overview baseline
 - [x] KYB detail Risk Score Analysis tab — reuses `KycRiskAnalysisPanel` for scores 0–4
-- [x] KYB detail Directors & Officers tab — scores 0, 1, 2, 3, and 4 (frame-1618868336 PEP Match baseline)
+- [x] KYB detail Directors & Officers tab — scores 0, 1, 3, and 4 baselines (score 2 placeholder)
 - [x] KYB detail Shareholders tab — Share Capital Structure table for all risk levels
 - [x] KYB detail Document tab — Submitted Documents list for all risk levels
 - [x] KYB detail Compliance Checks tab — AML screening sections for all risk levels 0–4
-- [x] Frame 95 high-risk Overview — tier risk cards + escalate footer (`kyb-record-1`)
-- [x] Frame 112 Compliance Checks flagged — OFAC match expand + PEP/Warning View Details
-- [x] Frames 115 / 135 — Confirm Approval modal (circular risk badge + verification type)
-- [x] Frame 122 — cleared Business Overview (same as frame 93 baseline)
 - [x] KYB detail transparent section headers — shared `KybDetailSectionHeader`
 - [x] Document viewer modal — Certificate of Incorporation (Cancel / Download / X)
 

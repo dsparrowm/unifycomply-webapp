@@ -115,7 +115,7 @@ This spec covers the **standalone** AML SCREENING section from the sidebar.
 | `amlListDataEmpty` | `?empty=1` (frame 15) | All `0` |
 | `amlListDataPopulated` | **Current** `/aml-screening` (frame 20) | `14` / `5` / `5` / `12` |
 
-## Acceptance
+## Acceptance — placeholder (current)
 
 - [x] Route `/aml-screening` resolves (no 404)
 - [x] Placeholder panel with title and coming-soon copy

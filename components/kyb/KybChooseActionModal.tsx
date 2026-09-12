@@ -36,9 +36,7 @@ export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProp
     {
       id: "lookup",
       label: "Perform Lookup",
-      description: "Verify a business against a registry",
       icon: Search,
-      disabled: false,
       onClick: () => {
         onClose();
         router.push("/kyb/lookup");
@@ -47,7 +45,6 @@ export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProp
     {
       id: "validate",
       label: "Validate Document",
-      description: "Awaiting dedicated business onboarding design",
       icon: FileSearch,
       onClick: () => {
         onClose();
@@ -61,7 +58,7 @@ export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProp
       <button
         type="button"
         aria-label="Close choose action dialog"
-        className="absolute inset-0 bg-[color:var(--text-primary)]/40"
+        className="absolute inset-0 bg-black/40"
         onClick={onClose}
       />
 
@@ -90,25 +87,19 @@ export function KybChooseActionModal({ open, onClose }: KybChooseActionModalProp
               key={action.id}
               type="button"
               onClick={action.onClick}
-              disabled={action.disabled}
               className={cn(
                 "flex w-full items-center justify-between rounded-xl border border-[color:var(--border-default)] px-6 py-5 text-left transition-colors",
-                action.disabled
-                  ? "cursor-not-allowed opacity-55"
-                  : "hover:border-[color:var(--accent-primary-hover)] hover:bg-[color:var(--accent-primary-soft)]",
+                action.id === "lookup"
+                  ? "hover:border-[color:var(--accent-primary-hover)] hover:bg-[color:var(--accent-primary-soft)]"
+                  : "hover:bg-[color:var(--bg-muted)]",
               )}
             >
               <span className="flex items-center gap-4">
                 <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-[color:var(--bg-muted)] text-[color:var(--accent-primary)]">
                   <action.icon className="h-6 w-6" />
                 </span>
-                <span>
-                  <span className="block text-lg font-medium text-[color:var(--text-primary)]">
-                    {action.label}
-                  </span>
-                  <span className="mt-1 block text-sm text-[color:var(--text-muted)]">
-                    {action.description}
-                  </span>
+                <span className="text-lg font-medium text-[color:var(--text-primary)]">
+                  {action.label}
                 </span>
               </span>
               <ChevronRight className="h-6 w-6 text-[color:var(--text-light)]" />

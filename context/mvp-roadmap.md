@@ -123,10 +123,6 @@ Maps to Figma: **KYC COMPLIANCE**, **KYB COMPLIANCE**, **BANK ANALYSIS**, **AML 
 - End-to-end KYC UI flows with mock data
 - Compliance queue and risk score visualization
 - Document upload UI
-- Standalone AML screening list, lookup/batch, detail, case, and escalation flows
-- Bank Analysis batch lookup, meaningful detail states, decision history, and escalation
-- Remaining design-defined KYB actions and states
-- Features without dedicated WebApp designs are explicitly documented as deferred
 
 ---
 
@@ -204,13 +200,12 @@ Development → Staging → UAT → Production
 
 ## Implementation Order
 
-**Active milestone gate: M2.** M1 and the design-defined M2 implementation are
-complete. Do not implement M3 or later milestones until M2 QA/UAT is accepted and
-`lib/constants/milestones.ts` is explicitly updated.
+**Active milestone: M1.** Do not implement later milestones until M1 completion criteria
+are met and `lib/constants/milestones.ts` is updated.
 
 Align feature specs and `progress-tracker.md` to this order:
 
-### Milestone 1 (complete)
+### Milestone 1 (current)
 
 1. Scaffold, design system, tokens
 2. App shell + milestone-gated navigation
@@ -219,15 +214,11 @@ Align feature specs and `progress-tracker.md` to this order:
 5. Tenant admin (settings, users, roles, API keys)
 6. RBAC-aware nav gating
 
-### Milestone 2 (complete; active gate)
+### Milestone 2+ (blocked)
 
-1. KYC/KYB, onboarding wizard, and compliance status workflows
-2. Bank analysis list, lookup, detail, batch, and escalation workflows
-3. AML screening list, lookup/batch, detail, case, and escalation workflows
-4. M2 validation, Figma parity review, and documentation closeout
+Do not start until M1 is complete:
 
-### Milestone 3+ (blocked)
-
+2. **M2** — KYC/KYB, onboarding wizard, compliance queue, bank analysis, AML
 3. **M3** — Monitoring dashboard, alerts, transaction explorer, rules
 4. **M4** — Cases, SAR editor, investigation workspace, AI review UI
 5. **M5** — Performance, accessibility, error pages, production hardening
