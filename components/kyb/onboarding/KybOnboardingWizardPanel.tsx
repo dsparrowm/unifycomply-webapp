@@ -103,7 +103,7 @@ export function KybOnboardingWizardPanel({
       }
 
       toastSuccess("Business submitted for verification");
-      await queryClient.invalidateQueries({ queryKey: customerKeys.kybList });
+      await queryClient.invalidateQueries({ queryKey: customerKeys.kybListRoot });
       router.push(`/kyb/${customerId}/account-purpose`);
     } catch (error) {
       toastError(error, "Failed to submit business onboarding");

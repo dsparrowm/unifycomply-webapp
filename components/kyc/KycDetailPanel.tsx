@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { EmptyState } from "@/components/feedback/EmptyState";
 import { KycAmlScreeningPanel } from "@/components/kyc/detail/KycAmlScreeningPanel";
 import { KycApproveModal } from "@/components/kyc/detail/KycApproveModal";
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
@@ -20,6 +21,15 @@ import { KycDocumentViewer } from "@/components/kyc/KycDocumentViewer";
 import { KycExtractedInformation } from "@/components/kyc/KycExtractedInformation";
 import { KycRiskAnalysisCard } from "@/components/kyc/KycRiskAnalysisCard";
 import { KycVerificationTimeline } from "@/components/kyc/KycVerificationTimeline";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
+import {
+  mergeKycDetailWithDocumentsTab,
+  useKycAmlScreeningTab,
+  useKycDeviceInformationTab,
+  useKycLivenessTab,
+  useKycVerificationDocumentsTab,
+  useKycVerificationRiskScore,
+} from "@/lib/hooks/use-customers";
 import type { KycDetail, KycDetailTab, KycVerificationStatus } from "@/types/kyc";
 
 type KycDetailPanelProps = {
@@ -33,7 +43,51 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   const [status, setStatus] = useState<KycVerificationStatus>(initialDetail.status);
   const [activeModal, setActiveModal] = useState<KycDetailModal>(null);
 
-  const detail = { ...initialDetail, status };
+  const workflowId = initialDetail.workflowId;
+
+  const documentsQuery = useKycVerificationDocumentsTab(workflowId, activeTab === "document");
+  const riskQuery = useKycVerificationRiskScore(workflowId, activeTab === "risk-analysis");
+  const amlQuery = useKycAmlScreeningTab(workflowId, activeTab === "aml-screening");
+  const deviceQuery = useKycDeviceInformationTab(workflowId, activeTab === "ip-device");
+  const livenessQuery = useKycLivenessTab(workflowId, activeTab === "liveness");
+
+  const liveRisk = riskQuery.data;
+  const detailWithDocuments = mergeKycDetailWithDocumentsTab(
+    initialDetail,
+    documentsQuery.data,
+  );
+
+  const detail = {
+    ...detailWithDocuments,
+    status,
+    riskScore: liveRisk?.available ? liveRisk.riskScore : detailWithDocuments.riskScore,
+    riskAnalysis:
+      liveRisk?.available && liveRisk.riskAnalysis
+        ? liveRisk.riskAnalysis
+        : activeTab === "risk-analysis" && workflowId
+          ? null
+          : detailWithDocuments.riskAnalysis,
+    canApprove: liveRisk?.canApprove ?? detailWithDocuments.canApprove,
+    requiresEscalation: liveRisk?.requiresEscalation ?? detailWithDocuments.requiresEscalation,
+    amlScreening:
+      activeTab === "aml-screening" && workflowId
+        ? (amlQuery.data ?? null)
+        : detailWithDocuments.amlScreening,
+    ipDevice:
+      activeTab === "ip-device" && workflowId
+        ? (deviceQuery.data?.data ?? null)
+        : detailWithDocuments.ipDevice,
+    liveness:
+      activeTab === "liveness" && workflowId
+        ? (livenessQuery.data?.data ?? null)
+        : detailWithDocuments.liveness,
+    availability: {
+      ...detailWithDocuments.availability,
+      amlScreening: Boolean(amlQuery.data),
+      ipDevice: Boolean(deviceQuery.data?.available && deviceQuery.data.data),
+      liveness: Boolean(livenessQuery.data?.available && livenessQuery.data.data),
+    },
+  };
 
   function closeModal() {
     setActiveModal(null);
@@ -46,47 +100,101 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
       <KycDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "document" ? (
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_457px]">
-          <div className="space-y-6">
-            <KycDocumentViewer
-              matchScore={detail.matchScore}
-              failedMatch={
-                status === "resubmission" || detail.livenessStatus === "Failed"
-              }
-            />
-            <KycExtractedInformation
-              fields={detail.extractedFields}
-              statusLabel={detail.extractionStatus}
-            />
+        documentsQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : (
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_457px]">
+            <div className="space-y-6">
+              {detail.availability.documentPreview || !detail.workflowId ? (
+                <KycDocumentViewer
+                  matchScore={detail.matchScore}
+                  failedMatch={
+                    status === "resubmission" || detail.livenessStatus === "Failed"
+                  }
+                  views={detail.documentViews}
+                />
+              ) : (
+                <EmptyState
+                  title="No documents available"
+                  description="Signed document previews will appear here once files are uploaded on this verification."
+                />
+              )}
+              <KycExtractedInformation
+                fields={detail.extractedFields}
+                statusLabel={detail.extractionStatus}
+              />
+            </div>
+
+            <div className="space-y-6">
+              {detail.documentRiskTier ? (
+                <KycDocumentRiskTierCard tier={detail.documentRiskTier} />
+              ) : (
+                <KycRiskAnalysisCard detail={detail} />
+              )}
+              {detail.documentAlert ? <KycDocumentAlertCard alert={detail.documentAlert} /> : null}
+              <KycBiometricVerification detail={detail} />
+              <KycVerificationTimeline events={detail.timeline} />
+            </div>
           </div>
-
-          <div className="space-y-6">
-            {detail.documentRiskTier ? (
-              <KycDocumentRiskTierCard tier={detail.documentRiskTier} />
-            ) : (
-              <KycRiskAnalysisCard detail={detail} />
-            )}
-            {detail.documentAlert ? <KycDocumentAlertCard alert={detail.documentAlert} /> : null}
-            <KycBiometricVerification detail={detail} />
-            <KycVerificationTimeline events={detail.timeline} />
-          </div>
-        </div>
+        )
       ) : null}
 
-      {activeTab === "risk-analysis" && detail.riskAnalysis ? (
-        <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
+      {activeTab === "risk-analysis" ? (
+        riskQuery.isLoading ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.riskAnalysis ? (
+          <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
+        ) : (
+          <EmptyState
+            title="Risk score not available yet"
+            description="Risk decisioning has not scored this run. Open this tab again after the verification settles."
+          />
+        )
       ) : null}
 
-      {activeTab === "aml-screening" && detail.amlScreening ? (
-        <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
+      {activeTab === "aml-screening" ? (
+        amlQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.amlScreening ? (
+          <KycAmlScreeningPanel amlScreening={detail.amlScreening} />
+        ) : (
+          <EmptyState
+            title="AML screening"
+            description="No sanctions or PEP screening tasks are available for this verification yet."
+          />
+        )
       ) : null}
 
-      {activeTab === "ip-device" && detail.ipDevice ? (
-        <KycIpDevicePanel ipDevice={detail.ipDevice} />
+      {activeTab === "ip-device" ? (
+        deviceQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.ipDevice && detail.availability.ipDevice ? (
+          <KycIpDevicePanel ipDevice={detail.ipDevice} />
+        ) : (
+          <EmptyState
+            title="IP & device not captured"
+            description={
+              deviceQuery.data?.reason ??
+              "IP and device capture is not implemented on the platform yet."
+            }
+          />
+        )
       ) : null}
 
-      {activeTab === "liveness" && detail.liveness ? (
-        <KycLivenessPanel liveness={detail.liveness} />
+      {activeTab === "liveness" ? (
+        livenessQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.liveness && detail.availability.liveness ? (
+          <KycLivenessPanel liveness={detail.liveness} />
+        ) : (
+          <EmptyState
+            title="Liveness detail unavailable"
+            description={
+              livenessQuery.data?.reason ??
+              "Dedicated liveness provider results are not returned yet. Selfie checks may show as skipped for this country."
+            }
+          />
+        )
       ) : null}
 
       <KycDetailFooterActions

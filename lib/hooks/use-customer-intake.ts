@@ -92,7 +92,7 @@ export function useStartVerification(kind: CustomerKind, customerId: string) {
         queryKey: kind === "kyc" ? customerKeys.kycDetail(customerId) : customerKeys.kybDetail(customerId),
       });
       await queryClient.invalidateQueries({
-        queryKey: kind === "kyc" ? customerKeys.kycList : customerKeys.kybList,
+        queryKey: kind === "kyc" ? customerKeys.kycListRoot : customerKeys.kybListRoot,
       });
     },
   });

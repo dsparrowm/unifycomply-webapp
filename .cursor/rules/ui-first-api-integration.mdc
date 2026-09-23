@@ -1,0 +1,33 @@
+---
+description: UI-first API integration — never reshape Figma UI for backend; raise issues instead
+alwaysApply: true
+---
+
+# UI-first API integration
+
+Figma / existing WebApp UI is the product contract. Backend OpenAPI is an integration input, not a reason to redesign screens.
+
+## Rule
+
+When wiring live Core Platform APIs (`https://unifycomply-api.rokxier.com`):
+
+1. **Preserve the UI** — layout, fields, labels, flows, and states stay as designed/implemented.
+2. **Adapt in the BFF / mappers** — map API payloads ↔ UI view models in `lib/api/` (and BFF routes). Prefer adapters over changing components.
+3. **If the API shape cannot support the UI without changing it** — **stop**. Do **not** alter the UI to match the backend.
+4. **Raise an issue** — add an open question / blocker in `context/progress-tracker.md` (what UI needs, what API returns/missing, suggested backend change). Call it out clearly to the user. Do not silently ship a degraded UI.
+
+## Allowed
+
+- Mapping, renaming, combining, or defaulting fields in mappers
+- Keeping mock data for UI surfaces the API cannot yet power
+- Partial live wiring that leaves unsupported UI sections on mock / disabled with a tracked issue
+- **Missing Figma for an API-backed flow:** log in `context/progress-tracker.md` + a feature
+  spec, then **build the flow** (mark “API-derived / no Figma”). Do not invent alternate
+  product behaviour beyond what OpenAPI + existing UI patterns support.
+
+## Not allowed
+
+- Removing Figma fields, panels, tabs, or flows because the API omits them
+- Renaming user-facing copy to match DTO names
+- Collapsing multi-step or multi-panel UI into a simpler form “because the API is flatter”
+- Treating OpenAPI as the design source of truth over Figma

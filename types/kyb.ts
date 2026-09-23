@@ -25,7 +25,10 @@ export type KybVerificationType =
   | "SCUML";
 
 export type KybRecord = {
+  /** Customer id — detail route `/kyb/[id]` stays customer-scoped. */
   id: string;
+  /** Verification workflow id when the row comes from `/verifications/kyb`. */
+  workflowId?: string;
   kybId: string;
   businessName: string;
   businessType: string;
@@ -189,6 +192,8 @@ export type KybComplianceChecksData = {
 
 export type KybDetail = {
   id: string;
+  /** Present when opened from the verification queue. */
+  workflowId?: string;
   kybId: string;
   businessName: string;
   businessType: string;
@@ -220,6 +225,8 @@ export type KybDetail = {
   shareholders: KybShareCapitalData;
   documents: KybSubmittedDocumentsData;
   complianceChecks: KybComplianceChecksData | null;
+  /** When false, risk tab shows empty until scored. */
+  riskAnalysisAvailable?: boolean;
 };
 
 export type KybRegistryLookupResult = {

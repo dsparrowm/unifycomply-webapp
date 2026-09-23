@@ -89,3 +89,5 @@ Mock data shape (required for v1).
 | `10-kyb-business-onboarding.md` | KYB Validate Document intake (`/kyb/onboarding`) | Done (API-derived) |
 | `11-transaction-monitoring-overview.md` | TM Overview dashboard (`/transaction-monitoring`) | Done — empty default; queues placeholder |
 | `12-account-purpose-and-verification.md` | Account purpose + start verification | Done (API-derived / no Figma) |
+| `15-settings-app-picker.md` | Settings App picker + app-scoped settings | Done (API-derived / no Figma) |
+| `16-prekyc-rekyc-tenant-flow.md` | Pre-KYC / Re-KYC tenant flow (missing screens) | Plan only |

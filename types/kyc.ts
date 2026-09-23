@@ -56,7 +56,10 @@ export type KycFilterOption<T extends string = string> = {
 };
 
 export type KycRecord = {
+  /** Customer id — detail route `/kyc/[id]` stays customer-scoped. */
   id: string;
+  /** Verification workflow id when the row comes from `/verifications/kyc`. */
+  workflowId?: string;
   kycId: string;
   customerName: string;
   documentType: string;
@@ -302,8 +305,16 @@ export type KycDocumentAlert = {
   description: string;
 };
 
+export type KycDocumentView = {
+  id: string;
+  label: string;
+  src: string;
+};
+
 export type KycDetail = {
   id: string;
+  /** Present when opened from the verification queue. */
+  workflowId?: string;
   kycId: string;
   customerName: string;
   documentType: string;
@@ -326,6 +337,8 @@ export type KycDetail = {
   canApprove?: boolean;
   requiresEscalation?: boolean;
   availability: KycDetailAvailability;
+  /** Live signed document previews from verification documents tab. */
+  documentViews?: KycDocumentView[];
   /** Document tab tier card — shown at elevated risk scores (e.g. score 2). */
   documentRiskTier?: KycDocumentRiskTier;
   /** Document tab alert panel — shown when verification warnings apply. */

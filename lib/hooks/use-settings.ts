@@ -47,6 +47,7 @@ import {
   mapUserProfileToSettings,
   monthsToDays,
 } from "@/lib/api/mappers/settings";
+import { requireSettingsAppId, useSettingsAppSelection } from "@/lib/hooks/use-tenant-apps";
 import type { SettingsBusinessInformation, SettingsProfile } from "@/types/settings";
 
 export const settingsKeys = {
@@ -57,12 +58,11 @@ export const settingsKeys = {
   teams: ["settings", "teams"] as const,
   roles: ["settings", "roles"] as const,
   roleOptions: ["settings", "role-options"] as const,
-  apiKey: ["settings", "api-key"] as const,
-  riskFactors: ["settings", "risk-factors"] as const,
-  riskThreshold: ["settings", "risk-threshold"] as const,
-  pep: ["settings", "pep"] as const,
-  notifications: ["settings", "notifications"] as const,
-  compliance: ["settings", "compliance"] as const,
+  apiKey: (appId: string) => ["settings", "api-key", appId] as const,
+  approvals: (appId: string) => ["settings", "approvals", appId] as const,
+  pep: (appId: string) => ["settings", "pep", appId] as const,
+  notifications: (appId: string) => ["settings", "notifications", appId] as const,
+  compliance: (appId: string) => ["settings", "compliance", appId] as const,
   mfa: ["settings", "mfa"] as const,
 };
 
@@ -257,70 +257,84 @@ export function useDeleteRole() {
 }
 
 export function useSettingsApiKey() {
+  const { selectedAppId } = useSettingsAppSelection();
   return useQuery({
-    queryKey: settingsKeys.apiKey,
-    queryFn: getApiKey,
+    queryKey: settingsKeys.apiKey(selectedAppId ?? "none"),
+    queryFn: () => getApiKey(requireSettingsAppId(selectedAppId)),
+    enabled: Boolean(selectedAppId),
   });
 }
 
 export function useRotateApiKey() {
   const queryClient = useQueryClient();
+  const { selectedAppId } = useSettingsAppSelection();
   return useMutation({
-    mutationFn: rotateApiKey,
+    mutationFn: () => rotateApiKey(requireSettingsAppId(selectedAppId)),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: settingsKeys.apiKey });
+      if (selectedAppId) {
+        void queryClient.invalidateQueries({ queryKey: settingsKeys.apiKey(selectedAppId) });
+      }
     },
   });
 }
 
 export function useSettingsApprovals() {
+  const { selectedAppId } = useSettingsAppSelection();
   return useQuery({
-    queryKey: [...settingsKeys.riskFactors, ...settingsKeys.riskThreshold],
+    queryKey: settingsKeys.approvals(selectedAppId ?? "none"),
     queryFn: async () => {
+      const appId = requireSettingsAppId(selectedAppId);
       const [factors, thresholds] = await Promise.all([
-        getRiskFactors(),
-        getRiskScoreThreshold(),
+        getRiskFactors(appId),
+        getRiskScoreThreshold(appId),
       ]);
       return mapApprovalsToSettings(factors, thresholds);
     },
+    enabled: Boolean(selectedAppId),
   });
 }
 
 export function useSaveSettingsApprovals() {
   const queryClient = useQueryClient();
+  const { selectedAppId } = useSettingsAppSelection();
   return useMutation({
     mutationFn: async (input: {
       factors: Array<{ id: string; impact: "low" | "medium" | "high" }>;
       warningThreshold: number;
       blockThreshold: number;
     }) => {
+      const appId = requireSettingsAppId(selectedAppId);
       const weightFromImpact = { low: 1, medium: 2, high: 3 } as const;
       await Promise.all([
         ...input.factors.map((factor) =>
-          updateRiskFactor(factor.id, weightFromImpact[factor.impact]),
+          updateRiskFactor(appId, factor.id, weightFromImpact[factor.impact]),
         ),
-        updateRiskScoreThreshold({
+        updateRiskScoreThreshold(appId, {
           warningThreshold: input.warningThreshold,
           blockThreshold: input.blockThreshold,
         }),
       ]);
     },
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: settingsKeys.riskFactors });
-      void queryClient.invalidateQueries({ queryKey: settingsKeys.riskThreshold });
+      if (selectedAppId) {
+        void queryClient.invalidateQueries({ queryKey: settingsKeys.approvals(selectedAppId) });
+      }
     },
   });
 }
 
 export function useSettingsPep() {
+  const { selectedAppId } = useSettingsAppSelection();
   return useQuery({
-    queryKey: settingsKeys.pep,
-    queryFn: async () => mapPepToSettings(await getPepTiers()),
+    queryKey: settingsKeys.pep(selectedAppId ?? "none"),
+    queryFn: async () => mapPepToSettings(await getPepTiers(requireSettingsAppId(selectedAppId))),
+    enabled: Boolean(selectedAppId),
   });
 }
 
 export function useUpdatePepTier() {
   const queryClient = useQueryClient();
+  const { selectedAppId } = useSettingsAppSelection();
   return useMutation({
     mutationFn: async (input: {
       tier: "tier-1" | "tier-2" | "tier-3" | "tier-4";
@@ -331,7 +345,7 @@ export function useUpdatePepTier() {
       autoEscalation: boolean;
       examples: string[];
     }) =>
-      updatePepTier(input.tier, {
+      updatePepTier(requireSettingsAppId(selectedAppId), input.tier, {
         name: input.name,
         description: input.description,
         riskScoreImpact: input.riskScoreImpact,
@@ -340,40 +354,52 @@ export function useUpdatePepTier() {
         positionExamples: input.examples,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: settingsKeys.pep });
+      if (selectedAppId) {
+        void queryClient.invalidateQueries({ queryKey: settingsKeys.pep(selectedAppId) });
+      }
     },
   });
 }
 
 export function useSettingsNotifications() {
+  const { selectedAppId } = useSettingsAppSelection();
   return useQuery({
-    queryKey: settingsKeys.notifications,
-    queryFn: async () => mapNotificationsToSettings(await getNotificationPreferences()),
+    queryKey: settingsKeys.notifications(selectedAppId ?? "none"),
+    queryFn: async () =>
+      mapNotificationsToSettings(await getNotificationPreferences(requireSettingsAppId(selectedAppId))),
+    enabled: Boolean(selectedAppId),
   });
 }
 
 export function useUpdateSettingsNotifications() {
   const queryClient = useQueryClient();
+  const { selectedAppId } = useSettingsAppSelection();
   return useMutation({
     mutationFn: async (input: { webhookEnabled: boolean; webhookUrl: string }) =>
-      updateNotificationPreferences({
+      updateNotificationPreferences(requireSettingsAppId(selectedAppId), {
         eventCallbackUrl: input.webhookEnabled ? input.webhookUrl || null : null,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: settingsKeys.notifications });
+      if (selectedAppId) {
+        void queryClient.invalidateQueries({ queryKey: settingsKeys.notifications(selectedAppId) });
+      }
     },
   });
 }
 
 export function useSettingsCompliance() {
+  const { selectedAppId } = useSettingsAppSelection();
   return useQuery({
-    queryKey: settingsKeys.compliance,
-    queryFn: async () => mapComplianceRulesToSettings(await getComplianceRules()),
+    queryKey: settingsKeys.compliance(selectedAppId ?? "none"),
+    queryFn: async () =>
+      mapComplianceRulesToSettings(await getComplianceRules(requireSettingsAppId(selectedAppId))),
+    enabled: Boolean(selectedAppId),
   });
 }
 
 export function useUpdateSettingsCompliance() {
   const queryClient = useQueryClient();
+  const { selectedAppId } = useSettingsAppSelection();
   return useMutation({
     mutationFn: async (input: {
       kycExpiryMonths: number;
@@ -382,7 +408,7 @@ export function useUpdateSettingsCompliance() {
       kybDocuments: string[];
       flaggedCountryCodes: string[];
     }) =>
-      updateComplianceRules({
+      updateComplianceRules(requireSettingsAppId(selectedAppId), {
         kycExpiryDays: monthsToDays(input.kycExpiryMonths),
         kybExpiryDays: monthsToDays(input.kybExpiryMonths),
         kycDocuments: input.kycDocuments,
@@ -390,7 +416,9 @@ export function useUpdateSettingsCompliance() {
         flaggedCountryCodes: input.flaggedCountryCodes,
       }),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: settingsKeys.compliance });
+      if (selectedAppId) {
+        void queryClient.invalidateQueries({ queryKey: settingsKeys.compliance(selectedAppId) });
+      }
     },
   });
 }

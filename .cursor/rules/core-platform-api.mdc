@@ -1,0 +1,16 @@
+---
+description: UnifyComply Core Platform API — mandatory upstream for live BFF calls
+alwaysApply: true
+---
+
+# Core Platform API
+
+**From now on, all live frontend → Core Platform traffic uses this upstream.**
+
+- **OpenAPI / Swagger docs:** https://unifycomply-api.rokxier.com/v1/docs
+- **API base URL:** `https://unifycomply-api.rokxier.com` via server-only `API_BASE_URL`
+- Local: `.env.local` (gitignored). Example: `.env.example`
+- Browser talks only to this app’s BFF (`/api/*`); BFF proxies with `getApiBaseUrl()` in `lib/api/server/upstream.ts`
+- Do not use older hosts (e.g. `unifycomply.svr.monolith.ng`)
+- Test login: gitignored `.cursor/rules/core-platform-api.local.mdc` — never commit credentials
+- **UI first:** if API shape would force UI changes, raise a blocker — see `ui-first-api-integration.mdc`
