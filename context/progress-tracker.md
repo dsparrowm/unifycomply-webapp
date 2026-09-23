@@ -4,10 +4,11 @@ Update this file whenever the current phase, active feature, or implementation s
 
 ## Current Phase
 
-**Milestone 2 — KYC Orchestration (active)**
+**Milestone 3 — Transaction Monitoring (nav unlocked)**
 
-M1 is complete. **M3 TM UI is complete and parked** (gated while `CURRENT_MILESTONE` is 2).
-`CURRENT_MILESTONE = 2` — KYC, KYB, AML, and Bank Analysis unique UI are closed. Resume **live KYC/KYB**. M4+ remain disabled.
+M1–M2 complete for unique UI + live KYC/KYB. **`CURRENT_MILESTONE = 3`** so TM sidebar
+routes are clickable (still mock data). M4+ (SAR Report, Risk Score nav, PND Watchlist,
+Case Management) remain disabled.
 
 ## Scope Decisions
 
@@ -16,7 +17,7 @@ M1 is complete. **M3 TM UI is complete and parked** (gated while `CURRENT_MILEST
 | Router | Next.js **App Router**, `app/` at project root |
 | Figma scope | **WebApp page only** (`1:2`) |
 | Landing page | **Out of scope** — built in another repo |
-| **Active milestone** | **M2** (`lib/constants/milestones.ts`) |
+| **Active milestone** | **M3** (`lib/constants/milestones.ts`) — TM nav unlocked |
 | Data | Hybrid — live auth/settings + tenant apps + KYC/KYB create, verification queue list, customer detail; lookup + TM + AML/bank mock |
 | **API ↔ UI** | **UI first** — do not change Figma UI for API shape; map in BFF/`lib/api` or raise a blocker in Open Questions |
 
@@ -28,9 +29,9 @@ Inventory: `design/figma/webapp/bank/README.md` + `manifest.json`.
 
 KYC unique UI from `🪪Unifycomply (3).zip` is closed except the frame 115 **In Review** vs 79/86 **High Risk Alert** label conflict. KYB unique UI from the (4).zip cache is closed.
 
-## M3 (parked — complete)
+## M3 (complete — unlocked 2026-09-23)
 
-TM Overview, Transactions, queues, Account Statement, SAR wizard, Rules + Adopt Template — done on mocks. Risk Score / SAR Report / PND Watchlist / Case Management remain M4.
+TM Overview, Transactions, queues, Account Statement, SAR wizard, Rules + Adopt Template — done on mocks; nav enabled via `CURRENT_MILESTONE = 3`. Risk Score / SAR Report / PND Watchlist / Case Management remain M4.
 
 ## M1 Completion Checklist
 

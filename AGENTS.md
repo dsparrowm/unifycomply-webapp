@@ -7,15 +7,13 @@ This repository is the **WebApp frontend** from Figma (page `1:2`), including a
 JWTs in httpOnly cookies. Do **not** implement the Core Platform backend itself, or
 the **Landing Page** (built in a separate project).
 
-**Current milestone: M2** (`lib/constants/milestones.ts`). M1 is complete. M3 TM UI is
-complete and parked. KYC unique UI from `design/figma/webapp/kyc/` is closed. KYB
-unique UI from `design/figma/webapp/kyb/` is closed. AML unique UI from
-`design/figma/webapp/aml/` is closed. Bank Analysis unique UI from
-`design/figma/webapp/bank/` is closed. Resume M2 with **live KYC/KYB** unless
-the user says otherwise. Implement
-routes and feature specs for the active milestone and earlier milestones only.
-Do not implement M4–M5 until `CURRENT_MILESTONE` is advanced. M3 routes stay built
-but are gated while `CURRENT_MILESTONE` is 2.
+**Current milestone: M3** (`lib/constants/milestones.ts`). M1–M2 unique UI and live
+KYC/KYB wiring are in place. M3 TM UI is unlocked for use (mock data). KYC unique UI
+from `design/figma/webapp/kyc/` is closed. KYB unique UI from `design/figma/webapp/kyb/`
+is closed. AML unique UI from `design/figma/webapp/aml/` is closed. Bank Analysis unique
+UI from `design/figma/webapp/bank/` is closed. Continue live KYC/KYB as needed; TM is
+browsable. Implement routes and feature specs for the active milestone and earlier
+milestones only. Do not implement M4–M5 until `CURRENT_MILESTONE` is advanced.
 
 Use **Next.js App Router** with routes under `app/` at the project root. Use **live
 APIs** for auth, tenant settings, and KYC/KYB create + list/detail reads via the BFF; use
