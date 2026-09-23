@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { KycRecord } from "@/types/kyc";
 import { KycAssignedToCell } from "@/components/kyc/KycAssignedToCell";
 import { KycPriorityBadge, KycStatusBadge } from "@/components/kyc/KycStatusBadge";
+import { verificationDetailHref } from "@/lib/compliance/detail-href";
 
 const columns = [
   "KYC ID",
@@ -59,7 +60,7 @@ export function KycTable({
             ) : (
               records.map((record) => (
                 <tr
-                  key={record.id}
+                  key={record.workflowId ?? record.id}
                   className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] last:border-b-0"
                 >
                   <td className="px-4 py-4">
@@ -71,7 +72,7 @@ export function KycTable({
                   </td>
                   <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
                     <Link
-                      href={`/kyc/${record.id}`}
+                      href={verificationDetailHref("kyc", record)}
                       className="hover:text-[color:var(--accent-primary-hover)]"
                     >
                       {record.kycId}
@@ -79,7 +80,7 @@ export function KycTable({
                   </td>
                   <td className="px-4 py-4 text-[color:var(--text-primary)]">
                     <Link
-                      href={`/kyc/${record.id}`}
+                      href={verificationDetailHref("kyc", record)}
                       className="hover:text-[color:var(--accent-primary-hover)]"
                     >
                       {record.customerName}

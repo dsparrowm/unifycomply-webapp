@@ -7,11 +7,12 @@ import { getErrorMessage } from "@/lib/api/errors";
 import { useKybDetail } from "@/lib/hooks/use-customers";
 
 type KybDetailContainerProps = {
-  customerId: string;
+  routeId: string;
+  workflowId?: string;
 };
 
-export function KybDetailContainer({ customerId }: KybDetailContainerProps) {
-  const query = useKybDetail(customerId);
+export function KybDetailContainer({ routeId, workflowId }: KybDetailContainerProps) {
+  const query = useKybDetail(routeId, workflowId);
 
   if (query.isLoading) {
     return <PageLoadingSkeleton variant="generic" />;

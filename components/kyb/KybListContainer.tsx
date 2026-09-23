@@ -21,7 +21,7 @@ export function KybListContainer({ initialSearchMode }: KybListContainerProps) {
   if (query.isError || !query.data) {
     return (
       <PageErrorState
-        title="Could not load KYB businesses"
+        title="Could not load KYB queue"
         description={getErrorMessage(query.error, "Please try again.")}
         onRetry={() => {
           void query.refetch();

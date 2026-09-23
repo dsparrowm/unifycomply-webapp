@@ -227,6 +227,18 @@ export type CreateTenantTeamInviteDto = {
   roleId: string;
 };
 
+export type ApiTenantApp = {
+  id: string;
+  name: string;
+  description: string | null;
+  disabled: boolean;
+};
+
+export type CreateTenantAppDto = {
+  name: string;
+  description?: string;
+};
+
 export type ApiApiKey = {
   id: string;
   createdAt: string;
@@ -236,6 +248,7 @@ export type ApiApiKey = {
   domain: ApiDomain;
   lastUsedAt: string | null;
   tenantId: string;
+  appId?: string;
 };
 
 export type ApiRiskFactor = {
@@ -745,11 +758,50 @@ export type ApiVerificationWorkflow = {
   id: string;
   status?: string;
   verificationType?: string;
+  /** Array form on start/list (2026-09-14+) — prefer over singular `verificationType`. */
+  verificationTypes?: string[];
   profileType?: string;
   priority?: string;
   riskScore?: number | null;
+  customerId?: string;
   createdAt?: string;
   updatedAt?: string;
+  assignedTo?: string | null;
+  assignee?: string | null;
+  timeInQueueMs?: number | null;
+};
+
+/**
+ * Enriched queue row from `GET /verifications/kyc|kyb` (OpenAPI response under-documented).
+ * Guide: workflow fields + displayId, customerName, country, documentType.
+ */
+export type ApiVerificationListRow = ApiVerificationWorkflow & {
+  displayId?: string;
+  customerName?: string;
+  businessName?: string;
+  country?: string;
+  countryCode?: string;
+  documentType?: string;
+  workflowId?: string;
+};
+
+/** `GET /customers/kyc|kyb/stats` — counts from each customer's latest workflow. */
+export type ApiCustomerListStats = {
+  successful?: number;
+  pending?: number;
+  highRisk?: number;
+  rejected?: number;
+};
+
+export type ApiVerificationListQuery = {
+  page?: string;
+  limit?: string;
+  status?: string;
+  priority?: string;
+  verificationType?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  search?: string;
 };
 
 export type ApiRiskContribution = {
@@ -796,4 +848,133 @@ export type ApiVerificationDetail = {
   run?: ApiVerificationRunBundle | null;
   risk?: ApiRiskAssessment | null;
   events?: ApiVerificationEvent[];
+};
+
+/** Tab payloads from `GET /verifications/kyc|kyb/:workflowId/*` (2026-09-15 guide). */
+export type ApiVerificationDocumentRow = {
+  id: string;
+  type?: string;
+  category?: string;
+  status?: string;
+  url?: string | null;
+  signedUrl?: string | null;
+  contentType?: string | null;
+  idNumber?: string | null;
+  issueDate?: string | null;
+  expiryDate?: string | null;
+  customerId?: string | null;
+  customerType?: string | null;
+  shareholderId?: string | null;
+  extractedInformation?: unknown;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type ApiKycVerificationDocumentsTab = {
+  workflowId: string;
+  documents: ApiVerificationDocumentRow[];
+  riskScore?: number | null;
+  riskBand?: string | null;
+  timeline?: ApiVerificationEvent[];
+};
+
+export type ApiKybVerificationDocumentTab = {
+  workflowId: string;
+  documents: ApiVerificationDocumentRow[];
+};
+
+export type ApiVerificationRiskScoreTab = {
+  available: boolean;
+  risk: (ApiRiskAssessment & {
+    runId?: string;
+    workflowId?: string;
+    warningThreshold?: number;
+    blockThreshold?: number;
+  }) | null;
+};
+
+export type ApiKycAmlScreeningTab = {
+  tasks?: ApiVerificationTask[] | null;
+};
+
+export type ApiKycDeviceInformationTab = {
+  available: boolean;
+  ip?: string | null;
+  geolocation?: Record<string, unknown> | null;
+  device?: Record<string, unknown> | null;
+  vpnDetected?: boolean | null;
+  proxyDetected?: boolean | null;
+  reason?: string | null;
+};
+
+export type ApiKycLivenessTab = {
+  available: boolean;
+  livenessDetection?: string | null;
+  matchScoreRate?: number | null;
+  providerKey?: string | null;
+  providerReference?: string | null;
+  attempts?: number | null;
+  completedAt?: string | null;
+  reasons?: ApiVerificationReason[] | null;
+  task?: unknown;
+};
+
+export type ApiKybBusinessOverviewTab = {
+  workflowId: string;
+  business?: Record<string, unknown> | null;
+  registrationNumber?: string | null;
+  tin?: string | null;
+  activities?: string[] | null;
+  status?: string;
+  riskScore?: number | null;
+};
+
+export type ApiKybScreeningTask = {
+  id?: string;
+  verificationType?: string;
+  outcome?: string;
+  reasons?: unknown[];
+  providerKey?: string;
+};
+
+export type ApiKybDirectorOfficer = {
+  id?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  sharePercentage?: number | null;
+  shareCountTotal?: number | null;
+  type?: string | null;
+  dateAppointed?: string | null;
+  role?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  countryCode?: string | null;
+  address?: Record<string, unknown> | null;
+  nationality?: string | null;
+  idType?: string | null;
+  idNumber?: string | null;
+  screening?: ApiKybScreeningTask[] | null;
+};
+
+export type ApiKybDirectorsOfficersTab = {
+  directors?: ApiKybDirectorOfficer[] | null;
+};
+
+export type ApiKybShareholderRow = {
+  id?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  name?: string | null;
+  sharePercentage?: number | null;
+  shareCountTotal?: number | null;
+  type?: string | null;
+  shareClass?: string | null;
+};
+
+export type ApiKybShareholdersTab = {
+  shareholders?: ApiKybShareholderRow[] | null;
+};
+
+export type ApiKybComplianceChecksTab = {
+  tasks?: ApiKybScreeningTask[] | null;
 };

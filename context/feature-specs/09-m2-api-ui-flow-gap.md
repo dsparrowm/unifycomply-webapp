@@ -39,9 +39,9 @@ Backend models a **customer record → enrich → verify** pipeline. There is no
 | D | Account purpose (`PUT …/account-purpose`) | **No UI** | **Done** — `/kyc/[id]/account-purpose` and KYB twin (`12-account-purpose-and-verification.md`) |
 | E | KYB shareholders + shareholder docs | Detail **Shareholders** tab is read-only mock | Wire list; **missing create/edit UI** for API-required shareholder fields |
 | F | `available-checks` + start verification | Lookup “App / ID type” is provider-ish mock; no start-workflow screen | **Done** — `/kyc/[id]/start-verification` and KYB twin; lookup UI unchanged |
-| G | List/get customers + list/get workflows | KYC/KYB **list + detail** live on customers; no verifications queue route | **Done** for customers; workflows remain product-open |
+| G | List/get customers + list/get workflows | KYC/KYB **list** = verification queue; **detail** = customers | **Done** — queue `GET /verifications/kyc|kyb` + stats; detail still customers |
 | H | Flag status patch | Risk/AML panels mock; no flag state machine | Map into existing flag/alert UI; if API lacks approve/reject, **raise backend issue** |
-| I | Tenant apps + keys | Lookup “App” dropdown is Staging/Production mock; Settings has tenant API key only | **Missing screens** for app CRUD (or map App dropdown to `/tenants/apps`) |
+| I | Tenant apps + keys | Lookup “App” dropdown is Staging/Production mock; Settings has a live App picker | **Done** for Settings (`15-settings-app-picker.md`); lookup still mock |
 | J | Perform Lookup / bulk xlsx | Full KYC/KYB lookup UI | **API missing** — keep UI; backend issue for registry/ID lookup + bulk |
 | K | Approve / Reject / Escalate / Resubmission | Detail footers + modals | **API missing** — keep UI; backend issue for decision endpoints |
 | L | Bank analysis / AML / Packages / Request | Bank partial; AML/Packages/Request placeholder | **API missing** — keep placeholders / mock until contracts exist |
@@ -55,7 +55,7 @@ Backend models a **customer record → enrich → verify** pipeline. There is no
 
 | UI journey | Routes | API coverage |
 | ---------- | ------ | ------------ |
-| Browse / review | `/kyc` → `/kyc/[id]` | List/get customer possible; detail tabs (OCR, liveness, IP) **not** in OpenAPI |
+| Browse / review | `/kyc` → `/kyc/[id]?workflowId=` | Queue from `/verifications/kyc`; detail uses customer when possible + lazy documents/risk-score tabs; OCR/IP/liveness empty per guide |
 | Perform Lookup | `/kyc/lookup` → result | **No** matching endpoints |
 | Validate Document wizard | `/kyc/onboarding` | Maps loosely to create + documents; missing purpose; business fields belong on KYB |
 
@@ -63,17 +63,17 @@ Backend models a **customer record → enrich → verify** pipeline. There is no
 
 | UI journey | Routes | API coverage |
 | ---------- | ------ | ------------ |
-| Browse / review | `/kyb` → `/kyb/[id]` | List/get + documents + shareholders readable |
+| Browse / review | `/kyb` → `/kyb/[id]?workflowId=` | Queue from `/verifications/kyb`; documents/risk/business-overview tabs live; directors/compliance still mock until wired |
 | Perform Lookup | `/kyb/lookup` → result | **No** matching endpoints |
 | Validate Document | modal only | **Missing flow** — should follow API create → docs → purpose → shareholders → verify |
 
-### Verifications (API only)
+### Verifications (API + queue list)
 
-No dedicated frontend route for `/v1/verifications`. Closest UI is compliance queue filters on KYC/KYB lists.
+`/kyc` and `/kyb` officer tables are powered by `GET /v1/verifications/kyc|kyb` (one row per workflow). Detail routes remain customer-scoped.
 
-### Apps (API only)
+### Apps (API + Settings picker)
 
-`/v1/tenants/apps*` not surfaced; UI “App” select is environment-flavoured mock.
+Settings header App picker lists `GET /v1/tenants/apps` and scopes API keys / compliance configuration. Lookup **Select app** remains environment-flavoured mock.
 
 ---
 
@@ -99,9 +99,9 @@ When Figma is missing, **build the flow** and note “API-derived / no Figma” 
 | P0 | KYB Validate Document intake flow | **Done** — `/kyb/onboarding` (`10-kyb-business-onboarding.md`) |
 | P1 | Account purpose step/panel (KYC + KYB) | **Done** — API-derived / no Figma |
 | P1 | Start verification (check picker from `available-checks`) | **Done** — after intake; lookup unchanged |
-| P1 | Wire KYC/KYB list + detail reads | **Done** — keep columns/tabs; map fields; mock unsupported panels |
+| P1 | Wire KYC/KYB list + detail reads | **Done** — list = verification queue (2026-09-15); detail = customers; mock unsupported panels |
 | P2 | Shareholder create/edit | API-derived if no Figma |
-| P2 | Tenant apps selector / settings | Feed lookup App dropdown from live apps |
+| P2 | Tenant apps selector / settings | **Done** on Settings; lookup App dropdown still mock |
 | P2 | Flag status actions | Map into existing alert UI |
 
 ---

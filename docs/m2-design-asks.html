@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unifycomply — M2 design asks</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ddd;
+      --bg: #fff;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Georgia, "Times New Roman", serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .meta p { margin: 0.15rem 0; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin: 1.75rem 0 0.75rem;
+    }
+    p { margin: 0.5rem 0 0.75rem; }
+    ul { margin: 0.35rem 0 0.75rem; padding-left: 1.25rem; }
+    li { margin: 0.25rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 0.5rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f5f5f5;
+      font-weight: 600;
+    }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85em;
+      background: #f3f4f6;
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    @media print {
+      body { padding: 0; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Unifycomply — M2 design asks (frontend)</h1>
+  <div class="meta">
+    <p><strong>From:</strong> Davies Aniefiok (WebApp frontend)</p>
+    <p><strong>To:</strong> Design</p>
+    <p><strong>Date:</strong> 13 September 2026</p>
+    <p><strong>Figma:</strong> WebApp page (<code>1:2</code>) only</p>
+  </div>
+
+  <hr />
+
+  <h2>Why this note</h2>
+  <p>
+    KYC, KYB, AML, and Bank Analysis unique UI from the zips is <strong>built and visually checked</strong>.
+    We did <strong>not</strong> change those frames to match the API.
+  </p>
+  <p>
+    The designed product is a <strong>review desk</strong> (queue → case → decide). A working CDD tool also
+    needs an <strong>intake desk</strong>, a <strong>UBO desk</strong>, and a <strong>job desk</strong>.
+    Those were not in the M2 frames.
+  </p>
+  <p>The WebApp UI stays as designed. We will not reshape screens to match backend DTOs.</p>
+  <p>A companion backend brief was sent separately.</p>
+
+  <h2>Please do not redesign</h2>
+  <ul>
+    <li>KYC/KYB list columns, metrics, or filters</li>
+    <li>Case tabs and Approve / Reject / Escalate footers</li>
+    <li>Perform Lookup (it stays; it is not the same as “start verification”)</li>
+    <li>Do not add a separate <strong>Compliance queue</strong> route — frames 79–86 already are the queue</li>
+    <li>Do not add <strong>Batch Screening</strong> as a sidebar item unless you mean a new section (AML frame 15 vs Batch Lookup 24)</li>
+  </ul>
+
+  <h2>We already shipped without Figma (please align or bless)</h2>
+  <table>
+    <thead>
+      <tr><th>Flow</th><th>What we built</th><th>Ask</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>KYC onboarding wizard</td>
+        <td>Personal → business → docs → review → consent (<code>/kyc/onboarding</code>)</td>
+        <td>Roadmap-only; no WebApp frames. Export or mark as accepted.</td>
+      </tr>
+      <tr>
+        <td>KYB Validate Document</td>
+        <td>Same pattern (<code>/kyb/onboarding</code>)</td>
+        <td>Modal used to close only. Need a real frame or accept current.</td>
+      </tr>
+      <tr>
+        <td>Account purpose</td>
+        <td><code>/kyc/[id]/account-purpose</code> (KYB twin)</td>
+        <td>Purpose, source of funds, channels. No frame.</td>
+      </tr>
+      <tr>
+        <td>Start verification</td>
+        <td><code>/kyc/[id]/start-verification</code></td>
+        <td>Check picker from live <code>available-checks</code>. No frame.</td>
+      </tr>
+      <tr>
+        <td>Live detail links</td>
+        <td>“Account purpose · Start verification” under the header on <strong>live</strong> cases only</td>
+        <td>Additive; hidden on Figma fixture ids. Keep, restyle, or move.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Please design (in this order)</h2>
+  <ol>
+    <li><strong>Add shareholder / UBO</strong> (KYB) — create/edit on the existing Shareholders tab: type, %, appointment, ID upload. Tab stays; it is read-only today.</li>
+    <li><strong>Document requirements</strong> — “required vs received” on the existing Document tab (not a new page).</li>
+    <li><strong>Verification run on the case</strong> — status, checks run, fail reasons, retry. Not a new nav item.</li>
+    <li><strong>Packages / Request / Pre-KYC</strong> — sidebar labels exist, <strong>zero section frames</strong>. This is how customers arrive (hosted collect, partner request). If Pre-KYC is a real product, we need the surface.</li>
+    <li><strong>Maker–checker</strong> — Escalate is not four-eyes. Checker view or dual-control on Approve.</li>
+    <li><strong>Ongoing review</strong> — Settings already has KYC/KYB expiry; no “due for refresh” queue.</li>
+    <li>
+      <strong>Small label conflicts to close</strong>
+      <ul>
+        <li>KYC empty metric: frame 115 <strong>In Review</strong> vs 79/86 <strong>High Risk Alert</strong> (we kept High Risk Alert)</li>
+        <li>Bank Analysis: empty <strong>high risk alerts</strong> vs populated <strong>high risk Entity</strong></li>
+        <li>Bank Analysis Single Lookup: run-07 is Country / App / Entity type / ID; we still have Bank + Account Number because later list work used that</li>
+      </ul>
+    </li>
+  </ol>
+
+  <h2>Decisions we need</h2>
+  <ol>
+    <li>Bless the API-derived purpose + start-verification screens, or you will draw them?</li>
+    <li>Is Packages/Request in M2, or do we leave placeholders?</li>
+    <li>Is Pre-KYC = the onboarding wizard, Packages/Request, or something else?</li>
+  </ol>
+
+  <h2>Out of scope for this meeting</h2>
+  <p>TM, SAR, PND, case management — later milestones. Do not pull them into M2.</p>
+
+  <p class="footer">Prepared for design. Companion backend brief: docs/m2-backend-asks.html</p>
+</body>
+</html>

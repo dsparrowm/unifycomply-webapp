@@ -1,0 +1,28 @@
+---
+description: Visual QA against Figma before advancing to the next UI build
+alwaysApply: true
+---
+
+# Visual QA before next build
+
+After implementing or changing any Figma-backed screen, **do not start the next feature unit** until visual QA passes.
+
+## Required loop
+
+1. Open the **reference frame** (PNG in `design/figma/` or Figma MCP screenshot).
+2. Run the app and capture the **implemented screen** (browser screenshot of the real route).
+3. Diff structure, copy, spacing, colors, badges, empty states, and key sample data against the frame.
+4. **Fix mismatches** before marking the unit done.
+5. Only then move to the next build (next route / modal / component group).
+
+## What to check
+
+- Layout regions and order (header → metrics → filters → table / detail columns)
+- Exact labels and empty copy from the frame (e.g. “No User Activity”)
+- Status / category colors (do not substitute blue for purple, etc.)
+- Badge shapes, icon containers (circle vs rounded square), filter chrome (card vs bare)
+- Detail hierarchy (e.g. TXN id below title when the frame shows that)
+
+## Docs
+
+Log material Figma ↔ implementation deltas in `context/progress-tracker.md` when intentional (API/data limits) or when fixing.

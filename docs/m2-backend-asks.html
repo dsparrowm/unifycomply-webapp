@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unifycomply — M2 backend asks</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ddd;
+      --bg: #fff;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Georgia, "Times New Roman", serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 3rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .meta p { margin: 0.15rem 0; }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.5rem 0;
+    }
+    h2 {
+      font-size: 1.25rem;
+      margin: 1.75rem 0 0.75rem;
+    }
+    h3 {
+      font-size: 1.05rem;
+      margin: 1.25rem 0 0.5rem;
+    }
+    p { margin: 0.5rem 0 0.75rem; }
+    ul { margin: 0.35rem 0 0.75rem; padding-left: 1.25rem; }
+    li { margin: 0.2rem 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 0.5rem 0 1rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f5f5f5;
+      font-weight: 600;
+    }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85em;
+      background: #f3f4f6;
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+    @media print {
+      body { padding: 0; max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Unifycomply — M2 backend asks (frontend)</h1>
+  <div class="meta">
+    <p><strong>From:</strong> Davies Aniefiok (WebApp frontend)</p>
+    <p><strong>To:</strong> Core Platform / backend</p>
+    <p><strong>Date:</strong> 13 September 2026</p>
+    <p><strong>OpenAPI:</strong> <a href="https://unifycomply-api.rokxier.com/v1/docs">https://unifycomply-api.rokxier.com/v1/docs</a></p>
+    <p><strong>Staging API:</strong> <code>https://unifycomply-api.rokxier.com</code></p>
+  </div>
+
+  <hr />
+
+  <h2>Why this note</h2>
+  <p>
+    M2 Figma unique UI is <strong>built</strong> (KYC, KYB, AML, Bank Analysis). Live traffic already powers
+    auth, tenant settings, and KYC/KYB <strong>create + list/detail + account purpose + start verification</strong>.
+  </p>
+  <p>
+    The WebApp UI is the product contract. We map payloads in the BFF. We will
+    <strong>not</strong> drop fields, tabs, or decision modals because OpenAPI is flatter.
+    If a designed screen cannot be powered without changing it, we need a
+    <strong>backend change</strong> (or a documented equivalent), not a UI redesign.
+  </p>
+  <p>This list is only what <strong>blocks wiring the remaining M2 screens to live data</strong>.</p>
+
+  <h2>Already wired (do not break)</h2>
+  <p>Browser → WebApp BFF <code>/api/*</code> → Core Platform. JWTs stay in httpOnly cookies.</p>
+  <table>
+    <thead>
+      <tr><th>Area</th><th>Upstream</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Auth / MFA / access switch</td><td><code>/v1/auth/*</code></td></tr>
+      <tr><td>Tenant settings</td><td><code>/v1/users/me/profiles</code>, <code>/v1/tenants/settings/*</code></td></tr>
+      <tr><td>KYC create + list + detail + documents</td><td><code>GET/POST /v1/customers/kyc</code>, documents</td></tr>
+      <tr><td>KYB create + list + detail + documents + shareholders <strong>read</strong></td><td><code>GET/POST /v1/customers/kyb</code>, documents, <code>GET …/shareholders</code></td></tr>
+      <tr><td>Account purpose</td><td><code>GET/PUT …/account-purpose</code> (404 = empty form)</td></tr>
+      <tr><td>Start verification</td><td><code>GET /v1/verifications/available-checks</code>, <code>POST /v1/verifications/kyc|kyb</code></td></tr>
+    </tbody>
+  </table>
+  <p>
+    List envelope we handle: <code>{ data: [], meta: { totalItems, totalPages, … } }</code>.
+    Status map: <code>pending</code> → Pending, <code>onboarded</code> → Approved,
+    <code>review</code> → In Review, <code>blocked</code> / <code>offboarded</code> → Rejected.
+  </p>
+
+  <h2>P0 — UI exists, no OpenAPI (or no usable contract)</h2>
+  <p>These screens are in the product. Officers can click them. They currently no-op or stay on mocks.</p>
+
+  <h3>1. Perform Lookup + bulk upload</h3>
+  <p><strong>UI:</strong> <code>/kyc/lookup</code>, <code>/kyb/lookup</code>, result pages, bulk xlsx.</p>
+  <p><strong>Need:</strong> Documented endpoints (or confirm they will never exist).</p>
+  <table>
+    <thead>
+      <tr><th>Check</th><th>UI today</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>KYC</td><td>BVN, NIN, passport, etc. — single + bulk</td></tr>
+      <tr><td>KYB</td><td>CAC / TIN / RC — single + bulk</td></tr>
+    </tbody>
+  </table>
+  <p>
+    Return enough to fill the existing result layout: identity fields, match/validation rows,
+    risk score (0–4), AML-style summary. Do <strong>not</strong> ask us to collapse lookup into
+    “start verification” — that is a different designed flow.
+  </p>
+  <p>
+    If lookup is meant to be <code>POST /verifications/kyc</code> only, say so in OpenAPI and document
+    the <strong>synchronous result body</strong> the result screen needs. Today start-verification is
+    fire-and-forget / workflow id, which cannot fill Perform Lookup.
+  </p>
+
+  <h3>2. Officer decisions on the case</h3>
+  <p><strong>UI:</strong> KYC/KYB detail footer — Approve, Reject, Escalate, Request Resubmission (modals already built).</p>
+  <p><strong>Need one of:</strong></p>
+  <ul>
+    <li>Dedicated endpoints that match those four actions, <strong>or</strong></li>
+    <li>
+      Written confirmation that <code>PATCH …/flags/{flagId}</code> is the only decision API,
+      plus a documented flag state machine we can map onto those four buttons
+      <strong>without removing any button</strong>.
+    </li>
+  </ul>
+  <p>“Just hide Escalate until later” is not acceptable — the Figma footer stays.</p>
+
+  <h3>3. Detail-tab read models</h3>
+  <p>
+    <strong>UI tabs still mocked:</strong> risk analysis, AML screening, IP &amp; device, liveness / biometrics,
+    KYB directors, KYB compliance checks, OCR extracted fields beyond name/address.
+  </p>
+  <p><strong>Need:</strong> Stable JSON (OpenAPI schemas, not “object”) for:</p>
+  <ul>
+    <li>OCR / extracted document fields + confidence</li>
+    <li>Liveness / selfie match outcome</li>
+    <li>IP / device fingerprint</li>
+    <li>Risk breakdown for the existing 0–4 score + factor list</li>
+    <li>AML / PEP / sanctions hits for the <strong>customer case</strong> (not the standalone AML module)</li>
+  </ul>
+  <p>
+    List rows also need <strong>document type</strong> and <strong>assignee</strong> if those columns stay live.
+    Today list customers have neither, so we show <strong>—</strong> and <strong>Unassigned</strong>.
+  </p>
+
+  <h3>4. Create / start-verification contracts to freeze</h3>
+  <p>Please confirm and document:</p>
+  <ul>
+    <li><strong>201 body</strong> for <code>POST /customers/kyc</code> and <code>/kyb</code> — we accept <code>id</code> or <code>customerId</code>; we need a guaranteed field.</li>
+    <li><strong>201 body</strong> for <code>POST /verifications/kyc|kyb</code> — <code>workflowId</code> / <code>id</code> so we can poll <code>GET /verifications/{workflowId}</code>.</li>
+    <li>Whether <code>x-app-id</code> is required on start-verification; we can forward it once apps are listed.</li>
+  </ul>
+
+  <h2>P1 — APIs exist; we need behaviour / docs</h2>
+  <table>
+    <thead>
+      <tr><th>Topic</th><th>What we need</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>KYC wizard Business step</td>
+        <td>UI still collects company fields. <code>CreateTenantKycDto</code> has none. Dual-create a KYB, extra KYC fields, or a documented “ignore”.</td>
+      </tr>
+      <tr>
+        <td>Queue model</td>
+        <td>Officer list is <strong>customers</strong>, not workflows. If review work lives on <code>/v1/verifications</code>, show workflow status <strong>on the customer row</strong> — no new queue screen.</td>
+      </tr>
+      <tr>
+        <td>Document requirements</td>
+        <td><code>GET …/documents/requirements</code> — confirm path + schema for a checklist without changing upload UI.</td>
+      </tr>
+      <tr>
+        <td>Shareholder write</td>
+        <td><code>POST/PATCH …/shareholders</code> (+ docs). Read is wired; create/edit is next on frontend once the write contract is stable.</td>
+      </tr>
+      <tr>
+        <td>Flags</td>
+        <td><code>PATCH …/flags/{flagId}</code> — allowed statuses, who can transition, how they relate to Approve/Reject/Escalate.</td>
+      </tr>
+      <tr>
+        <td>Tenant apps</td>
+        <td><code>GET/POST /v1/tenants/apps</code> — so the existing <strong>App</strong> dropdown is real apps, not sandbox/production labels.</td>
+      </tr>
+      <tr>
+        <td>Google OAuth</td>
+        <td>Upstream <code>redirect_uri</code> must match the deployed WebApp callback (<code>/auth/google/callback</code>).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>P2 — no OpenAPI yet (UI mocked; needed before those modules go live)</h2>
+  <p>Not asking for TM (M3) in this milestone. For <strong>M2 completeness</strong>:</p>
+  <table>
+    <thead>
+      <tr><th>Module</th><th>UI status</th><th>Ask</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>AML Screening</td><td>Full Figma UI on mocks</td><td>Customer/entity screening APIs + case read model</td></tr>
+      <tr><td>Bank analysis</td><td>Full Figma UI on mocks</td><td>Account/bank check APIs + run/batch read model</td></tr>
+      <tr><td>Overview dashboard</td><td>Mock charts</td><td>Metrics that match existing cards (or say “keep mock”)</td></tr>
+      <tr><td>Audit logs</td><td>Settings screen mock</td><td>List/filter/export route</td></tr>
+      <tr><td>Packages / Request / Pre-KYC</td><td>Placeholder routes</td><td>Confirm if these are backend products or design-only for now</td></tr>
+    </tbody>
+  </table>
+
+  <h2>How to reply (most useful)</h2>
+  <p>For each P0 item, a short answer is enough:</p>
+  <ol>
+    <li><strong>Endpoint(s)</strong> (or “will not exist — use X instead”)</li>
+    <li><strong>Example JSON</strong> for the designed screen</li>
+    <li><strong>Error cases</strong> the officer already sees in UI (no match, provider down, already decided)</li>
+  </ol>
+  <p>Please add <strong>read models</strong> to OpenAPI (<code>docs-json</code>), not only create DTOs.</p>
+
+  <h2>Out of scope for this ask</h2>
+  <ul>
+    <li>Redesigning KYC/KYB list or detail to match current DTOs</li>
+    <li>Folding Perform Lookup into start-verification without a new lookup contract</li>
+    <li>A new <code>/compliance-queue</code> route (Figma uses list status filters)</li>
+    <li>M3 Transaction Monitoring / M4 SAR APIs</li>
+  </ul>
+
+  <p class="footer">Prepared for Core Platform. Companion design brief already sent separately.</p>
+</body>
+</html>

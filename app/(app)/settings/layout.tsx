@@ -1,11 +1,12 @@
 import type { ReactNode } from "react";
+import { SettingsAppPicker } from "@/components/settings/SettingsAppPicker";
 import { SettingsNav } from "@/components/settings/SettingsNav";
 import { SettingsPageHeader } from "@/components/settings/SettingsPageHeader";
 
 export default function SettingsLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex flex-col gap-6">
-      <SettingsPageHeader />
+      <SettingsPageHeader actions={<SettingsAppPicker />} />
 
       <div className="overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
         <div className="flex flex-col lg:flex-row">

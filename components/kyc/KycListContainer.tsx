@@ -16,7 +16,7 @@ export function KycListContainer() {
   if (query.isError || !query.data) {
     return (
       <PageErrorState
-        title="Could not load KYC customers"
+        title="Could not load KYC queue"
         description={getErrorMessage(query.error, "Please try again.")}
         onRetry={() => {
           void query.refetch();

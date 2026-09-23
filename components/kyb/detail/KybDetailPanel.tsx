@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
+import { EmptyState } from "@/components/feedback/EmptyState";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { KybApproveModal } from "@/components/kyb/detail/KybApproveModal";
 import { KybBusinessOverviewTab } from "@/components/kyb/detail/KybBusinessOverviewTab";
 import { KybDetailHeader } from "@/components/kyb/detail/KybDetailHeader";
@@ -16,6 +18,15 @@ import { KybLookupPlaceholderTab } from "@/components/kyb/lookup/KybLookupPlaceh
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
 import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPanel";
 import { KycRequestResubmissionModal } from "@/components/kyc/detail/KycRequestResubmissionModal";
+import {
+  mergeKybDetailWithBusinessOverview,
+  useKybBusinessOverviewTab,
+  useKybComplianceChecksTab,
+  useKybDirectorsOfficersTab,
+  useKybShareholdersTabQuery,
+  useKybVerificationDocumentsTab,
+  useKybVerificationRiskScore,
+} from "@/lib/hooks/use-customers";
 import type { KybDetail, KybDetailTab, KybVerificationStatus } from "@/types/kyb";
 
 type KybDetailPanelProps = {
@@ -28,8 +39,57 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<KybDetailTab>("business-overview");
   const [status, setStatus] = useState<KybVerificationStatus>(initialDetail.status);
   const [activeModal, setActiveModal] = useState<KybDetailModal>(null);
+  const [overviewStatusSynced, setOverviewStatusSynced] = useState(false);
 
-  const detail = { ...initialDetail, status };
+  const workflowId = initialDetail.workflowId;
+
+  const overviewQuery = useKybBusinessOverviewTab(workflowId, activeTab === "business-overview");
+  const riskQuery = useKybVerificationRiskScore(workflowId, activeTab === "risk-analysis");
+  const directorsQuery = useKybDirectorsOfficersTab(workflowId, activeTab === "directors");
+  const shareholdersQuery = useKybShareholdersTabQuery(workflowId, activeTab === "shareholders");
+  const documentsQuery = useKybVerificationDocumentsTab(workflowId, activeTab === "document");
+  const complianceQuery = useKybComplianceChecksTab(workflowId, activeTab === "compliance-checks");
+
+  const liveRisk = riskQuery.data;
+  const detailWithOverview = mergeKybDetailWithBusinessOverview(
+    initialDetail,
+    overviewQuery.data,
+  );
+
+  useEffect(() => {
+    if (!overviewStatusSynced && overviewQuery.data) {
+      setStatus(detailWithOverview.status);
+      setOverviewStatusSynced(true);
+    }
+  }, [overviewQuery.data, detailWithOverview.status, overviewStatusSynced]);
+
+  const detail = {
+    ...detailWithOverview,
+    status,
+    riskScore: liveRisk?.available ? liveRisk.riskScore : detailWithOverview.riskScore,
+    riskAnalysis:
+      liveRisk?.available && liveRisk.riskAnalysis
+        ? liveRisk.riskAnalysis
+        : activeTab === "risk-analysis" && workflowId
+          ? null
+          : detailWithOverview.riskAnalysis,
+    directors:
+      activeTab === "directors" && workflowId
+        ? (directorsQuery.data ?? null)
+        : detailWithOverview.directors,
+    shareholders:
+      activeTab === "shareholders" && workflowId && shareholdersQuery.data
+        ? shareholdersQuery.data
+        : detailWithOverview.shareholders,
+    documents:
+      activeTab === "document" && workflowId && documentsQuery.data
+        ? documentsQuery.data
+        : detailWithOverview.documents,
+    complianceChecks:
+      activeTab === "compliance-checks" && workflowId
+        ? (complianceQuery.data ?? null)
+        : detailWithOverview.complianceChecks,
+  };
 
   function closeModal() {
     setActiveModal(null);
@@ -42,22 +102,30 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
       <KybDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === "business-overview" ? (
-        <KybBusinessOverviewTab detail={detail} status={status} />
+        overviewQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : (
+          <KybBusinessOverviewTab detail={detail} status={status} />
+        )
       ) : null}
 
       {activeTab === "risk-analysis" ? (
-        detail.riskAnalysis ? (
+        riskQuery.isLoading ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.riskAnalysis ? (
           <KycRiskAnalysisPanel riskScore={detail.riskScore} riskAnalysis={detail.riskAnalysis} />
         ) : (
-          <KybLookupPlaceholderTab
-            title="Risk analysis"
-            description="Task-level risk analysis is not returned on the customer record yet."
+          <EmptyState
+            title="Risk score not available yet"
+            description="Risk decisioning has not scored this run. Open this tab again after the verification settles."
           />
         )
       ) : null}
 
       {activeTab === "directors" ? (
-        detail.directors ? (
+        directorsQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.directors ? (
           <KybDirectorsOfficersTab directors={detail.directors} />
         ) : (
           <KybLookupPlaceholderTab
@@ -68,15 +136,35 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
       ) : null}
 
       {activeTab === "shareholders" ? (
-        <KybShareholdersTab shareholders={detail.shareholders} />
+        shareholdersQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.shareholders.shareholders.length > 0 ? (
+          <KybShareholdersTab shareholders={detail.shareholders} />
+        ) : (
+          <EmptyState
+            title="No shareholders on file"
+            description="Share capital structure will appear here once shareholders are linked to this verification."
+          />
+        )
       ) : null}
 
       {activeTab === "document" ? (
-        <KybDocumentsTab documents={detail.documents} />
+        documentsQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.documents.documents.length > 0 ? (
+          <KybDocumentsTab documents={detail.documents} />
+        ) : (
+          <EmptyState
+            title="No documents available"
+            description="Signed document previews will appear here once files are uploaded on this verification."
+          />
+        )
       ) : null}
 
       {activeTab === "compliance-checks" ? (
-        detail.complianceChecks ? (
+        complianceQuery.isLoading && workflowId ? (
+          <PageLoadingSkeleton variant="generic" />
+        ) : detail.complianceChecks ? (
           <KybComplianceChecksTab complianceChecks={detail.complianceChecks} />
         ) : (
           <KybLookupPlaceholderTab

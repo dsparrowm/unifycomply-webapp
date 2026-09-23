@@ -111,8 +111,9 @@ Browser → `/api/*` → Core Platform `https://unifycomply-api.rokxier.com`.
 | `GET /v1/public/misc/business-industries`, `/employee-counts` | Settings dropdowns |
 | `GET/POST /v1/tenants/settings/teams`, resend / revoke | Teams |
 | `GET/POST /v1/tenants/settings/roles-permissions` (+ options, update, delete) | Roles |
-| `GET /v1/tenants/settings/api-key`, `POST …/rotate` | API keys |
-| `GET/PUT` risk-factor, risk-score-threshold, pep-tier, notification-preferences, compliance-rules | Approvals / PEP / notifications / rules |
+| `GET/POST /v1/tenants/apps` | Settings App picker |
+| `GET /v1/tenants/apps/{appId}/api-key`, `POST …/rotate` | API keys (per app) |
+| `GET/PUT /v1/tenants/apps/{appId}/…` risk-factor, risk-score-threshold, pep-tier, notification-preferences, compliance-rules | Approvals / PEP / notifications / rules (per app) |
 | `POST /v1/tenants/settings/domain/switch` | Sandbox / Production toggle |
 
 ### KYC / KYB / verifications (live)

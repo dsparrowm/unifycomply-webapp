@@ -120,41 +120,49 @@ export function deleteRolePermissions(roleId: string) {
   return apiFetch(`/api/v1/tenants/settings/roles-permissons/${roleId}`, { method: "DELETE" });
 }
 
-export function getApiKey() {
-  return apiFetch<ApiApiKey>("/api/v1/tenants/settings/api-key");
+function appSettingsPath(appId: string, suffix: string) {
+  return `/api/v1/tenants/apps/${appId}/${suffix}`;
 }
 
-export function rotateApiKey() {
-  return apiFetch<ApiApiKey>("/api/v1/tenants/settings/api-key/rotate", { method: "POST" });
+export function getApiKey(appId: string) {
+  return apiFetch<ApiApiKey>(appSettingsPath(appId, "api-key"));
 }
 
-export function getRiskFactors() {
-  return apiFetch<ApiRiskFactor[]>("/api/v1/tenants/settings/risk-factor-configurations");
+export function rotateApiKey(appId: string) {
+  return apiFetch<ApiApiKey>(appSettingsPath(appId, "api-key/rotate"), { method: "POST" });
 }
 
-export function updateRiskFactor(slug: string, riskWeight: number) {
-  return apiFetch(`/api/v1/tenants/settings/risk-factor-configurations/${slug}`, {
+export function getRiskFactors(appId: string) {
+  return apiFetch<ApiRiskFactor[]>(appSettingsPath(appId, "risk-factor-configurations"));
+}
+
+export function updateRiskFactor(appId: string, slug: string, riskWeight: number) {
+  return apiFetch(appSettingsPath(appId, `risk-factor-configurations/${slug}`), {
     method: "PUT",
     body: { riskWeight },
   });
 }
 
-export function getRiskScoreThreshold() {
-  return apiFetch<ApiRiskScoreThreshold>("/api/v1/tenants/settings/risk-score-threshold");
+export function getRiskScoreThreshold(appId: string) {
+  return apiFetch<ApiRiskScoreThreshold>(appSettingsPath(appId, "risk-score-threshold"));
 }
 
-export function updateRiskScoreThreshold(body: {
-  warningThreshold: number;
-  blockThreshold: number;
-}) {
-  return apiFetch("/api/v1/tenants/settings/risk-score-threshold", { method: "PUT", body });
+export function updateRiskScoreThreshold(
+  appId: string,
+  body: {
+    warningThreshold: number;
+    blockThreshold: number;
+  },
+) {
+  return apiFetch(appSettingsPath(appId, "risk-score-threshold"), { method: "PUT", body });
 }
 
-export function getPepTiers() {
-  return apiFetch<ApiPepTier[]>("/api/v1/tenants/settings/pep-tier-configurations");
+export function getPepTiers(appId: string) {
+  return apiFetch<ApiPepTier[]>(appSettingsPath(appId, "pep-tier-configurations"));
 }
 
 export function updatePepTier(
+  appId: string,
   tier: ApiPepTier["tier"],
   body: Partial<{
     description: string;
@@ -166,41 +174,45 @@ export function updatePepTier(
     positionExamples: string[];
   }>,
 ) {
-  return apiFetch(`/api/v1/tenants/settings/pep-tier-configurations/${tier}`, {
+  return apiFetch(appSettingsPath(appId, `pep-tier-configurations/${tier}`), {
     method: "PUT",
     body,
   });
 }
 
-export function getNotificationPreferences() {
-  return apiFetch<ApiNotificationPreferences>(
-    "/api/v1/tenants/settings/notification-preferences",
-  );
+export function getNotificationPreferences(appId: string) {
+  return apiFetch<ApiNotificationPreferences>(appSettingsPath(appId, "notification-preferences"));
 }
 
-export function updateNotificationPreferences(body: {
-  eventCallbackUrl?: string | null;
-  ipWhitelistEnabled?: boolean;
-  allowedIps?: string[];
-}) {
-  return apiFetch("/api/v1/tenants/settings/notification-preferences", {
+export function updateNotificationPreferences(
+  appId: string,
+  body: {
+    eventCallbackUrl?: string | null;
+    ipWhitelistEnabled?: boolean;
+    allowedIps?: string[];
+  },
+) {
+  return apiFetch(appSettingsPath(appId, "notification-preferences"), {
     method: "PUT",
     body,
   });
 }
 
-export function getComplianceRules() {
-  return apiFetch<ApiComplianceRules>("/api/v1/tenants/settings/compliance-rules");
+export function getComplianceRules(appId: string) {
+  return apiFetch<ApiComplianceRules>(appSettingsPath(appId, "compliance-rules"));
 }
 
-export function updateComplianceRules(body: Partial<{
-  kycExpiryDays: number;
-  kybExpiryDays: number;
-  kycDocuments: string[];
-  kybDocuments: string[];
-  flaggedCountryCodes: string[];
-}>) {
-  return apiFetch("/api/v1/tenants/settings/compliance-rules", { method: "PUT", body });
+export function updateComplianceRules(
+  appId: string,
+  body: Partial<{
+    kycExpiryDays: number;
+    kybExpiryDays: number;
+    kycDocuments: string[];
+    kybDocuments: string[];
+    flaggedCountryCodes: string[];
+  }>,
+) {
+  return apiFetch(appSettingsPath(appId, "compliance-rules"), { method: "PUT", body });
 }
 
 export function getMfaStatus() {

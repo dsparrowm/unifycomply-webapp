@@ -3,6 +3,7 @@ import { Eye } from "lucide-react";
 import type { KybRecord } from "@/types/kyb";
 import { KycAssignedToCell } from "@/components/kyc/KycAssignedToCell";
 import { KycPriorityBadge, KycStatusBadge } from "@/components/kyc/KycStatusBadge";
+import { verificationDetailHref } from "@/lib/compliance/detail-href";
 
 const columns = [
   "KYB ID",
@@ -70,7 +71,7 @@ export function KybTable({
             ) : (
               records.map((record) => (
                 <tr
-                  key={record.id}
+                  key={record.workflowId ?? record.id}
                   className="border-b border-[color:var(--border-default)] bg-[color:var(--bg-surface)] last:border-b-0"
                 >
                   <td className="px-4 py-4">
@@ -82,7 +83,7 @@ export function KybTable({
                   </td>
                   <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
                     <Link
-                      href={`/kyb/${record.id}`}
+                      href={verificationDetailHref("kyb", record)}
                       className="hover:text-[color:var(--accent-primary-hover)]"
                     >
                       {record.kybId}
@@ -90,7 +91,7 @@ export function KybTable({
                   </td>
                   <td className="px-4 py-4 text-[color:var(--text-primary)]">
                     <Link
-                      href={`/kyb/${record.id}`}
+                      href={verificationDetailHref("kyb", record)}
                       className="block hover:text-[color:var(--accent-primary-hover)]"
                     >
                       {record.businessName}
@@ -124,7 +125,7 @@ export function KybTable({
                   {showViewAction ? (
                     <td className="px-4 py-4">
                       <Link
-                        href={`/kyb/${record.id}`}
+                        href={verificationDetailHref("kyb", record)}
                         aria-label={`View ${record.businessName}`}
                         className="flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--bg-muted)] hover:text-[color:var(--text-primary)]"
                       >

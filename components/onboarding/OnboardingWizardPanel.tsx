@@ -88,7 +88,7 @@ export function OnboardingWizardPanel({
       }
 
       toastSuccess("Customer submitted for verification");
-      await queryClient.invalidateQueries({ queryKey: customerKeys.kycList });
+      await queryClient.invalidateQueries({ queryKey: customerKeys.kycListRoot });
       router.push(`/kyc/${customerId}/account-purpose`);
     } catch (error) {
       toastError(error, "Failed to submit customer onboarding");

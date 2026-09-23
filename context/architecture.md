@@ -102,7 +102,10 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 - **Feature sections** — One presentational component per major Figma section (metric
   cards, filter bar, data table). Container pages assemble sections and pass typed props.
 - **Settings** — Page containers use React Query hooks (`lib/hooks/use-settings.ts`);
-  panels remain presentational with optional `onSave` callbacks.
+  panels remain presentational with optional `onSave` callbacks. Settings header has an
+  **App** picker (`SettingsAppPicker`) that scopes API keys, approvals, PEP,
+  notifications, and compliance rules to `GET/PUT /v1/tenants/apps/{appId}/…`.
+  Profile, business, teams, roles, security, and audit logs stay tenant-wide.
 - **Bank Analysis detail** — `/bank-analysis/[id]` composes a detail header, two-level
   tab navigation, account portfolio cards, and a risk/profile/network sidebar from
   typed mock data under `components/bank-analysis/detail/`. `?view=high-risk` shows
@@ -125,6 +128,8 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 - **UI state (Zustand):** Sidebar, sandbox/production environment.
 - **Auth session (Zustand persist):** `authStep`, user, tenant/access metadata, domain —
   **never** JWTs (cookies only).
+- **Settings app (Zustand persist):** selected `appId` keyed by tenant. Used only for
+  app-scoped settings reads/writes.
 - **Server state (TanStack Query):** Settings and other BFF-backed reads/mutations.
 - **Mock data:** Static fixtures in `lib/data/` for M2 compliance modules until APIs exist.
 - **RBAC:** Tenant role on auth tenant context. Permission matrix in
@@ -134,7 +139,9 @@ Auth routes under `app/(auth)/` per ONBOARDING section in Figma.
 ## Data Source
 
 - **Live (BFF):** Auth, tenant settings, user profile, public misc, domain switch,
-  KYC/KYB customer create + documents, list/detail reads, account purpose, start verification.
+  tenant apps list/create, app-scoped settings (API keys / approvals / PEP /
+  notifications / compliance rules), KYC/KYB customer create + documents, list/detail
+  reads, account purpose, start verification.
 - **Mock:** KYC/KYB lookup, rich verification/AML/IP/liveness panels, KYB bulk batches,
   bank analysis, AML, overview, audit logs, transaction monitoring.
 - **UI-first integration:** Map API → view models in `lib/api/`; do not reshape Figma UI

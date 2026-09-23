@@ -1,55 +1,98 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { KycDocumentView } from "@/types/kyc";
 
-const documentViews = ["ID Front", "ID Back", "Selfie"] as const;
-
-type DocumentView = (typeof documentViews)[number];
-
-const documentImages: Record<DocumentView, string> = {
-  "ID Front": "/assets/kyc/nigeria-passport-front.svg",
-  "ID Back": "/assets/kyc/nigeria-passport-front.svg",
-  Selfie: "/assets/kyc/selfie-placeholder.svg",
-};
-
-const compareImages = {
-  passport: "/assets/kyc/nigeria-passport-front.svg",
-  selfie: "/assets/kyc/selfie-placeholder.svg",
-};
+const defaultViews: KycDocumentView[] = [
+  { id: "id-front", label: "ID Front", src: "/assets/kyc/nigeria-passport-front.svg" },
+  { id: "id-back", label: "ID Back", src: "/assets/kyc/nigeria-passport-front.svg" },
+  { id: "selfie", label: "Selfie", src: "/assets/kyc/selfie-placeholder.svg" },
+];
 
 type KycDocumentViewerProps = {
   matchScore?: number;
   /** Failed biometric compare — Figma 119: Request Resubmission + {n}% Match Score. */
   failedMatch?: boolean;
+  /** Live signed document previews when available. */
+  views?: KycDocumentView[];
 };
+
+function DocumentImage({
+  src,
+  alt,
+  width,
+  height,
+  className,
+  style,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  const isRemote = src.startsWith("http://") || src.startsWith("https://");
+  if (isRemote) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- signed S3 URLs vary by host
+      <img src={src} alt={alt} width={width} height={height} className={className} style={style} />
+    );
+  }
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      className={className}
+      style={style}
+      priority
+    />
+  );
+}
 
 export function KycDocumentViewer({
   matchScore = 94,
   failedMatch = false,
+  views,
 }: KycDocumentViewerProps) {
-  const [activeView, setActiveView] = useState<DocumentView>("ID Front");
+  const documentViews = views && views.length > 0 ? views : defaultViews;
+  const [activeId, setActiveId] = useState(documentViews[0]?.id ?? "id-front");
   const [compareMode, setCompareMode] = useState(false);
   const [zoom, setZoom] = useState(1);
 
-  const activeIndex = documentViews.indexOf(activeView);
+  const activeView = useMemo(
+    () => documentViews.find((view) => view.id === activeId) ?? documentViews[0],
+    [activeId, documentViews],
+  );
+  const activeIndex = documentViews.findIndex((view) => view.id === activeView?.id);
+  const frontSrc =
+    documentViews.find((view) => view.label === "ID Front")?.src ??
+    documentViews[0]?.src ??
+    defaultViews[0].src;
+  const selfieSrc =
+    documentViews.find((view) => view.label === "Selfie")?.src ??
+    documentViews.find((view) => /selfie/i.test(view.label))?.src ??
+    defaultViews[2].src;
 
   function goToPrevious() {
-    const nextIndex = activeIndex === 0 ? documentViews.length - 1 : activeIndex - 1;
-    setActiveView(documentViews[nextIndex]);
+    const nextIndex = activeIndex <= 0 ? documentViews.length - 1 : activeIndex - 1;
+    setActiveId(documentViews[nextIndex].id);
     setZoom(1);
   }
 
   function goToNext() {
-    const nextIndex = activeIndex === documentViews.length - 1 ? 0 : activeIndex + 1;
-    setActiveView(documentViews[nextIndex]);
+    const nextIndex = activeIndex >= documentViews.length - 1 ? 0 : activeIndex + 1;
+    setActiveId(documentViews[nextIndex].id);
     setZoom(1);
   }
 
-  function selectView(view: DocumentView) {
-    setActiveView(view);
+  function selectView(id: string) {
+    setActiveId(id);
     setCompareMode(false);
     setZoom(1);
   }
@@ -59,23 +102,27 @@ export function KycDocumentViewer({
     setZoom(1);
   }
 
+  if (!activeView) {
+    return null;
+  }
+
   return (
     <div className="overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--border-default)] px-6 py-4">
         <div className="inline-flex gap-1 rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-muted)] p-1">
           {documentViews.map((view) => (
             <button
-              key={view}
+              key={view.id}
               type="button"
-              onClick={() => selectView(view)}
+              onClick={() => selectView(view.id)}
               className={cn(
                 "rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
-                activeView === view && !compareMode
+                activeView.id === view.id && !compareMode
                   ? "bg-[color:var(--bg-surface)] text-[color:var(--accent-primary-hover)] shadow-sm"
                   : "text-[color:var(--text-muted)]",
               )}
             >
-              {view}
+              {view.label}
             </button>
           ))}
         </div>
@@ -102,26 +149,24 @@ export function KycDocumentViewer({
           >
             <div className="flex items-center justify-center gap-4 sm:gap-6">
               <div className="overflow-hidden rounded-lg shadow-md">
-                <Image
-                  src={compareImages.passport}
-                  alt="Nigerian international passport"
+                <DocumentImage
+                  src={frontSrc}
+                  alt="Identity document"
                   width={316}
                   height={210}
                   className="h-auto w-full max-w-[280px] object-contain sm:max-w-[316px]"
-                  priority
                 />
               </div>
 
               <ArrowRight className="h-8 w-8 shrink-0 text-[color:var(--accent-primary-hover)]" />
 
               <div className="overflow-hidden rounded-lg shadow-md">
-                <Image
-                  src={compareImages.selfie}
-                  alt="Selfie placeholder"
+                <DocumentImage
+                  src={selfieSrc}
+                  alt="Selfie"
                   width={200}
                   height={200}
                   className="h-auto w-full max-w-[180px] object-contain sm:max-w-[200px]"
-                  priority
                 />
               </div>
             </div>
@@ -153,14 +198,13 @@ export function KycDocumentViewer({
           </button>
 
           <div className="overflow-hidden rounded-lg shadow-md">
-            <Image
-              src={documentImages[activeView]}
-              alt={`${activeView} document`}
+            <DocumentImage
+              src={activeView.src}
+              alt={`${activeView.label} document`}
               width={316}
-              height={activeView === "Selfie" ? 200 : 210}
+              height={activeView.label === "Selfie" ? 200 : 210}
               className="h-auto w-full max-w-[340px] object-contain transition-transform duration-200"
               style={{ transform: `scale(${zoom})` }}
-              priority
             />
           </div>
 

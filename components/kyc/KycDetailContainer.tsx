@@ -7,11 +7,12 @@ import { getErrorMessage } from "@/lib/api/errors";
 import { useKycDetail } from "@/lib/hooks/use-customers";
 
 type KycDetailContainerProps = {
-  customerId: string;
+  routeId: string;
+  workflowId?: string;
 };
 
-export function KycDetailContainer({ customerId }: KycDetailContainerProps) {
-  const query = useKycDetail(customerId);
+export function KycDetailContainer({ routeId, workflowId }: KycDetailContainerProps) {
+  const query = useKycDetail(routeId, workflowId);
 
   if (query.isLoading) {
     return <PageLoadingSkeleton variant="generic" />;

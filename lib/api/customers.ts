@@ -4,6 +4,7 @@ import { unwrapCollection } from "@/lib/api/mappers/customers";
 import type {
   ApiCustomerCreateResult,
   ApiCustomerListQuery,
+  ApiCustomerListStats,
   CreateTenantKybDocumentDto,
   CreateTenantKybDto,
   CreateTenantKycDocumentDto,
@@ -75,6 +76,12 @@ export function listKycDocuments(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}/documents`);
 }
 
+export function getKycCustomerStats(appId?: string) {
+  return apiFetch<ApiCustomerListStats>("/api/v1/customers/kyc/stats", {
+    headers: appId ? { "x-app-id": appId } : undefined,
+  });
+}
+
 export function listKybCustomers(query: ApiCustomerListQuery = DEFAULT_LIST_QUERY) {
   return apiFetch<unknown>("/api/v1/customers/kyb", { query });
 }
@@ -93,6 +100,12 @@ export function listKybDocuments(customerId: string) {
 
 export function listKybShareholders(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/shareholders`);
+}
+
+export function getKybCustomerStats(appId?: string) {
+  return apiFetch<ApiCustomerListStats>("/api/v1/customers/kyb/stats", {
+    headers: appId ? { "x-app-id": appId } : undefined,
+  });
 }
 
 async function getAccountPurpose(path: string) {
