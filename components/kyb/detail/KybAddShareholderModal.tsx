@@ -120,7 +120,7 @@ export function KybAddShareholderModal({
       document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open, onClose, reset]);
+  }, [open, onClose, reset, shareholder]);
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);

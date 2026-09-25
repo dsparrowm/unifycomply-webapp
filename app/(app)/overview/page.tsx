@@ -62,10 +62,11 @@ function mapApiCalls(
   const monthLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   return points.map((point) => ({
-    label:
+    label: String(
       typeof (point.label ?? point.month) === "number"
         ? monthLabels[Number(point.label ?? point.month) - 1] ?? String(point.label ?? point.month)
         : point.label ?? point.month ?? "",
+    ),
     calls: point.successful ?? point.success ?? 0,
     errors: point.failed ?? point.errors ?? 0,
   }));
