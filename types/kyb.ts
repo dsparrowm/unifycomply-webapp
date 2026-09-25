@@ -7,6 +7,7 @@ import type {
   KycVerificationStatus,
 } from "@/types/kyc";
 import type { CustomerFlag } from "@/types/customer-compliance";
+import type { ApiKybDocumentType } from "@/lib/api/types";
 
 export type KybMetric = KycMetric;
 
@@ -164,7 +165,7 @@ export type KybSubmittedDocument = {
   uploadedAt: string;
   status: KybSubmittedDocumentStatus;
   previewSrc: string;
-  type?: KybDocumentType;
+  type?: ApiKybDocumentType;
   idNumber?: string;
   issueDate?: string;
   expiryDate?: string;

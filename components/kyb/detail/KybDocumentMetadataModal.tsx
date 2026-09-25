@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import type { CreateTenantKybDocumentDto } from "@/lib/api/types";
-import type { KybDocumentType, KybSubmittedDocument } from "@/types/kyb";
+import type { ApiKybDocumentType, CreateTenantKybDocumentDto } from "@/lib/api/types";
+import type { KybSubmittedDocument } from "@/types/kyb";
 
-const documentOptions: { value: KybDocumentType; label: string }[] = [
+const documentOptions: { value: ApiKybDocumentType; label: string }[] = [
   { value: "certificate-of-incorporation", label: "Certificate of Incorporation" },
   { value: "tin", label: "TIN" },
   { value: "proof-of-business-address", label: "Proof of Business Address" },
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export function KybDocumentMetadataModal({ document, onClose, onSave }: Props) {
-  const [type, setType] = useState<KybDocumentType>("certificate-of-incorporation");
+  const [type, setType] = useState<ApiKybDocumentType>("certificate-of-incorporation");
   const [idNumber, setIdNumber] = useState("");
   const [issueDate, setIssueDate] = useState("");
   const [expiryDate, setExpiryDate] = useState("");
@@ -65,7 +65,7 @@ export function KybDocumentMetadataModal({ document, onClose, onSave }: Props) {
           <button type="button" onClick={onClose} aria-label="Close" className="rounded-lg p-1 text-[color:var(--text-light)] hover:bg-[color:var(--bg-muted)]"><X className="h-5 w-5" /></button>
         </div>
         <form onSubmit={submit} className="space-y-4 px-5 py-6">
-          <label className="block text-sm text-[color:var(--text-primary)]">Document type<select value={type} onChange={(event) => setType(event.target.value as KybDocumentType)} className="mt-1 w-full rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3 py-2.5">{documentOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
+          <label className="block text-sm text-[color:var(--text-primary)]">Document type<select value={type} onChange={(event) => setType(event.target.value as ApiKybDocumentType)} className="mt-1 w-full rounded-lg border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-3 py-2.5">{documentOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>
           <label className="block text-sm text-[color:var(--text-primary)]">Document number<input value={idNumber} onChange={(event) => setIdNumber(event.target.value)} className="mt-1 w-full rounded-lg border border-[color:var(--border-default)] px-3 py-2.5" /></label>
           <div className="grid gap-4 sm:grid-cols-2"><label className="block text-sm text-[color:var(--text-primary)]">Issue date<input type="date" value={issueDate} onChange={(event) => setIssueDate(event.target.value)} className="mt-1 w-full rounded-lg border border-[color:var(--border-default)] px-3 py-2.5" /></label><label className="block text-sm text-[color:var(--text-primary)]">Expiry date<input type="date" value={expiryDate} onChange={(event) => setExpiryDate(event.target.value)} className="mt-1 w-full rounded-lg border border-[color:var(--border-default)] px-3 py-2.5" /></label></div>
           {error ? <p className="text-sm text-[color:var(--state-error)]">{error}</p> : null}
