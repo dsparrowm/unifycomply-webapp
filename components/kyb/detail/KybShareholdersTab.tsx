@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Pencil } from "lucide-react";
 import { KybAddShareholderModal } from "@/components/kyb/detail/KybAddShareholderModal";
 import type { CreateTenantKybShareholderDto } from "@/lib/api/types";
-import type { KybShareCapitalData, KybShareholderType } from "@/types/kyb";
+import type { KybShareCapitalData, KybShareholder, KybShareholderType } from "@/types/kyb";
 import { cn } from "@/lib/utils";
 
 const columns = ["Shareholder", "Type", "Shares", "Percentage", "Share Class"] as const;
