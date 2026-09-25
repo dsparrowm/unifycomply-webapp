@@ -1,6 +1,11 @@
-import { TransactionsListPanel } from "@/components/transaction-monitoring/TransactionsListPanel";
-import { tmTransactionsListPopulated } from "@/lib/data/transactions";
+import { Suspense } from "react";
+import { TransactionsListContainer } from "@/components/transaction-monitoring/TransactionsListContainer";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 
 export default function TransactionsPage() {
-  return <TransactionsListPanel data={tmTransactionsListPopulated} />;
+  return (
+    <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}>
+      <TransactionsListContainer />
+    </Suspense>
+  );
 }

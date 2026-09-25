@@ -7,9 +7,11 @@ import type {
   ApiCustomerListStats,
   CreateTenantKybDocumentDto,
   CreateTenantKybDto,
+  CreateTenantKybShareholderDto,
   CreateTenantKycDocumentDto,
   CreateTenantKycDto,
   DeclareAccountPurposeDto,
+  SetCustomerFlagStatusDto,
 } from "@/lib/api/types";
 
 const DEFAULT_LIST_QUERY: ApiCustomerListQuery = {
@@ -60,6 +62,22 @@ export function createKybDocument(customerId: string, body: CreateTenantKybDocum
   });
 }
 
+export function updateKybDocument(
+  customerId: string,
+  documentId: string,
+  body: CreateTenantKybDocumentDto,
+  appId?: string,
+) {
+  return apiFetch<unknown>(
+    `/api/v1/customers/kyb/${customerId}/documents/${encodeURIComponent(documentId)}`,
+    {
+      method: "PUT",
+      body,
+      headers: appId ? { "x-app-id": appId } : undefined,
+    },
+  );
+}
+
 export function listKycCustomers(query: ApiCustomerListQuery = DEFAULT_LIST_QUERY) {
   return apiFetch<unknown>("/api/v1/customers/kyc", { query });
 }
@@ -70,6 +88,13 @@ export function listAllKycCustomers() {
 
 export function getKycCustomer(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}`);
+}
+
+export function offboardKycCustomer(customerId: string, reason?: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}`, {
+    method: "DELETE",
+    body: reason ? { reason } : undefined,
+  });
 }
 
 export function listKycDocuments(customerId: string) {
@@ -94,12 +119,87 @@ export function getKybCustomer(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}`);
 }
 
+export function offboardKybCustomer(customerId: string, reason?: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}`, {
+    method: "DELETE",
+    body: reason ? { reason } : undefined,
+  });
+}
+
 export function listKybDocuments(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/documents`);
 }
 
 export function listKybShareholders(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/shareholders`);
+}
+
+export function createKybShareholder(customerId: string, body: CreateTenantKybShareholderDto, appId?: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/shareholders`, {
+    method: "POST",
+    body,
+    headers: appId ? { "x-app-id": appId } : undefined,
+  });
+}
+
+export function updateKybShareholder(
+  customerId: string,
+  shareholderId: string,
+  body: CreateTenantKybShareholderDto,
+  appId?: string,
+) {
+  return apiFetch<unknown>(
+    `/api/v1/customers/kyb/${customerId}/shareholders/${encodeURIComponent(shareholderId)}`,
+    {
+      method: "PUT",
+      body,
+      headers: appId ? { "x-app-id": appId } : undefined,
+    },
+  );
+}
+
+export function getKycDocumentRequirements(customerId: string, appId?: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}/documents/requirements`, {
+    headers: appId ? { "x-app-id": appId } : undefined,
+  });
+}
+
+export function getKybDocumentRequirements(customerId: string, appId?: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/documents/requirements`, {
+    headers: appId ? { "x-app-id": appId } : undefined,
+  });
+}
+
+export function patchKycFlagStatus(
+  customerId: string,
+  flagId: string,
+  body: SetCustomerFlagStatusDto,
+  appId?: string,
+) {
+  return apiFetch<unknown>(
+    `/api/v1/customers/kyc/${customerId}/flags/${encodeURIComponent(flagId)}`,
+    {
+      method: "PATCH",
+      body,
+      headers: appId ? { "x-app-id": appId } : undefined,
+    },
+  );
+}
+
+export function patchKybFlagStatus(
+  customerId: string,
+  flagId: string,
+  body: SetCustomerFlagStatusDto,
+  appId?: string,
+) {
+  return apiFetch<unknown>(
+    `/api/v1/customers/kyb/${customerId}/flags/${encodeURIComponent(flagId)}`,
+    {
+      method: "PATCH",
+      body,
+      headers: appId ? { "x-app-id": appId } : undefined,
+    },
+  );
 }
 
 export function getKybCustomerStats(appId?: string) {

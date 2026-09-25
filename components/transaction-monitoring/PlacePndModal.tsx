@@ -50,7 +50,14 @@ type PlacePndModalProps = {
   transactionId: string;
   customerName?: string;
   onClose: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (payload: {
+    entityType: "individual" | "business";
+    fullName: string;
+    riskLevel: "low" | "medium" | "high" | "critical";
+    reasonForListing: string;
+    narrative?: string;
+    evidenceReference?: string;
+  }) => void;
 };
 
 function FieldLabel({
@@ -126,13 +133,20 @@ export function PlacePndModal({
     return null;
   }
 
-  const canSubmit = narrative.trim().length > 0;
+  const canSubmit = narrative.trim().length > 0 && Boolean(riskLevel) && Boolean(reason);
 
   const handleSubmit = () => {
     if (!canSubmit) {
       return;
     }
-    onSubmit?.();
+    onSubmit?.({
+      entityType: entityType === "Business" ? "business" : "individual",
+      fullName: fullName.trim(),
+      riskLevel: riskLevel.toLowerCase() as "low" | "medium" | "high" | "critical",
+      reasonForListing: reason,
+      narrative: narrative.trim(),
+      evidenceReference: evidenceRef.trim(),
+    });
     onClose();
   };
 

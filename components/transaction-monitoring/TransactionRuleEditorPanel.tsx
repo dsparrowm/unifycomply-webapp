@@ -42,11 +42,13 @@ const severityStyles: Record<TmRuleSeverity, string> = {
 type TransactionRuleEditorPanelProps = {
   initial: TmRuleDetail;
   mode: "create" | "edit";
+  onSave?: (detail: TmRuleDetail) => Promise<void> | void;
 };
 
 export function TransactionRuleEditorPanel({
   initial,
   mode,
+  onSave,
 }: TransactionRuleEditorPanelProps) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
@@ -288,7 +290,10 @@ export function TransactionRuleEditorPanel({
           <div className="flex justify-end gap-3 border-t border-[color:var(--border-default)] px-5 py-4">
             <button
               type="button"
-              onClick={() => router.push("/rules")}
+              onClick={() => {
+                if (onSave) void onSave(form);
+                else router.push("/rules");
+              }}
               className="inline-flex h-10 items-center justify-center rounded-lg bg-[color:var(--bg-muted)] px-4 text-sm font-medium text-[color:var(--text-primary)]"
             >
               Cancel

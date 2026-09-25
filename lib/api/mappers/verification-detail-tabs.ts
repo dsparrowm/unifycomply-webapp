@@ -517,6 +517,10 @@ export function mapKybDocumentsTab(
       uploadedAt: formatShortDate(asString(doc.createdAt) ?? asString(doc.updatedAt)),
       status,
       previewSrc: asString(doc.signedUrl) ?? asString(doc.url) ?? "",
+      type: asString(doc.type) as KybSubmittedDocument["type"],
+      idNumber: asString(doc.idNumber),
+      issueDate: asString(doc.issueDate),
+      expiryDate: asString(doc.expiryDate),
     };
   });
 

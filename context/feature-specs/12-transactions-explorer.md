@@ -2,7 +2,7 @@
 
 **Milestone:** M3  
 **Figma:** `Transaction monitoring // TM Category` (list) + `Real-time` (detail)  
-**Status:** List + detail + Account Statement + Resolve/PND/Escalate + SAR wizard done (mock)
+**Status:** List + detail live-wired to Core Platform `GET /transactions` (+ `/:id`); Account Statement + Resolve/PND/Escalate + SAR wizard remain mock. Use `?mock=1` for populated Figma fixtures.
 
 Read `AGENTS.md` before starting.
 
@@ -35,7 +35,10 @@ Read `AGENTS.md` before starting.
 
 ## Data
 
-Mock fixtures in `lib/data/transactions.ts`. No Core Platform OpenAPI for TM yet.
+- **Live:** `GET /v1/transactions` + `GET /v1/transactions/{id}` via BFF (`lib/api/transactions.ts` → UI mappers in `lib/api/mappers/transactions.ts`). Create DTO fields only in OpenAPI — category / queue / rules / risk enrichment default when absent (UI preserved).
+- **Fixtures:** `lib/data/transactions.ts` — `?mock=1` forces populated list/detail for visual QA; empty live list shows Figma “No User Activity”.
+- **Still mock (no OpenAPI):** queue lists, account statement, SAR wizard, resolve/PND/escalate submits, TM overview charts, rules CRUD.
+- **Subscribe:** `POST .../customers/{kyc|kyb}/{id}/transaction-monitoring/subscribe` exists (KYC/KYB customer flow) — not on explorer.
 
 ## Components
 

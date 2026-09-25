@@ -6,6 +6,8 @@ import type {
   KycRiskAnalysisData,
   KycVerificationStatus,
 } from "@/types/kyc";
+import type { CustomerFlag } from "@/types/customer-compliance";
+import type { ApiKybDocumentType } from "@/lib/api/types";
 
 export type KybMetric = KycMetric;
 
@@ -136,6 +138,18 @@ export type KybShareholder = {
   shares: number;
   percentage: number;
   shareClass: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  dateAppointed?: string;
+  countryLabel?: string;
+  address?: {
+    houseNo?: string;
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+  };
 };
 
 export type KybShareCapitalData = {
@@ -151,6 +165,10 @@ export type KybSubmittedDocument = {
   uploadedAt: string;
   status: KybSubmittedDocumentStatus;
   previewSrc: string;
+  type?: ApiKybDocumentType;
+  idNumber?: string;
+  issueDate?: string;
+  expiryDate?: string;
 };
 
 export type KybSubmittedDocumentsData = {
@@ -227,6 +245,8 @@ export type KybDetail = {
   complianceChecks: KybComplianceChecksData | null;
   /** When false, risk tab shows empty until scored. */
   riskAnalysisAvailable?: boolean;
+  /** Live customer flags — investigation status via PATCH (not Approve/Reject). */
+  flags?: CustomerFlag[];
 };
 
 export type KybRegistryLookupResult = {

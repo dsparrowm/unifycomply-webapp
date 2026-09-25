@@ -1,4 +1,5 @@
 import { countryLabelFromCode } from "@/lib/api/mappers/onboarding";
+import { mapCustomerFlags } from "@/lib/api/mappers/customer-compliance";
 import { KYB_DOCUMENT_PREVIEW_SRC } from "@/lib/data/kyb-documents";
 import { buildKybDetailFromRecord } from "@/lib/data/kyb-detail";
 import { buildKycDetailFromRecord } from "@/lib/data/kyc-detail";
@@ -481,7 +482,7 @@ function mapKybDocuments(documents: unknown[]): KybSubmittedDocumentsData {
   };
 }
 
-function mapKybShareholders(items: unknown[]): KybShareCapitalData {
+export function mapKybShareholders(items: unknown[]): KybShareCapitalData {
   const shareholders: KybShareholder[] = items.flatMap((item, index) => {
     if (!isRecord(item)) {
       return [];
@@ -499,6 +500,22 @@ function mapKybShareholders(items: unknown[]): KybShareCapitalData {
         shares: asNumber(item.shareCountTotal) ?? 0,
         percentage: asNumber(item.sharePercentage) ?? 0,
         shareClass: "Ordinary",
+        email: asString(item.email),
+        phone: asString(item.phone),
+        role: asString(item.role),
+        dateAppointed: asString(item.dateAppointed),
+        countryLabel: isRecord(item.address)
+          ? countryLabelFromCode(asString(item.address.countryCode) ?? "NG")
+          : undefined,
+        address: isRecord(item.address)
+          ? {
+              houseNo: asString(item.address.houseNo),
+              street: asString(item.address.street),
+              city: asString(item.address.city),
+              state: asString(item.address.state),
+              zipCode: asString(item.address.zipCode),
+            }
+          : undefined,
       },
     ];
   });
@@ -523,9 +540,15 @@ export function mapApiKycToDetail(
   }
 
   const detail = buildKycDetailFromRecord(record);
+  const flags = mapCustomerFlags(customer.flags);
   return {
     ...detail,
     extractedFields: overlayExtractedFields(detail.extractedFields, customer, unwrapCollection(documentsData)),
+    flags,
+    documentAlert:
+      flags[0] !== undefined
+        ? { title: flags[0].title, description: flags[0].description }
+        : detail.documentAlert,
   };
 }
 
@@ -573,5 +596,6 @@ export function mapApiKybToDetail(
     businessActivities: industry ? [humanizeLabel(industry)] : [],
     documents: documents.length > 0 ? mapKybDocuments(documents) : { sectionStatus: "Pending", documents: [] },
     shareholders: mapKybShareholders(unwrapCollection(shareholdersData)),
+    flags: mapCustomerFlags(customer.flags),
   };
 }

@@ -6,16 +6,21 @@ import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   ArrowLeft,
+  Banknote,
+  Check,
   CheckCircle2,
   ChevronDown,
   Clock3,
   Info,
+  ShieldCheck,
+  type LucideIcon,
 } from "lucide-react";
 import { EscalateCaseModal } from "@/components/transaction-monitoring/EscalateCaseModal";
 import { ResolveCaseModal } from "@/components/transaction-monitoring/ResolveCaseModal";
 import { PlacePndModal } from "@/components/transaction-monitoring/PlacePndModal";
 import type { TmTransactionDetail, TmTxCategory } from "@/types/transaction-monitoring";
 import { cn } from "@/lib/utils";
+import { useTransactionActions, useTransactionCase } from "@/lib/hooks/use-transaction-monitoring";
 
 type TransactionDetailPanelProps = {
   detail: TmTransactionDetail;
@@ -28,6 +33,39 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
   const [resolveOpen, setResolveOpen] = useState(false);
   const [pndOpen, setPndOpen] = useState(false);
   const [escalateOpen, setEscalateOpen] = useState(false);
+  const caseQuery = useTransactionCase(detail.id, tab === "case");
+  const actions = useTransactionActions(detail.id);
+
+  const resolveCase = (payload: {
+    resolutionType: string;
+    outcomeSummary: string;
+    actionsTaken: string[];
+    notes: string;
+  }) => {
+    const resolutionTypeMap: Record<string, "cleared-no-issues" | "false-positive" | "escalated-to-authorities" | "resolved-after-contact" | "documentation-provided-cleared"> = {
+      cleared: "cleared-no-issues",
+      "false-positive": "false-positive",
+      escalated: "escalated-to-authorities",
+      "customer-contact": "resolved-after-contact",
+      documentation: "documentation-provided-cleared",
+    };
+    const actionMap: Record<string, string> = {
+      "Customer verification completed": "customer-verification-completed",
+      "Source of funds verified": "source-of-funds-verified",
+      "PEP screening cleared": "pep-screening-cleared",
+      "Enhanced due diligence performed": "enhanced-due-diligence-performed",
+      "Transaction pattern analyzed": "transaction-pattern-analyzed",
+      "Adverse media check completed": "adverse-media-check-completed",
+      "Business relationship reviewed": "business-relationship-reviewed",
+      "Sanctions screening passed": "sanctions-screening-passed",
+    };
+    void actions.resolve.mutateAsync({
+      resolutionType: resolutionTypeMap[payload.resolutionType] ?? "cleared-no-issues",
+      outcomeSummary: payload.outcomeSummary,
+      actionsTaken: payload.actionsTaken.map((action) => actionMap[action] ?? action),
+      resolutionNotes: payload.notes,
+    });
+  };
 
   const handleAction = (label: string) => {
     setActionsOpen(false);
@@ -58,6 +96,7 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
         open={resolveOpen}
         transactionId={detail.transactionId}
         onClose={() => setResolveOpen(false)}
+        onSubmit={resolveCase}
       />
 
       <PlacePndModal
@@ -65,6 +104,7 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
         transactionId={detail.transactionId}
         customerName={detail.customerName}
         onClose={() => setPndOpen(false)}
+        onSubmit={(payload) => void actions.placePnd.mutateAsync(payload)}
       />
 
       <EscalateCaseModal
@@ -72,9 +112,10 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
         transactionId={detail.transactionId}
         customerName={detail.customerName}
         onClose={() => setEscalateOpen(false)}
+        onConfirm={(notes) => void actions.escalate.mutateAsync(notes)}
       />
 
-      <div className="flex items-center gap-6 border-b border-[color:var(--border-default)]">
+      <div className="inline-flex w-fit items-center gap-1 rounded-lg bg-[color:var(--bg-muted)] p-1">
         <TabButton active={tab === "details"} onClick={() => setTab("details")}>
           Transaction Details
         </TabButton>
@@ -84,7 +125,7 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
       </div>
 
       {tab === "details" ? (
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex flex-col gap-4">
             <AiRiskCard detail={detail} />
             <SummaryCard detail={detail} />
@@ -96,10 +137,12 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
               />
             </div>
             <RulesCard rules={detail.rules} />
-            <RelatedCard
-              items={detail.relatedTransactions}
-              totalCount={detail.relatedTotalCount}
-            />
+            {detail.relatedTransactions.length > 0 ? (
+              <RelatedCard
+                items={detail.relatedTransactions}
+                totalCount={detail.relatedTotalCount}
+              />
+            ) : null}
           </div>
           <div className="flex flex-col gap-4">
             <TimelineCard steps={detail.timeline} />
@@ -108,7 +151,7 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
           </div>
         </div>
       ) : (
-        <CaseManagementPlaceholder />
+        <CaseManagementPlaceholder data={caseQuery.data} isLoading={caseQuery.isLoading} />
       )}
     </div>
   );
@@ -217,10 +260,10 @@ function TabButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "-mb-px border-b-2 pb-3 text-sm font-medium transition-colors",
+        "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
         active
-          ? "border-[color:var(--accent-primary-hover)] text-[color:var(--accent-primary-hover)]"
-          : "border-transparent text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)]",
+          ? "bg-[color:var(--bg-surface)] text-[color:var(--accent-primary-hover)] shadow-sm"
+          : "text-[color:var(--text-muted)] hover:text-[color:var(--text-primary)]",
       )}
     >
       {children}
@@ -228,10 +271,22 @@ function TabButton({
   );
 }
 
+const cardClass =
+  "rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm";
+
+function SectionTitle({ icon: Icon, children }: { icon?: LucideIcon; children: ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-2 text-xs font-medium uppercase tracking-wide text-[color:var(--text-primary)]">
+      {Icon ? <Icon className="h-4 w-4 text-[color:var(--accent-primary-hover)]" /> : null}
+      {children}
+    </h2>
+  );
+}
+
 function riskTheme(category: TmTxCategory, score: number) {
   if (category === "cumulative-frequency") {
     return {
-      header: "bg-[color:var(--state-purple)]",
+      text: "text-[color:var(--state-purple)]",
       bar: "bg-[color:var(--state-purple)]",
       border: "border-[color:var(--state-purple)]/30",
       soft: "bg-[color:var(--state-purple-soft)]",
@@ -239,7 +294,7 @@ function riskTheme(category: TmTxCategory, score: number) {
   }
   if (category === "stop-payment" || (score >= 70 && score < 100)) {
     return {
-      header: "bg-[color:var(--state-warning)]",
+      text: "text-[color:var(--state-warning)]",
       bar: "bg-[color:var(--state-warning)]",
       border: "border-[color:var(--state-warning)]/30",
       soft: "bg-[color:var(--state-warning-soft)]",
@@ -247,64 +302,90 @@ function riskTheme(category: TmTxCategory, score: number) {
   }
   if (category === "tm-blocked" || score >= 90) {
     return {
-      header: "bg-[color:var(--state-error)]",
+      text: "text-[color:var(--state-error)]",
       bar: "bg-[color:var(--state-error)]",
       border: "border-[color:var(--state-error)]/30",
       soft: "bg-[color:var(--state-error-soft)]",
     };
   }
   return {
-    header: "bg-[color:var(--state-success)]",
+    text: "text-[color:var(--state-success)]",
     bar: "bg-[color:var(--state-success)]",
-    border: "border-[color:var(--border-default)]",
+    border: "border-[color:var(--state-success)]/30",
     soft: "bg-[color:var(--state-success-soft)]",
   };
 }
 
+function splitHeadline(headline: string) {
+  const match = headline.match(/^(.*?)(\s*\([^)]*\))$/);
+  return match ? { main: match[1], suffix: match[2] } : { main: headline, suffix: "" };
+}
+
 function AiRiskCard({ detail }: { detail: TmTransactionDetail }) {
   const theme = riskTheme(detail.category, detail.riskScore);
+  const headline = splitHeadline(detail.riskHeadline);
 
   return (
-    <div className={cn("overflow-hidden rounded-xl border shadow-sm", theme.border)}>
-      <div
+    <div className={cn("space-y-4 rounded-xl border p-5 shadow-sm", theme.border, theme.soft)}>
+      <p
         className={cn(
-          "flex items-center gap-2 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-white",
-          theme.header,
+          "flex items-center gap-2 text-xs font-medium uppercase tracking-wide",
+          theme.text,
         )}
       >
         <AlertTriangle className="h-4 w-4" />
         AI Risk Analysis
-      </div>
-      <div className={cn("space-y-4 p-5", theme.soft)}>
-        <div>
-          <p className="text-base font-semibold text-[color:var(--text-primary)]">
-            {detail.riskHeadline}
-          </p>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/80">
+      </p>
+      <div>
+        <p className="text-xl font-semibold text-[color:var(--text-primary)]">
+          {headline.main}
+          <span className="text-sm font-medium">{headline.suffix}</span>
+        </p>
+        <div className="mt-3 flex items-center gap-3">
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-[color:var(--bg-surface)]">
             <div
               className={cn("h-full rounded-full", theme.bar)}
               style={{ width: `${Math.max(detail.riskScore, detail.riskScore === 0 ? 2 : 0)}%` }}
             />
           </div>
+          <span className="text-sm font-medium text-[color:var(--text-primary)]">
+            {detail.riskScore}%
+          </span>
         </div>
-        <ul className="space-y-2 text-sm text-[color:var(--text-muted)]">
-          {detail.riskFindings.map((finding) => (
-            <li key={finding} className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[color:var(--text-light)]" />
-              <span>{finding}</span>
-            </li>
-          ))}
-        </ul>
       </div>
+      <ul className="space-y-2 rounded-lg bg-[color:var(--bg-surface)] px-3 py-3 text-sm text-[color:var(--text-primary)]">
+        {detail.riskFindings.map((finding) => (
+          <li key={finding}>{finding}</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 function SummaryCard({ detail }: { detail: TmTransactionDetail }) {
-  const fields = [
-    { label: "Amount", value: detail.amountLabel },
-    { label: "Type", value: detail.typeLabel, accent: "success" as const },
-    { label: "Severity", value: detail.severityLabel, accent: "severity" as const },
+  const fields: { label: string; value: ReactNode; strong?: boolean }[] = [
+    { label: "Amount", value: detail.amountLabel, strong: true },
+    {
+      label: "Type",
+      value: (
+        <span className="inline-flex rounded-md bg-[color:var(--state-success-soft)] px-2 py-0.5 text-xs font-medium text-[color:var(--state-success)]">
+          {detail.typeLabel}
+        </span>
+      ),
+    },
+    {
+      label: "Severity",
+      value: (
+        <span
+          className={cn(
+            "inline-flex rounded-md px-2 py-0.5 text-xs font-medium",
+            severityPillClass(detail.severityLabel),
+          )}
+        >
+          {detail.severityLabel}
+        </span>
+      ),
+    },
     { label: "Analyst Status", value: detail.analystStatus },
     { label: "Date & Time", value: detail.dateTime },
     { label: "Customer", value: detail.customerName },
@@ -313,24 +394,20 @@ function SummaryCard({ detail }: { detail: TmTransactionDetail }) {
   ];
 
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
-      <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">
-        Transaction Summary
-      </h2>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    <div className={cardClass}>
+      <SectionTitle icon={Banknote}>Transaction Summary</SectionTitle>
+      <div className="mt-5 grid gap-x-4 gap-y-5 sm:grid-cols-3">
         {fields.map((field) => (
-          <div key={field.label}>
+          <div key={field.label} className="min-w-0">
             <p className="text-xs text-[color:var(--text-muted)]">{field.label}</p>
-            <p
+            <div
               className={cn(
-                "mt-1 text-sm font-medium",
-                field.accent === "success" && "text-[color:var(--state-success)]",
-                field.accent === "severity" && severityTextClass(detail.severityLabel),
-                !field.accent && "text-[color:var(--text-primary)]",
+                "mt-1.5 truncate text-sm text-[color:var(--text-primary)]",
+                field.strong ? "text-base font-semibold" : "font-medium",
               )}
             >
               {field.value}
-            </p>
+            </div>
           </div>
         ))}
       </div>
@@ -338,11 +415,24 @@ function SummaryCard({ detail }: { detail: TmTransactionDetail }) {
   );
 }
 
-function severityTextClass(severity: string) {
+function severityPillClass(severity: string) {
   const normalized = severity.toLowerCase();
-  if (normalized === "high") return "text-[color:var(--state-error)]";
-  if (normalized === "medium") return "text-[color:var(--state-warning)]";
-  return "text-[color:var(--state-success)]";
+  if (normalized === "high" || normalized === "critical") {
+    return "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]";
+  }
+  if (normalized === "medium") {
+    return "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]";
+  }
+  return "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]";
+}
+
+function DetailRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-3 text-sm">
+      <dt className="text-xs uppercase text-[color:var(--text-muted)]">{label}</dt>
+      <dd className="truncate font-medium text-[color:var(--text-primary)]">{value}</dd>
+    </div>
+  );
 }
 
 function PartyCard({
@@ -362,18 +452,15 @@ function PartyCard({
   ];
 
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
-      <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">{title}</h2>
-      <p className="mt-3 text-base font-semibold text-[color:var(--text-primary)]">
+    <div className={cardClass}>
+      <p className="text-xs uppercase tracking-wide text-[color:var(--text-muted)]">{title}</p>
+      <p className="mt-3 truncate text-base font-semibold text-[color:var(--text-primary)]">
         {party.name}
       </p>
-      <p className="text-xs text-[color:var(--text-muted)]">ID {party.maskedId}</p>
-      <dl className="mt-4 space-y-2">
+      <p className="text-xs text-[color:var(--text-muted)]">{party.maskedId}</p>
+      <dl className="mt-5 space-y-2.5">
         {rows.map((row) => (
-          <div key={row.label} className="flex justify-between gap-3 text-sm">
-            <dt className="text-[color:var(--text-muted)]">{row.label}</dt>
-            <dd className="font-medium text-[color:var(--text-primary)]">{row.value}</dd>
-          </div>
+          <DetailRow key={row.label} label={row.label} value={row.value} />
         ))}
       </dl>
     </div>
@@ -387,39 +474,40 @@ function CustomerCard({
   party: TmTransactionDetail["customer"];
   accountActivityHref: string;
 }) {
+  const rows = [
+    { label: "Country", value: party.country },
+    { label: "Date of Birth", value: party.dateOfBirth ?? "-" },
+    { label: "National Code", value: party.nationalCode ?? "-" },
+    { label: "Activities", value: party.activities ?? "-" },
+    { label: "Activity Description", value: party.activityDescription ?? "-" },
+    { label: "Registration Date", value: party.registrationDate ?? "-" },
+  ];
+
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
+    <div className={cardClass}>
       <div className="flex items-start justify-between gap-3">
-        <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">
+        <p className="text-xs uppercase tracking-wide text-[color:var(--text-muted)]">
           Customer Category: {party.categoryLabel ?? "Individual"}
-        </h2>
+        </p>
         {party.riskLabel ? (
-          <span className="rounded-md bg-[color:var(--state-success-soft)] px-2 py-0.5 text-xs font-semibold text-[color:var(--state-success)]">
+          <span
+            className={cn(
+              "rounded-md px-2 py-0.5 text-xs font-semibold",
+              severityPillClass(party.riskLabel),
+            )}
+          >
             {party.riskLabel}
           </span>
         ) : null}
       </div>
-      <p className="mt-3 text-base font-semibold text-[color:var(--accent-primary-hover)]">
+      <p className="mt-3 truncate text-base font-semibold text-[color:var(--accent-primary-hover)] underline underline-offset-2">
         {party.name}
       </p>
-      <p className="text-xs text-[color:var(--text-muted)]">ID {party.maskedId}</p>
-      <dl className="mt-4 space-y-2">
-        <div className="flex justify-between gap-3 text-sm">
-          <dt className="text-[color:var(--text-muted)]">Country</dt>
-          <dd className="font-medium text-[color:var(--text-primary)]">{party.country}</dd>
-        </div>
-        <div className="flex justify-between gap-3 text-sm">
-          <dt className="text-[color:var(--text-muted)]">Date of Birth</dt>
-          <dd className="font-medium text-[color:var(--text-primary)]">
-            {party.dateOfBirth ?? "-"}
-          </dd>
-        </div>
-        <div className="flex justify-between gap-3 text-sm">
-          <dt className="text-[color:var(--text-muted)]">National Code</dt>
-          <dd className="font-medium text-[color:var(--text-primary)]">
-            {party.nationalCode ?? "-"}
-          </dd>
-        </div>
+      <p className="text-xs text-[color:var(--text-muted)]">{party.maskedId}</p>
+      <dl className="mt-5 space-y-2.5">
+        {rows.map((row) => (
+          <DetailRow key={row.label} label={row.label} value={row.value} />
+        ))}
       </dl>
       <Link
         href={accountActivityHref}
@@ -433,30 +521,41 @@ function CustomerCard({
 
 function RulesCard({ rules }: { rules: TmTransactionDetail["rules"] }) {
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
-      <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">Rules Triggered</h2>
-      <ul className="mt-4 space-y-3">
-        {rules.map((rule) => (
-          <li key={rule.id} className="flex items-center justify-between gap-3 text-sm">
-            <span className="text-[color:var(--text-primary)]">{rule.label}</span>
-            <span
-              className={cn(
-                "inline-flex items-center gap-1.5 font-medium",
-                rule.outcome === "cleared"
-                  ? "text-[color:var(--state-success)]"
-                  : "text-[color:var(--state-error)]",
-              )}
-            >
-              {rule.outcome === "cleared" ? (
-                <CheckCircle2 className="h-4 w-4" />
-              ) : (
-                <AlertTriangle className="h-4 w-4" />
-              )}
-              {rule.outcome === "cleared" ? "Cleared" : "Flagged"}
-            </span>
-          </li>
-        ))}
-      </ul>
+    <div className={cardClass}>
+      <SectionTitle icon={ShieldCheck}>Rules Triggered</SectionTitle>
+      <div className="mt-4 rounded-lg border border-[color:var(--border-subtle)] bg-[color:var(--bg-muted)] px-3 py-2">
+        {rules.length === 0 ? (
+          <p className="py-2 text-sm text-[color:var(--text-muted)]">
+            No rules triggered for this transaction.
+          </p>
+        ) : (
+          <ul className="divide-y divide-[color:var(--border-subtle)]">
+            {rules.map((rule) => (
+              <li key={rule.id} className="flex items-center justify-between gap-3 py-2 text-sm">
+                <span className="inline-flex items-center gap-2 text-[color:var(--text-primary)]">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[color:var(--accent-primary-hover)]" />
+                  {rule.label}
+                </span>
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium",
+                    rule.outcome === "cleared"
+                      ? "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]"
+                      : "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
+                  )}
+                >
+                  {rule.outcome === "cleared" ? (
+                    <Check className="h-3 w-3" />
+                  ) : (
+                    <AlertTriangle className="h-3 w-3" />
+                  )}
+                  {rule.outcome === "cleared" ? "Cleared" : "Flagged"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
@@ -469,10 +568,8 @@ function RelatedCard({
   totalCount: number;
 }) {
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
-      <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">
-        Related Transactions in Pattern
-      </h2>
+    <div className={cardClass}>
+      <SectionTitle>Related Transactions in Pattern</SectionTitle>
       <ul className="mt-4 divide-y divide-[color:var(--border-subtle)]">
         {items.map((item) => (
           <li
@@ -509,30 +606,29 @@ function TimelineCard({ steps }: { steps: TmTransactionDetail["timeline"] }) {
   } as const;
 
   const toneClass = {
-    success: "text-[color:var(--state-success)]",
-    warning: "text-[color:var(--state-warning)]",
-    error: "text-[color:var(--state-error)]",
-    info: "text-[color:var(--state-info)]",
-    pending: "text-[color:var(--text-muted)]",
+    success: "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]",
+    warning: "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]",
+    error: "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
+    info: "bg-[color:var(--state-info-soft)] text-[color:var(--state-info)]",
+    pending: "bg-[color:var(--bg-muted)] text-[color:var(--text-muted)]",
   } as const;
 
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
-      <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">
-        Transaction Timeline
-      </h2>
-      <ol className="mt-4 space-y-4">
-        {steps.map((step, index) => {
+    <div className={cardClass}>
+      <SectionTitle>Transaction Timeline</SectionTitle>
+      <ol className="mt-5 space-y-5">
+        {steps.map((step) => {
           const Icon = toneIcon[step.tone];
           return (
-            <li key={step.id} className="relative flex gap-3">
-              {index < steps.length - 1 ? (
-                <span
-                  className="absolute left-[11px] top-7 h-[calc(100%-8px)] w-px bg-[color:var(--border-default)]"
-                  aria-hidden
-                />
-              ) : null}
-              <Icon className={cn("mt-0.5 h-5 w-5 shrink-0", toneClass[step.tone])} />
+            <li key={step.id} className="flex gap-3">
+              <span
+                className={cn(
+                  "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+                  toneClass[step.tone],
+                )}
+              >
+                <Icon className="h-4 w-4" />
+              </span>
               <div>
                 <p className="text-sm font-medium text-[color:var(--text-primary)]">
                   {step.label}
@@ -562,24 +658,25 @@ function KeyValueCard({
   grid?: boolean;
 }) {
   return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] p-5 shadow-sm">
-      <h2 className="text-sm font-semibold text-[color:var(--text-primary)]">{title}</h2>
-      <dl
-        className={cn(
-          "mt-4",
-          grid ? "grid grid-cols-2 gap-3" : "space-y-2",
-        )}
-      >
+    <div className={cardClass}>
+      <SectionTitle>{title}</SectionTitle>
+      <dl className={cn("mt-5", grid ? "grid grid-cols-2 gap-x-4 gap-y-5" : "space-y-2.5")}>
         {rows.map((row) => (
           <div
             key={row.label}
             className={cn(
-              "text-sm",
-              grid ? "space-y-0.5" : "flex items-center justify-between gap-3",
+              "min-w-0 text-sm",
+              grid
+                ? "space-y-1"
+                : "flex items-center justify-between gap-3 rounded-lg border border-[color:var(--border-subtle)] bg-[color:var(--bg-muted)] px-3 py-2.5",
             )}
           >
-            <dt className="text-[color:var(--text-muted)]">{row.label}</dt>
-            <dd className="font-medium text-[color:var(--text-primary)]">{row.value}</dd>
+            <dt className={cn("shrink-0 text-[color:var(--text-muted)]", grid && "text-xs")}>
+              {row.label}
+            </dt>
+            <dd className="truncate font-medium text-[color:var(--text-primary)]" title={row.value}>
+              {row.value}
+            </dd>
           </div>
         ))}
       </dl>
@@ -587,13 +684,34 @@ function KeyValueCard({
   );
 }
 
-function CaseManagementPlaceholder() {
+function CaseManagementPlaceholder({
+  data,
+  isLoading,
+}: {
+  data?: Record<string, unknown>;
+  isLoading: boolean;
+}) {
+  const entries = Object.entries(data ?? {}).filter(([, value]) => value !== null && value !== undefined);
+
   return (
     <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-6 py-16 text-center shadow-sm">
       <p className="text-lg font-medium text-[color:var(--text-primary)]">Case Management</p>
-      <p className="mt-2 text-sm text-[color:var(--text-muted)]">
-        SAR filing and PND placement status will appear here after Resolve / Place PND actions.
-      </p>
+      {isLoading ? <p className="mt-2 text-sm text-[color:var(--text-muted)]">Loading case details...</p> : null}
+      {!isLoading && entries.length === 0 ? (
+        <p className="mt-2 text-sm text-[color:var(--text-muted)]">No case data is available for this transaction.</p>
+      ) : null}
+      {entries.length > 0 ? (
+        <dl className="mx-auto mt-6 grid max-w-2xl gap-2 text-left sm:grid-cols-2">
+          {entries.map(([label, value]) => (
+            <div key={label} className="rounded-lg bg-[color:var(--bg-muted)] px-3 py-2">
+              <dt className="text-xs text-[color:var(--text-muted)]">{label}</dt>
+              <dd className="mt-1 text-sm font-medium text-[color:var(--text-primary)]">
+                {typeof value === "string" || typeof value === "number" ? String(value) : JSON.stringify(value)}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
     </div>
   );
 }

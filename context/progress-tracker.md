@@ -7,8 +7,9 @@ Update this file whenever the current phase, active feature, or implementation s
 **Milestone 3 — Transaction Monitoring (nav unlocked)**
 
 M1–M2 complete for unique UI + live KYC/KYB. **`CURRENT_MILESTONE = 3`** so TM sidebar
-routes are clickable (still mock data). M4+ (SAR Report, Risk Score nav, PND Watchlist,
-Case Management) remain disabled.
+routes are clickable. **Live:** `GET /transactions` (+ `/:id`). Queues / SAR / rules /
+overview remain mock. M4+ (SAR Report, Risk Score nav, PND Watchlist, Case Management)
+remain disabled.
 
 ## Scope Decisions
 
@@ -18,20 +19,42 @@ Case Management) remain disabled.
 | Figma scope | **WebApp page only** (`1:2`) |
 | Landing page | **Out of scope** — built in another repo |
 | **Active milestone** | **M3** (`lib/constants/milestones.ts`) — TM nav unlocked |
-| Data | Hybrid — live auth/settings + tenant apps + KYC/KYB create, verification queue list, customer detail; lookup + TM + AML/bank mock |
+| Data | Hybrid — live auth/settings + tenant apps + KYC/KYB + **TM transactions list/detail**; lookup + TM queues/rules/SAR/overview + AML/bank mock |
 | **API ↔ UI** | **UI first** — do not change Figma UI for API shape; map in BFF/`lib/api` or raise a blocker in Open Questions |
 
 ## Current Goal (M2 — live KYC/KYB)
 
-List uses verification queue + stats. Detail is **workflow-aware**: queue → `?workflowId=` → lazy **documents** + **risk-score** tabs (`verification-detail-tabs` guide). Next: AML / device / liveness / KYB directors-officers + compliance-checks tabs; document requirements; shareholder create; Pre-KYC/Re-KYC Start refresh. Re-test detail on a **new** verification (enriched customerId).
+List uses verification queue + stats. Detail is **workflow-aware** with lazy tabs and a live
+verification run history panel (workflow status, checks, risk decision, and audit events).
+Overview summary, high-risk count, recent activity, and API calls now read from the dashboard API
+with mock fallback for unavailable responses.
+KYC/KYB detail headers now expose guarded customer offboarding for live customer records.
+Workflow-backed KYC/KYB detail status badges now prefer the verification workflow status, matching
+the officer queue, instead of the customer lifecycle status.
+Notification settings now include selected-app webhook delivery history and failed-delivery redelivery
+through the app-scoped webhook API.
+KYB shareholder rows now preserve editable API fields and expose a live PUT-backed edit modal when
+shareholders are present.
+KYB submitted document rows now expose metadata editing for type, document number, issue date, and
+expiry date through the customer document PUT API.
+Document requirements + KYB shareholder create + flag status PATCH are live.
+Lookup / decisions / AML / bank remain mock (no API). Next: Pre-KYC/Re-KYC Start refresh.
 
 Inventory: `design/figma/webapp/bank/README.md` + `manifest.json`.
 
 KYC unique UI from `🪪Unifycomply (3).zip` is closed except the frame 115 **In Review** vs 79/86 **High Risk Alert** label conflict. KYB unique UI from the (4).zip cache is closed.
 
-## M3 (complete — unlocked 2026-09-23)
+## M3 (unlocked 2026-09-23 — partially live)
 
-TM Overview, Transactions, queues, Account Statement, SAR wizard, Rules + Adopt Template — done on mocks; nav enabled via `CURRENT_MILESTONE = 3`. Risk Score / SAR Report / PND Watchlist / Case Management remain M4.
+TM Overview, all four queues, Account Statement, Rules/template reads, Case Management,
+Resolve Case, Escalate Case, Place PND, and SAR rationale submission are now live
+through the Core Platform. **Transactions explorer** list + detail remain live via
+`GET /v1/transactions` and `GET /v1/transactions/{id}/detail`; `?mock=1` remains
+available for Figma populated fixtures. PND Watchlist and SAR Reports remain pending.
+
+Live M3 response shapes were verified against staging on 2026-09-25. Queue data is
+currently empty for the staging tenant, but overview, queue envelopes, statements,
+rules, and rule templates returned valid authenticated responses.
 
 ## M1 Completion Checklist
 
@@ -126,9 +149,7 @@ Resume order when unblocked (M2 → up): **KYC → KYB → AML → Bank → Over
 Plan + raw inventory: `design/figma/webapp/_capture-plan.json`, `_inventory-raw.json`.  
 Policy: `context/feature-specs/00-design-inventory.md`, `design/figma/webapp/README.md`.
 
-## Open Questions
-
-- **Stop Payment list (M3):** Dedicated frames in `design/figma/webapp/tm/stop-payment/`. List + Account Statement + SAR wizard wired.
+- **M3 transaction enrichment (2026-09-23):** Core Platform exposes ingest + list/get only (`CreateTransactionDto`). Figma TM Category metrics, status/category filters, AI risk findings, rules triggered, and related transactions have no read schema — UI keeps those surfaces with defaults / empty related until backend adds TM alert/case APIs.
 - **Customer onboarding wizard Figma frames:** MVP flowchart references module 1.1 (`1532:157029`) but no WebApp frame exports in `design/manifest.json`. Wizard implemented from `mvp-roadmap.md` step list; re-align when frames are exported.
 - **Compliance queue:** Not a separate Figma route — reviewer workflow uses KYC/KYB list status filters (`Pending`, `In Review`, etc.) per frames 79–86. Do not add `/compliance-queue`.
 - **Bank analysis fourth metric label:** Frame 11 uses **high risk alerts**; populated frame 16 / batch 18 use **high risk Entity**. List empty (`?empty=1`) uses **high risk alerts**; populated list and batch result use **high risk Entity**.
@@ -382,4 +403,7 @@ Source: WebApp page metadata dump (file `gJgHsHV3Jt9wYKJfstVdWB`, sections KYC /
 - 2026-09-15: **Visual QA — KYC/KYB detail tabs** — Walked all KYC tabs on live Palmer Luckey + all KYB tabs on fixture `kyb-record-5`. Live KYC docs/risk OK; signed previews blank. Live KYB queue detail broken for workflow-only ids (needs workflow-only shell). Mock KYB tabs structure passes.
 - 2026-09-15: **KYB workflow-only detail shell** — `buildWorkflowOnlyKybDetail` when customer 404 + overview has no `business` (legacy null enrichment). Re-QA live `/kyb/40ee0f97…`: all 6 tabs render; Overview shell + Risk live; other tabs empty states.
 - 2026-09-15: **KYB all detail tabs lazy-wired** — `GET …/kyb/:workflowId/{business-overview,risk-score,directors-officers,shareholders,document,compliance-checks}` on tab click (guide). Mappers keep Figma chrome; empty when payload empty.
-- 2026-09-15: **KYC all detail tabs lazy-wired** — `GET …/kyc/:workflowId/{documents,risk-score,aml-screening,device-information,liveness}` on tab click. Device always empty today (guide); liveness often skipped.
+- **KYC all detail tabs lazy-wired** — `GET …/kyc/:workflowId/{documents,risk-score,aml-screening,device-information,liveness}` on tab click. Device always empty today (guide); liveness often skipped.
+- 2026-09-23: **M3 transactions live** — BFF allowlist `transactions/`; `lib/api/transactions.ts` + UI-first mappers; `/transactions` + `/transactions/[id]` via containers/hooks. OpenAPI has create+list+get only (no category/queue/rules schema) — defaults preserve Figma chrome. Empty live → “No User Activity”; `?mock=1` → populated fixtures for visual QA. Queues/SAR/rules/overview stay mock. Subscribe remains on KYC/KYB customer paths.
+- 2026-09-23: **M2 remaining API slice wired** — Document requirements checklist (`GET …/documents/requirements`) on KYC/KYB Document tabs; KYB **Add shareholder** modal (`POST …/shareholders`); flag status panel (`PATCH …/flags/{id}` warning→investigating→revised) on Document tab without removing Approve/Reject/Escalate. Visual QA: Palmer Luckey 3/3 received; Stripe UK Ltd shareholders + Add button; KYB docs 3/4 (Directors ID missing). No sandbox customers currently have flags to exercise transitions.
+- **M3 API ↔ UI gap (blocker note):** Transaction list metrics (Not Blocked / Stop Payment / Cum.Freq / TM-Blocked) and detail AI risk / rules / related txs need enrichment the ingest API does not return yet. Do not remove Figma panels — map when backend adds fields or dedicated TM alert APIs.

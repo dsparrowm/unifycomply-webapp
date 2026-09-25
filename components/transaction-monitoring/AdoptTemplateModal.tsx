@@ -63,12 +63,14 @@ type AdoptTemplateModalProps = {
   open: boolean;
   onClose: () => void;
   onConfirm?: (template: TmRuleTemplate) => void;
+  templates?: TmRuleTemplate[];
 };
 
 export function AdoptTemplateModal({
   open,
   onClose,
   onConfirm,
+  templates,
 }: AdoptTemplateModalProps) {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -109,7 +111,7 @@ export function AdoptTemplateModal({
       return tmRuleTemplateCatalog.packages;
     }
 
-    return tmRuleTemplateCatalog.packages.filter((item) =>
+    return (templates ?? tmRuleTemplateCatalog.packages).filter((item) =>
       [item.name, item.industryLabel, item.description].some((value) =>
         value.toLowerCase().includes(needle),
       ),
@@ -120,10 +122,11 @@ export function AdoptTemplateModal({
     return null;
   }
 
-  const detailPackage = tmRuleTemplateCatalog.packages.find(
+  const packages = templates ?? tmRuleTemplateCatalog.packages;
+  const detailPackage = packages.find(
     (item) => item.id === detailId,
   );
-  const selectedPackage = tmRuleTemplateCatalog.packages.find(
+  const selectedPackage = packages.find(
     (item) => item.id === selectedId,
   );
 

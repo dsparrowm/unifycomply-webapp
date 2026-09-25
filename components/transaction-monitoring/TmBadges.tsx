@@ -26,41 +26,33 @@ const categoryConfig: Record<
 const statusConfig: Record<TmTxStatus, { label: string; className: string }> = {
   pending: {
     label: "Pending",
-    className: "text-[color:var(--state-warning)]",
+    className: "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]",
   },
   cleared: {
     label: "Cleared",
-    className: "text-[color:var(--state-success)]",
+    className: "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]",
   },
   "in-review": {
     label: "In Review",
-    className: "text-[color:var(--state-info)]",
+    className: "bg-[color:var(--state-info-soft)] text-[color:var(--state-info)]",
   },
   blocked: {
     label: "Blocked",
-    className: "text-[color:var(--state-error)]",
+    className: "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
   },
 };
 
+const pillClass =
+  "inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium";
+
 export function TmCategoryBadge({ category }: { category: TmTxCategory }) {
   const config = categoryConfig[category];
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium",
-        config.className,
-      )}
-    >
-      {config.label}
-    </span>
-  );
+  return <span className={cn(pillClass, config.className)}>{config.label}</span>;
 }
 
 export function TmStatusText({ status }: { status: TmTxStatus }) {
   const config = statusConfig[status];
-  return (
-    <span className={cn("text-sm font-medium", config.className)}>{config.label}</span>
-  );
+  return <span className={cn(pillClass, config.className)}>{config.label}</span>;
 }
 
 export function TmRiskScoreBar({ score }: { score: number }) {
