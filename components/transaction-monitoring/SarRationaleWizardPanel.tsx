@@ -55,9 +55,10 @@ const labelClass = "mb-1.5 block text-sm font-medium text-[color:var(--text-prim
 
 type SarRationaleWizardPanelProps = {
   detail: TmTransactionDetail;
+  onSubmit?: (state: SarWizardState) => void;
 };
 
-export function SarRationaleWizardPanel({ detail }: SarRationaleWizardPanelProps) {
+export function SarRationaleWizardPanel({ detail, onSubmit }: SarRationaleWizardPanelProps) {
   const router = useRouter();
   const [stepIndex, setStepIndex] = useState(0);
   const [state, setState] = useState<SarWizardState>(() => createSarWizardState(detail));
@@ -206,6 +207,7 @@ export function SarRationaleWizardPanel({ detail }: SarRationaleWizardPanelProps
           type="button"
           onClick={() => {
             if (stepId === "export-review") {
+              onSubmit?.(state);
               setSavedOpen(true);
               return;
             }

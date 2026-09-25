@@ -63,7 +63,7 @@ function displayCode(prefix: string, id: string, preferred?: string): string {
 }
 
 /** Workflow statuses from core-platform → Figma list badges. */
-function mapWorkflowStatus(value: unknown): KycVerificationStatus {
+export function mapWorkflowStatus(value: unknown): KycVerificationStatus {
   const status = asString(value)?.toLowerCase().replace(/_/g, "-");
   if (
     status === "verified" ||

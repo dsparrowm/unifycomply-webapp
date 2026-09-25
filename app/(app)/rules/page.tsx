@@ -1,6 +1,7 @@
-import { TransactionRulesListPanel } from "@/components/transaction-monitoring/TransactionRulesListPanel";
-import { tmRulesListData } from "@/lib/data/tm-rules";
+import { Suspense } from "react";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
+import { TransactionRulesContainer } from "@/components/transaction-monitoring/TransactionRulesContainer";
 
 export default function RulesPage() {
-  return <TransactionRulesListPanel rules={tmRulesListData} />;
+  return <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}><TransactionRulesContainer /></Suspense>;
 }

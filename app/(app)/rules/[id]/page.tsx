@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { TransactionRuleEditorPanel } from "@/components/transaction-monitoring/TransactionRuleEditorPanel";
+import { TransactionRuleEditorContainer } from "@/components/transaction-monitoring/TransactionRuleEditorContainer";
 import { createEmptyTmRuleDetail, getTmRuleDetail } from "@/lib/data/tm-rules";
 
 type RuleEditorPageProps = {
@@ -10,9 +10,7 @@ export default async function RuleEditorPage({ params }: RuleEditorPageProps) {
   const { id } = await params;
 
   if (id === "new") {
-    return (
-      <TransactionRuleEditorPanel initial={createEmptyTmRuleDetail()} mode="create" />
-    );
+    return <TransactionRuleEditorContainer initial={createEmptyTmRuleDetail()} mode="create" />;
   }
 
   const detail = getTmRuleDetail(id);
@@ -20,5 +18,5 @@ export default async function RuleEditorPage({ params }: RuleEditorPageProps) {
     notFound();
   }
 
-  return <TransactionRuleEditorPanel initial={detail} mode="edit" />;
+  return <TransactionRuleEditorContainer initial={detail} mode="edit" />;
 }

@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CustomerOffboardButton } from "@/components/customers/CustomerOffboardButton";
 import { KycStatusBadge } from "@/components/kyc/KycStatusBadge";
 import type { KybDetail, KybVerificationStatus } from "@/types/kyb";
 
 type KybDetailHeaderProps = {
   detail: KybDetail;
   status: KybVerificationStatus;
+  canOffboard?: boolean;
 };
 
-export function KybDetailHeader({ detail, status }: KybDetailHeaderProps) {
+export function KybDetailHeader({ detail, status, canOffboard = false }: KybDetailHeaderProps) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
       <div className="space-y-4">
@@ -32,6 +34,7 @@ export function KybDetailHeader({ detail, status }: KybDetailHeaderProps) {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
+        {canOffboard ? <CustomerOffboardButton kind="kyb" customerId={detail.id} /> : null}
         <span className="inline-flex items-center rounded-full bg-[color:var(--state-success-soft)] px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-[color:var(--state-success)]">
           Risk Score: {detail.riskScore}
         </span>

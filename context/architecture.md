@@ -89,7 +89,7 @@ types/                 ← shared TypeScript types
 | --------- | ------------------------- | ------ |
 | **M1** | `/overview`, `/settings`, `/billing`, auth routes | Complete (settings live via API) |
 | **M2 (active)** | `/kyc`, `/kyc/[id]/account-purpose`, `/kyc/[id]/start-verification`, `/kyb`, `/kyb/[id]/account-purpose`, `/kyb/[id]/start-verification`, `/kyb/batch/[id]`, `/bank-analysis`, `/bank-analysis/lookup`, `/bank-analysis/batch/[id]`, `/bank-analysis/[id]`, `/aml-screening`, `/aml-screening/lookup`, `/aml-screening/lookup/result`, `/aml-screening/batch/[id]`, `/aml-screening/[id]`, `/packages`, `/request`, `/kyc/onboarding`, `/kyb/onboarding` | KYC/KYB unique UI closed; list/detail + purpose + start verification live |
-| **M3** | `/transaction-monitoring`, `/transactions`, `/transactions/[id]`, `/transactions/[id]/account-statement`, `/transactions/[id]/sar-rationale`, `/tm-not-blocked`, `/stop-payment`, `/cumulative-frequency`, `/tm-blocked`, `/rules`, `/rules/[id]` | UI complete, parked — gated while `CURRENT_MILESTONE` is 2 |
+| **M3** | `/transaction-monitoring`, `/transactions`, `/transactions/[id]`, `/transactions/[id]/account-statement`, `/transactions/[id]/sar-rationale`, `/tm-not-blocked`, `/stop-payment`, `/cumulative-frequency`, `/tm-blocked`, `/rules`, `/rules/[id]` | UI complete; overview/queues/statement/rule reads+writes, transaction list/detail, case read, SAR/action writes live; PND Watchlist/SAR Reports pending |
 | M4 | `/sar`, `/pnd-watchlist`, … | Blocked until M4 |
 
 Auth routes under `app/(auth)/` per ONBOARDING section in Figma.

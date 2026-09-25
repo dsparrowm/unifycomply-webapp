@@ -86,9 +86,9 @@
   <h1>Unifycomply — Frontend Status Update</h1>
   <div class="meta">
     <p><strong>Author:</strong> Davies Aniefiok</p>
-    <p><strong>Date:</strong> 12 September 2026</p>
+    <p><strong>Date:</strong> 26 September 2026</p>
     <p><strong>Scope:</strong> WebApp frontend (Next.js App Router + BFF) — screens completed and API usage</p>
-    <p><strong>Live site:</strong> <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a></p>
+    <p><strong>Live site:</strong> <a href="https://unifycomply-webapp.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp.vercel.app/</a></p>
     <p><strong>Upstream API:</strong> <a href="https://unifycomply-api.rokxier.com/v1/docs" target="_blank" rel="noopener noreferrer">https://unifycomply-api.rokxier.com/v1/docs</a></p>
   </div>
 
@@ -100,11 +100,11 @@
   </p>
   <p>
     Milestone 2 (KYC Orchestration) <strong>Figma unique UI is closed</strong> for KYC, KYB, AML, and Bank Analysis.
-    Live Core Platform traffic now powers auth, settings, and KYC/KYB <strong>create + list/detail + account purpose + start verification</strong>.
-    Perform Lookup, Approve/Reject/Escalate, AML, bank analysis, overview charts, and audit logs remain on mocks because those OpenAPI contracts are missing.
+    Live Core Platform traffic now powers auth, settings, and KYC/KYB <strong>create + list/detail + account purpose + start verification</strong>, verification history, flags, document requirements, offboarding, and KYB shareholder/document updates.
+    Perform Lookup, standalone AML, bank analysis, and audit logs remain mocked because usable contracts are missing.
   </p>
   <p>
-    Milestone 3 (Transaction Monitoring) UI is <strong>built and parked</strong> (gated while the active milestone is 2). M4–M5 are not started.
+    Milestone 3 (Transaction Monitoring) is <strong>active and API-integrated</strong>. Overview, queues, transaction explorer, account statement, case reads, transaction actions, SAR rationale submission, and rules CRUD/template adoption are wired through the BFF. M4 reporting surfaces remain out of scope.
   </p>
   <p>
     The browser talks only to this app’s BFF (<code>/api/*</code>). JWTs stay in httpOnly cookies.
@@ -112,7 +112,7 @@
   </p>
   <p>
     You can view the deployed WebApp here:
-    <a href="https://unifycomply-webapp-gfxl.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp-gfxl.vercel.app/</a>
+    <a href="https://unifycomply-webapp.vercel.app/" target="_blank" rel="noopener noreferrer">https://unifycomply-webapp.vercel.app/</a>
   </p>
 
   <h2>Completed modules / screens</h2>
@@ -136,7 +136,7 @@
       <tr>
         <td>Dashboard</td>
         <td>Overview dashboard</td>
-        <td>Mock</td>
+        <td><strong>Live</strong> summary, high-risk count, activity, and API calls; wallet and most-used endpoint remain mock</td>
       </tr>
       <tr>
         <td>Tenant admin / Settings</td>
@@ -172,7 +172,7 @@
         <td>KYC detail</td>
         <td>Document viewer, extracted fields, risk/biometric/timeline, AML/IP/liveness tabs, decision modals</td>
         <td><code>/kyc/[id]</code></td>
-        <td><strong>Live</strong> identity + documents; rich panels still mock</td>
+        <td><strong>Live</strong> identity, documents, requirements, workflow history, risk, AML tasks, and flags; OCR/IP/device/liveness detail and decisions remain unavailable or UI-only</td>
       </tr>
       <tr>
         <td>KYC account purpose</td>
@@ -208,7 +208,7 @@
         <td>KYB detail</td>
         <td>Business Overview, risk, directors, shareholders, documents, compliance checks, decision modals</td>
         <td><code>/kyb/[id]</code></td>
-        <td><strong>Live</strong> identity + documents + shareholders; directors/compliance mock</td>
+        <td><strong>Live</strong> identity, documents, requirements, workflow history, shareholders, document metadata, and flags; directors/compliance depend on returned task data</td>
       </tr>
       <tr>
         <td>KYB account purpose / start verification</td>
@@ -255,8 +255,8 @@
     </tbody>
   </table>
 
-  <h3>Milestone 3 — Transaction Monitoring (UI complete, parked)</h3>
-  <p>Built on mocks; routes exist but are gated while the active milestone is 2.</p>
+  <h3>Milestone 3 — Transaction Monitoring (active, live-integrated)</h3>
+  <p>Figma-aligned screens are implemented and connected to the authenticated Core Platform contract. Staging response shapes were verified on 25 September 2026. Queue data was empty for the tested tenant, so no mutating staging actions were submitted during QA.</p>
   <table>
     <thead>
       <tr><th>Area</th><th>Routes</th></tr>
@@ -276,6 +276,19 @@
       </tr>
     </tbody>
   </table>
+  <table>
+    <thead>
+      <tr><th>Live M3 API surface</th><th>Endpoints</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Overview</td><td><code>GET /v1/transaction-monitoring/overview</code></td></tr>
+      <tr><td>Queues</td><td><code>GET /v1/transaction-monitoring/tm-not-blocked</code>, <code>/stop-payment</code>, <code>/cumulative-frequency</code>, <code>/tm-blocked</code></td></tr>
+      <tr><td>Transactions</td><td><code>GET /v1/transactions</code>, <code>GET /v1/transactions/{id}</code>, <code>GET /v1/transactions/{id}/detail</code></td></tr>
+      <tr><td>Statement and case</td><td><code>GET /v1/customers/{id}/statement</code>, <code>GET /v1/transactions/{id}/case</code></td></tr>
+      <tr><td>Actions</td><td><code>POST /v1/transactions/{id}/actions/resolve-case</code>, <code>/escalate-case</code>, <code>/place-pnd</code>, <code>/sar-rationale</code></td></tr>
+      <tr><td>Rules and templates</td><td>App-scoped rule CRUD plus template list/adoption endpoints</td></tr>
+    </tbody>
+  </table>
 
   <h2>Outstanding</h2>
   <table>
@@ -286,27 +299,42 @@
       <tr>
         <td>KYB shareholder create/edit</td>
         <td>Frontend</td>
-        <td>Next (API exists; no Figma — will build API-derived)</td>
+        <td><strong>Done</strong> (API-derived; valid staging customer data still needed for mutation QA)</td>
       </tr>
       <tr>
         <td>Document requirements checklist</td>
         <td>Frontend</td>
-        <td>Next (<code>GET …/documents/requirements</code>)</td>
+        <td><strong>Done</strong> (<code>GET …/documents/requirements</code>)</td>
       </tr>
       <tr>
         <td>Verification run history on the case</td>
         <td>Frontend</td>
-        <td>Next (<code>GET /verifications/{workflowId}</code>)</td>
+        <td><strong>Done</strong> (<code>GET /verifications/{workflowId}</code>)</td>
       </tr>
       <tr>
         <td>Flag status on existing alert UI</td>
         <td>Frontend</td>
-        <td>Next (<code>PATCH …/flags/{flagId}</code>)</td>
+        <td><strong>Done</strong> (<code>PATCH …/flags/{flagId}</code>)</td>
       </tr>
       <tr>
         <td>Tenant apps on the existing App dropdown</td>
         <td>Frontend</td>
-        <td>Next (<code>GET /tenants/apps</code>)</td>
+        <td><strong>Done</strong> (<code>GET /tenants/apps</code>)</td>
+      </tr>
+      <tr>
+        <td>Customer offboarding</td>
+        <td>Frontend</td>
+        <td><strong>Done</strong> (soft-delete customer lifecycle API)</td>
+      </tr>
+      <tr>
+        <td>KYB document metadata editing</td>
+        <td>Frontend</td>
+        <td><strong>Done</strong> (customer document PUT API)</td>
+      </tr>
+      <tr>
+        <td>Webhook delivery history and redelivery</td>
+        <td>Frontend</td>
+        <td><strong>Done</strong> (app-scoped webhook API)</td>
       </tr>
       <tr>
         <td>Perform Lookup + bulk xlsx</td>
@@ -321,12 +349,17 @@
       <tr>
         <td>Rich OCR / liveness / IP / AML read models</td>
         <td>Backend</td>
-        <td>Detail tabs still use score templates</td>
+        <td>OCR remains pending; IP/device and dedicated liveness return unavailable; AML task read is live</td>
       </tr>
       <tr>
-        <td>AML + bank analysis + overview + audit logs</td>
+        <td>AML + bank analysis + audit logs</td>
         <td>Backend</td>
-        <td>UI done or mocked; <strong>no OpenAPI</strong></td>
+        <td>UI done or mocked; <strong>no usable OpenAPI contract</strong></td>
+      </tr>
+      <tr>
+        <td>PND Watchlist + SAR Reports</td>
+        <td>Backend / M4</td>
+        <td>Upstream routes exist but are not enabled in the frontend BFF or M4 UI</td>
       </tr>
       <tr>
         <td>Packages / Request / Pre-KYC screens</td>
@@ -344,7 +377,7 @@
         <td>List is customers today</td>
       </tr>
       <tr>
-        <td>Maker–checker, ongoing refresh, offboarding</td>
+        <td>Maker–checker, ongoing refresh</td>
         <td>Design + product</td>
         <td>Not in M2 Figma</td>
       </tr>
@@ -394,20 +427,23 @@
     <tbody>
       <tr><td><code>GET/POST /v1/customers/kyc</code></td><td>KYC list, onboarding create</td></tr>
       <tr><td><code>GET /v1/customers/kyc/{id}</code></td><td>KYC detail</td></tr>
-      <tr><td><code>GET/POST /v1/customers/kyc/{id}/documents</code></td><td>Detail + wizard upload</td></tr>
+      <tr><td><code>GET/POST/PUT /v1/customers/kyc/{id}/documents</code></td><td>Detail + wizard upload; KYC metadata PUT available for UI parity</td></tr>
       <tr><td><code>GET/PUT /v1/customers/kyc/{id}/account-purpose</code></td><td>Account purpose (404 = not declared)</td></tr>
       <tr><td><code>GET/POST /v1/customers/kyb</code></td><td>KYB list, onboarding create</td></tr>
       <tr><td><code>GET /v1/customers/kyb/{id}</code></td><td>KYB detail</td></tr>
-      <tr><td><code>GET/POST /v1/customers/kyb/{id}/documents</code></td><td>Detail + wizard upload</td></tr>
-      <tr><td><code>GET /v1/customers/kyb/{id}/shareholders</code></td><td>KYB Shareholders tab (read)</td></tr>
+      <tr><td><code>GET/POST/PUT /v1/customers/kyb/{id}/documents</code></td><td>Detail + wizard upload + metadata editing</td></tr>
+      <tr><td><code>GET/POST/PUT /v1/customers/kyb/{id}/shareholders</code></td><td>KYB Shareholders tab and API-derived create/edit</td></tr>
+      <tr><td><code>PATCH /v1/customers/kyc|kyb/{id}/flags/{flagId}</code></td><td>Existing alert status workflow</td></tr>
+      <tr><td><code>DELETE /v1/customers/kyc|kyb/{id}</code></td><td>Customer offboarding</td></tr>
       <tr><td><code>GET/PUT /v1/customers/kyb/{id}/account-purpose</code></td><td>KYB account purpose</td></tr>
       <tr><td><code>GET /v1/verifications/available-checks</code></td><td>Start verification picker</td></tr>
       <tr><td><code>POST /v1/verifications/kyc</code>, <code>/v1/verifications/kyb</code></td><td>Start verification</td></tr>
+      <tr><td><code>GET /v1/verifications/{workflowId}</code></td><td>Verification run history, tasks, risk, and audit events</td></tr>
     </tbody>
   </table>
 
-  <h3>Still mock (no OpenAPI or not wired)</h3>
-  <p>Lookup/bulk, approve/reject/escalate/resubmit, AML, bank analysis, overview charts, audit logs, TM, Packages/Request.</p>
+  <h3>Still mock or unavailable</h3>
+  <p>Lookup/bulk, standalone AML, bank analysis, audit logs, Packages/Request, PND Watchlist, SAR Reports, OCR extraction, IP/device capture, dedicated liveness results, and decision actions.</p>
 
   <h2>Milestone status overview</h2>
   <table>
@@ -416,9 +452,9 @@
     </thead>
     <tbody>
       <tr><td>M1 — Foundation</td><td><strong>Complete</strong> (auth + settings live)</td></tr>
-      <tr><td>M2 — KYC Orchestration</td><td><strong>Active</strong> — Figma unique UI closed; live KYC/KYB as above</td></tr>
-      <tr><td>M3 — Transaction Monitoring</td><td><strong>UI complete, parked</strong> (gated)</td></tr>
-      <tr><td>M4 — SAR &amp; Case Management</td><td>Not started (blocked)</td></tr>
+      <tr><td>M2 — KYC Orchestration</td><td><strong>Complete for current frontend scope</strong> — Figma unique UI closed; live KYC/KYB as above</td></tr>
+      <tr><td>M3 — Transaction Monitoring</td><td><strong>Active and live-integrated</strong> — UI complete; authenticated API reads/writes wired</td></tr>
+      <tr><td>M4 — SAR &amp; Case Management</td><td>Not started — PND Watchlist and SAR Reports deferred</td></tr>
       <tr><td>M5 — Optimisation</td><td>Not started (blocked)</td></tr>
     </tbody>
   </table>

@@ -25,6 +25,7 @@ import {
   mapRiskScoreTab,
 } from "@/lib/api/mappers/verification-detail-tabs";
 import {
+  mapWorkflowStatus,
   mapApiKybVerificationList,
   mapApiKycVerificationList,
 } from "@/lib/api/mappers/verifications";
@@ -80,6 +81,7 @@ export const customerKeys = {
     ["verifications", "kyb", workflowId, "shareholders"] as const,
   kybComplianceTab: (workflowId: string) =>
     ["verifications", "kyb", workflowId, "compliance-checks"] as const,
+  verificationDetail: (workflowId: string) => ["verifications", workflowId, "detail"] as const,
 };
 
 function isMissingCustomerError(error: unknown) {
@@ -115,9 +117,13 @@ async function resolveKycDetail(routeId: string, workflowIdHint: string | undefi
   }
 
   if (detail) {
+    const verification = await getVerification(workflowId, appId).catch(() => null);
     return {
       ...detail,
       workflowId,
+      status: verification?.workflow?.status
+        ? mapWorkflowStatus(verification.workflow.status)
+        : detail.status,
       riskAnalysis: null,
       amlScreening: null,
       ipDevice: null,
@@ -180,10 +186,14 @@ async function resolveKybDetail(routeId: string, workflowIdHint: string | undefi
   }
 
   if (detail) {
+    const verification = await getVerification(workflowId, appId).catch(() => null);
     // Live verification tabs fill these lazily — drop mock roster filler from buildKybDetailFromRecord.
     detail = {
       ...detail,
       workflowId,
+      status: verification?.workflow?.status
+        ? mapWorkflowStatus(verification.workflow.status)
+        : detail.status,
       directors: null,
       complianceChecks: null,
       riskAnalysis: null,
@@ -407,6 +417,16 @@ export function useKybComplianceChecksTab(workflowId: string | undefined, enable
       const tab = await getKybComplianceChecks(workflowId!, selectedAppId ?? undefined);
       return mapKybComplianceChecksTab(tab);
     },
+  });
+}
+
+export function useVerificationDetail(workflowId: string | undefined, enabled: boolean) {
+  const { selectedAppId } = useSettingsAppSelection();
+
+  return useQuery({
+    queryKey: customerKeys.verificationDetail(workflowId ?? "none"),
+    enabled: Boolean(workflowId) && enabled,
+    queryFn: () => getVerification(workflowId!, selectedAppId ?? undefined),
   });
 }
 

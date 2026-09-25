@@ -1,7 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { CustomerFlagsPanel } from "@/components/customers/CustomerFlagsPanel";
+import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
+import { DocumentRequirementsChecklist } from "@/components/customers/DocumentRequirementsChecklist";
+import { VerificationRunHistory } from "@/components/customers/VerificationRunHistory";
 import { EmptyState } from "@/components/feedback/EmptyState";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { KycAmlScreeningPanel } from "@/components/kyc/detail/KycAmlScreeningPanel";
 import { KycApproveModal } from "@/components/kyc/detail/KycApproveModal";
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
@@ -14,14 +19,18 @@ import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPan
 import { KycBiometricVerification } from "@/components/kyc/KycBiometricVerification";
 import { KycDocumentAlertCard } from "@/components/kyc/KycDocumentAlertCard";
 import { KycDocumentRiskTierCard } from "@/components/kyc/KycDocumentRiskTierCard";
-import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
 import { KycDetailHeader } from "@/components/kyc/KycDetailHeader";
 import { KycDetailTabs } from "@/components/kyc/KycDetailTabs";
 import { KycDocumentViewer } from "@/components/kyc/KycDocumentViewer";
 import { KycExtractedInformation } from "@/components/kyc/KycExtractedInformation";
 import { KycRiskAnalysisCard } from "@/components/kyc/KycRiskAnalysisCard";
 import { KycVerificationTimeline } from "@/components/kyc/KycVerificationTimeline";
-import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
+import { isLiveCustomerId } from "@/lib/customers/live-id";
+import {
+  applyFlagStatus,
+  useKycDocumentRequirements,
+  usePatchCustomerFlag,
+} from "@/lib/hooks/use-customer-compliance";
 import {
   mergeKycDetailWithDocumentsTab,
   useKycAmlScreeningTab,
@@ -29,7 +38,9 @@ import {
   useKycLivenessTab,
   useKycVerificationDocumentsTab,
   useKycVerificationRiskScore,
+  useVerificationDetail,
 } from "@/lib/hooks/use-customers";
+import type { CustomerFlag } from "@/types/customer-compliance";
 import type { KycDetail, KycDetailTab, KycVerificationStatus } from "@/types/kyc";
 
 type KycDetailPanelProps = {
@@ -42,14 +53,22 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   const [activeTab, setActiveTab] = useState<KycDetailTab>("document");
   const [status, setStatus] = useState<KycVerificationStatus>(initialDetail.status);
   const [activeModal, setActiveModal] = useState<KycDetailModal>(null);
+  const [flags, setFlags] = useState<CustomerFlag[]>(initialDetail.flags ?? []);
 
   const workflowId = initialDetail.workflowId;
+  const liveCustomer = isLiveCustomerId(initialDetail.id);
 
   const documentsQuery = useKycVerificationDocumentsTab(workflowId, activeTab === "document");
   const riskQuery = useKycVerificationRiskScore(workflowId, activeTab === "risk-analysis");
   const amlQuery = useKycAmlScreeningTab(workflowId, activeTab === "aml-screening");
   const deviceQuery = useKycDeviceInformationTab(workflowId, activeTab === "ip-device");
   const livenessQuery = useKycLivenessTab(workflowId, activeTab === "liveness");
+  const verificationQuery = useVerificationDetail(workflowId, Boolean(workflowId));
+  const requirementsQuery = useKycDocumentRequirements(
+    initialDetail.id,
+    activeTab === "document" && liveCustomer,
+  );
+  const patchFlag = usePatchCustomerFlag("kyc", initialDetail.id);
 
   const liveRisk = riskQuery.data;
   const detailWithDocuments = mergeKycDetailWithDocumentsTab(
@@ -60,6 +79,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
   const detail = {
     ...detailWithDocuments,
     status,
+    flags,
     riskScore: liveRisk?.available ? liveRisk.riskScore : detailWithDocuments.riskScore,
     riskAnalysis:
       liveRisk?.available && liveRisk.riskAnalysis
@@ -95,7 +115,7 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
 
   return (
     <div className="flex flex-col gap-6 pb-4">
-      <KycDetailHeader detail={detail} status={status} />
+      <KycDetailHeader detail={detail} status={status} canOffboard={liveCustomer} />
       <CustomerIntakeLinks kind="kyc" customerId={detail.id} />
       <KycDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -126,14 +146,34 @@ export function KycDetailPanel({ detail: initialDetail }: KycDetailPanelProps) {
             </div>
 
             <div className="space-y-6">
+              {requirementsQuery.data ? (
+                <DocumentRequirementsChecklist requirements={requirementsQuery.data} />
+              ) : null}
               {detail.documentRiskTier ? (
                 <KycDocumentRiskTierCard tier={detail.documentRiskTier} />
               ) : (
                 <KycRiskAnalysisCard detail={detail} />
               )}
-              {detail.documentAlert ? <KycDocumentAlertCard alert={detail.documentAlert} /> : null}
+              {flags.length > 0 ? (
+                <CustomerFlagsPanel
+                  flags={flags}
+                  kindLabel="KYC Alert"
+                  onUpdateStatus={async (flagId, nextStatus) => {
+                    await patchFlag.mutateAsync({ flagId, status: nextStatus });
+                    setFlags((current) => applyFlagStatus(current, flagId, nextStatus));
+                  }}
+                />
+              ) : detail.documentAlert ? (
+                <KycDocumentAlertCard alert={detail.documentAlert} />
+              ) : null}
               <KycBiometricVerification detail={detail} />
               <KycVerificationTimeline events={detail.timeline} />
+              {verificationQuery.data ? (
+                <VerificationRunHistory
+                  detail={verificationQuery.data}
+                  isLoading={verificationQuery.isLoading}
+                />
+              ) : null}
             </div>
           </div>
         )

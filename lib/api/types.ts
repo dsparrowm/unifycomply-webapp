@@ -406,6 +406,46 @@ export type CreateTenantKybDocumentDto = {
   file?: string;
 };
 
+export type CreateTenantKybShareholderDto = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  countryCode: string;
+  address: ApiAddressDto;
+  phone: string;
+  sharePercentage: number;
+  shareCountTotal: number;
+  type: "individual" | "corporate";
+  dateAppointed: string;
+  role: string;
+};
+
+export type ApiDocumentRequirement = {
+  category?: string;
+  acceptedTypes?: string[] | null;
+  satisfied?: boolean;
+  documentIds?: string[] | null;
+};
+
+export type ApiCustomerFlagStatus = "warning" | "investigating" | "revised";
+
+export type ApiCustomerFlag = {
+  id?: string;
+  status?: ApiCustomerFlagStatus | string;
+  title?: string | null;
+  description?: string | null;
+  note?: string | null;
+  type?: string | null;
+  reason?: string | null;
+  createdAt?: string | null;
+  [key: string]: unknown;
+};
+
+export type SetCustomerFlagStatusDto = {
+  status: ApiCustomerFlagStatus;
+  note?: string;
+};
+
 /**
  * Upstream create responses are under-documented in OpenAPI.
  * Accept common id shapes; mappers normalize to a string id.
@@ -978,3 +1018,75 @@ export type ApiKybShareholdersTab = {
 export type ApiKybComplianceChecksTab = {
   tasks?: ApiKybScreeningTask[] | null;
 };
+
+/** Transaction monitoring — create DTO from OpenAPI; read models are opaque in docs-json. */
+export type ApiCreateTransactionDto = {
+  customerId: string;
+  profileType: "individual" | "business";
+  direction: "inbound" | "outbound";
+  amount: number;
+  currency: string;
+  channel: string;
+  reference: string;
+  occurredAt: string;
+  corridorCountryCode?: string | null;
+  counterparty?: string | Record<string, unknown> | null;
+  metadata?: Record<string, unknown> | null;
+};
+
+export type ApiTransaction = {
+  id?: string;
+  customerId?: string;
+  profileType?: string;
+  direction?: string;
+  amount?: number;
+  currency?: string;
+  channel?: string;
+  reference?: string;
+  occurredAt?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  corridorCountryCode?: string | null;
+  counterparty?: string | Record<string, unknown> | null;
+  metadata?: Record<string, unknown> | null;
+  customerName?: string | null;
+  status?: string | null;
+  riskScore?: number | null;
+  [key: string]: unknown;
+};
+
+export type ApiTransactionMatchedRule = {
+  ruleId?: string;
+  ruleName?: string;
+  ruleType?: string;
+  severityOrScore?: string | number | null;
+  matchedConditions?: unknown;
+};
+
+export type ApiTransactionRisk = {
+  category?: string | null;
+  riskScore?: number | null;
+  riskLevel?: string | null;
+  status?: string | null;
+  rulesTriggerCount?: number | null;
+  matchedRules?: ApiTransactionMatchedRule[] | null;
+  decidedAt?: string | null;
+};
+
+/** `GET /v1/transactions/{id}/detail` — transaction + customer + risk assessment. */
+export type ApiTransactionDetail = {
+  transaction: ApiTransaction;
+  customer?: { name?: string | null; maskedAccount?: string | null } | null;
+  risk?: ApiTransactionRisk | null;
+  analystStatus?: string | null;
+  riskNarrative?: string | null;
+};
+
+export type ApiTransactionListQuery = {
+  customerId?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  page?: string;
+  limit?: string;
+};
+

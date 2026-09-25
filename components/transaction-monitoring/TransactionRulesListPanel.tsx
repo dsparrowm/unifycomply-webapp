@@ -11,6 +11,7 @@ import {
 import { AdoptTemplateModal } from "@/components/transaction-monitoring/AdoptTemplateModal";
 import { KycPagination } from "@/components/kyc/KycPagination";
 import type { TmRuleRecord, TmRuleSeverity } from "@/types/tm-rules";
+import type { TmRuleTemplate } from "@/types/tm-rule-templates";
 import { cn } from "@/lib/utils";
 
 const PAGE_SIZE = 10;
@@ -31,9 +32,11 @@ const severityLabels: Record<TmRuleSeverity, string> = {
 
 type TransactionRulesListPanelProps = {
   rules: TmRuleRecord[];
+  templates?: TmRuleTemplate[];
+  onTemplateAdopt?: (template: TmRuleTemplate) => void;
 };
 
-export function TransactionRulesListPanel({ rules }: TransactionRulesListPanelProps) {
+export function TransactionRulesListPanel({ rules, templates, onTemplateAdopt }: TransactionRulesListPanelProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const [templateOpen, setTemplateOpen] = useState(false);
@@ -76,6 +79,8 @@ export function TransactionRulesListPanel({ rules }: TransactionRulesListPanelPr
       <AdoptTemplateModal
         open={templateOpen}
         onClose={() => setTemplateOpen(false)}
+        templates={templates}
+        onConfirm={onTemplateAdopt}
       />
 
       <div className="overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">

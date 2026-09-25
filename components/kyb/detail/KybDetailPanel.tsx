@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CustomerFlagsPanel } from "@/components/customers/CustomerFlagsPanel";
 import { CustomerIntakeLinks } from "@/components/customers/CustomerIntakeLinks";
+import { DocumentRequirementsChecklist } from "@/components/customers/DocumentRequirementsChecklist";
+import { VerificationRunHistory } from "@/components/customers/VerificationRunHistory";
 import { EmptyState } from "@/components/feedback/EmptyState";
 import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 import { KybApproveModal } from "@/components/kyb/detail/KybApproveModal";
@@ -18,6 +21,16 @@ import { KybLookupPlaceholderTab } from "@/components/kyb/lookup/KybLookupPlaceh
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
 import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPanel";
 import { KycRequestResubmissionModal } from "@/components/kyc/detail/KycRequestResubmissionModal";
+import { isLiveCustomerId } from "@/lib/customers/live-id";
+import {
+  applyFlagStatus,
+  useCreateKybShareholder,
+  useUpdateKybShareholder,
+  useUpdateKybDocument,
+  useKybCustomerShareholders,
+  useKybDocumentRequirements,
+  usePatchCustomerFlag,
+} from "@/lib/hooks/use-customer-compliance";
 import {
   mergeKybDetailWithBusinessOverview,
   useKybBusinessOverviewTab,
@@ -26,7 +39,9 @@ import {
   useKybShareholdersTabQuery,
   useKybVerificationDocumentsTab,
   useKybVerificationRiskScore,
+  useVerificationDetail,
 } from "@/lib/hooks/use-customers";
+import type { CustomerFlag } from "@/types/customer-compliance";
 import type { KybDetail, KybDetailTab, KybVerificationStatus } from "@/types/kyb";
 
 type KybDetailPanelProps = {
@@ -40,15 +55,30 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
   const [status, setStatus] = useState<KybVerificationStatus>(initialDetail.status);
   const [activeModal, setActiveModal] = useState<KybDetailModal>(null);
   const [overviewStatusSynced, setOverviewStatusSynced] = useState(false);
+  const [flags, setFlags] = useState<CustomerFlag[]>(initialDetail.flags ?? []);
 
   const workflowId = initialDetail.workflowId;
+  const liveCustomer = isLiveCustomerId(initialDetail.id);
 
   const overviewQuery = useKybBusinessOverviewTab(workflowId, activeTab === "business-overview");
   const riskQuery = useKybVerificationRiskScore(workflowId, activeTab === "risk-analysis");
   const directorsQuery = useKybDirectorsOfficersTab(workflowId, activeTab === "directors");
   const shareholdersQuery = useKybShareholdersTabQuery(workflowId, activeTab === "shareholders");
+  const customerShareholdersQuery = useKybCustomerShareholders(
+    initialDetail.id,
+    activeTab === "shareholders" && liveCustomer,
+  );
   const documentsQuery = useKybVerificationDocumentsTab(workflowId, activeTab === "document");
   const complianceQuery = useKybComplianceChecksTab(workflowId, activeTab === "compliance-checks");
+  const verificationQuery = useVerificationDetail(workflowId, Boolean(workflowId));
+  const requirementsQuery = useKybDocumentRequirements(
+    initialDetail.id,
+    activeTab === "document" && liveCustomer,
+  );
+  const createShareholder = useCreateKybShareholder(initialDetail.id);
+  const updateShareholder = useUpdateKybShareholder(initialDetail.id);
+  const updateDocument = useUpdateKybDocument(initialDetail.id);
+  const patchFlag = usePatchCustomerFlag("kyb", initialDetail.id);
 
   const liveRisk = riskQuery.data;
   const detailWithOverview = mergeKybDetailWithBusinessOverview(
@@ -66,6 +96,7 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
   const detail = {
     ...detailWithOverview,
     status,
+    flags,
     riskScore: liveRisk?.available ? liveRisk.riskScore : detailWithOverview.riskScore,
     riskAnalysis:
       liveRisk?.available && liveRisk.riskAnalysis
@@ -78,9 +109,11 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
         ? (directorsQuery.data ?? null)
         : detailWithOverview.directors,
     shareholders:
-      activeTab === "shareholders" && workflowId && shareholdersQuery.data
-        ? shareholdersQuery.data
-        : detailWithOverview.shareholders,
+      liveCustomer && customerShareholdersQuery.data
+        ? customerShareholdersQuery.data
+        : activeTab === "shareholders" && workflowId && shareholdersQuery.data
+          ? shareholdersQuery.data
+          : detailWithOverview.shareholders,
     documents:
       activeTab === "document" && workflowId && documentsQuery.data
         ? documentsQuery.data
@@ -97,7 +130,7 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
 
   return (
     <div className="flex flex-col gap-6 pb-4">
-      <KybDetailHeader detail={detail} status={status} />
+      <KybDetailHeader detail={detail} status={status} canOffboard={liveCustomer} />
       <CustomerIntakeLinks kind="kyb" customerId={detail.id} />
       <KybDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -136,14 +169,29 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
       ) : null}
 
       {activeTab === "shareholders" ? (
-        shareholdersQuery.isLoading && workflowId ? (
+        (shareholdersQuery.isLoading && workflowId && !liveCustomer) ||
+        (customerShareholdersQuery.isLoading && liveCustomer) ? (
           <PageLoadingSkeleton variant="generic" />
-        ) : detail.shareholders.shareholders.length > 0 ? (
-          <KybShareholdersTab shareholders={detail.shareholders} />
         ) : (
-          <EmptyState
-            title="No shareholders on file"
-            description="Share capital structure will appear here once shareholders are linked to this verification."
+          <KybShareholdersTab
+            shareholders={detail.shareholders}
+            canAdd={liveCustomer}
+            onAddShareholder={
+              liveCustomer
+                ? async (body) => {
+                    await createShareholder.mutateAsync(body);
+                    await customerShareholdersQuery.refetch();
+                  }
+                : undefined
+            }
+              onEditShareholder={
+                liveCustomer
+                  ? async (shareholderId, body) => {
+                      await updateShareholder.mutateAsync({ shareholderId, body });
+                      await customerShareholdersQuery.refetch();
+                    }
+                  : undefined
+              }
           />
         )
       ) : null}
@@ -151,13 +199,46 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
       {activeTab === "document" ? (
         documentsQuery.isLoading && workflowId ? (
           <PageLoadingSkeleton variant="generic" />
-        ) : detail.documents.documents.length > 0 ? (
-          <KybDocumentsTab documents={detail.documents} />
         ) : (
-          <EmptyState
-            title="No documents available"
-            description="Signed document previews will appear here once files are uploaded on this verification."
-          />
+          <div className="space-y-6">
+            {requirementsQuery.data ? (
+              <DocumentRequirementsChecklist requirements={requirementsQuery.data} />
+            ) : null}
+            {flags.length > 0 ? (
+              <CustomerFlagsPanel
+                flags={flags}
+                kindLabel="KYB Alert"
+                onUpdateStatus={async (flagId, nextStatus) => {
+                  await patchFlag.mutateAsync({ flagId, status: nextStatus });
+                  setFlags((current) => applyFlagStatus(current, flagId, nextStatus));
+                }}
+              />
+            ) : null}
+            {detail.documents.documents.length > 0 ? (
+              <KybDocumentsTab
+                documents={detail.documents}
+                onUpdateDocument={
+                  liveCustomer
+                    ? async (documentId, body) => {
+                        await updateDocument.mutateAsync({ documentId, body });
+                        await documentsQuery.refetch();
+                      }
+                    : undefined
+                }
+              />
+            ) : (
+              <EmptyState
+                title="No documents available"
+                description="Signed document previews will appear here once files are uploaded on this verification."
+              />
+            )}
+            {verificationQuery.data ? (
+              <VerificationRunHistory
+                detail={verificationQuery.data}
+                isLoading={verificationQuery.isLoading}
+              />
+            ) : null}
+          </div>
         )
       ) : null}
 
@@ -203,7 +284,7 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
         open={activeModal === "resubmission"}
         onClose={closeModal}
         onConfirm={() => {
-          setStatus("pending");
+          setStatus("resubmission");
           closeModal();
         }}
       />
