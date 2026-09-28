@@ -1,6 +1,7 @@
-import { TmQueueListPanel } from "@/components/transaction-monitoring/TmQueueListPanel";
-import { tmNotBlockedQueuePopulated } from "@/lib/data/tm-queues";
+import { Suspense } from "react";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
+import { TmQueueContainer } from "@/components/transaction-monitoring/TmQueueContainer";
 
 export default function TmNotBlockedPage() {
-  return <TmQueueListPanel data={tmNotBlockedQueuePopulated} />;
+  return <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}><TmQueueContainer queueId="tm-not-blocked" /></Suspense>;
 }

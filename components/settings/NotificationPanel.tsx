@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { SettingsField } from "@/components/settings/SettingsField";
 import { SettingsToggle } from "@/components/settings/SettingsToggle";
+import { WebhookDeliveryHistory } from "@/components/settings/WebhookDeliveryHistory";
 import { toastSuccess } from "@/lib/toast";
 import type { SettingsNotifications } from "@/types/settings";
 import { cn } from "@/lib/utils";
@@ -117,6 +118,7 @@ export function NotificationPanel({ notifications, onSave }: NotificationPanelPr
           ) : null}
         </div>
       </section>
+      <WebhookDeliveryHistory />
     </div>
   );
 }

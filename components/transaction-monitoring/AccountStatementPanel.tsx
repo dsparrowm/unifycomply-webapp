@@ -449,6 +449,22 @@ function AccountStatementTable({
 }
 
 function splitTimestamp(timestamp: string): [string, string | null] {
+  const parsed = new Date(timestamp);
+  if (!Number.isNaN(parsed.getTime())) {
+    return [
+      new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }).format(parsed),
+      new Intl.DateTimeFormat("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+      }).format(parsed),
+    ];
+  }
+
   const parts = timestamp.trim().split(/\s+/);
   if (parts.length < 2) {
     return [timestamp, null];

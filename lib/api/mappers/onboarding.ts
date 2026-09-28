@@ -19,6 +19,8 @@ const COUNTRY_CODE_BY_NAME: Record<string, string> = {
   Ghana: "GH",
   Kenya: "KE",
   "South Africa": "ZA",
+  "United Kingdom": "GB",
+  "United States": "US",
 };
 
 const COUNTRY_LABEL_BY_CODE: Record<string, string> = {

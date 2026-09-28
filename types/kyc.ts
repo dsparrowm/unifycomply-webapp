@@ -1,3 +1,5 @@
+import type { CustomerFlag } from "@/types/customer-compliance";
+
 export type KycMetricTone = "success" | "info" | "warning" | "error";
 
 export type KycMetric = {
@@ -305,6 +307,9 @@ export type KycDocumentAlert = {
   description: string;
 };
 
+export type { DocumentRequirementItem } from "@/types/customer-compliance";
+export type { CustomerFlag };
+
 export type KycDocumentView = {
   id: string;
   label: string;
@@ -343,6 +348,8 @@ export type KycDetail = {
   documentRiskTier?: KycDocumentRiskTier;
   /** Document tab alert panel — shown when verification warnings apply. */
   documentAlert?: KycDocumentAlert;
+  /** Live customer flags — investigation status via PATCH (not Approve/Reject). */
+  flags?: CustomerFlag[];
 };
 
 export type KycLookupType =

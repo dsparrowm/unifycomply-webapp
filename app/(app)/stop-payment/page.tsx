@@ -1,6 +1,7 @@
-import { TmQueueListPanel } from "@/components/transaction-monitoring/TmQueueListPanel";
-import { tmStopPaymentQueuePopulated } from "@/lib/data/tm-queues";
+import { Suspense } from "react";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
+import { TmQueueContainer } from "@/components/transaction-monitoring/TmQueueContainer";
 
 export default function StopPaymentPage() {
-  return <TmQueueListPanel data={tmStopPaymentQueuePopulated} />;
+  return <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}><TmQueueContainer queueId="stop-payment" /></Suspense>;
 }

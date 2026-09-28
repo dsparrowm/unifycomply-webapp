@@ -2,15 +2,17 @@
 
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { CustomerOffboardButton } from "@/components/customers/CustomerOffboardButton";
 import { KycStatusBadge } from "@/components/kyc/KycStatusBadge";
 import type { KycDetail, KycVerificationStatus } from "@/types/kyc";
 
 type KycDetailHeaderProps = {
   detail: KycDetail;
   status: KycVerificationStatus;
+  canOffboard?: boolean;
 };
 
-export function KycDetailHeader({ detail, status }: KycDetailHeaderProps) {
+export function KycDetailHeader({ detail, status, canOffboard = false }: KycDetailHeaderProps) {
   const showExportReport =
     status === "approved" || status === "rejected" || status === "resubmission";
 
@@ -37,14 +39,17 @@ export function KycDetailHeader({ detail, status }: KycDetailHeaderProps) {
         </div>
       </div>
 
-      {showExportReport ? (
-        <button
-          type="button"
-          className="shrink-0 rounded-lg bg-[color:var(--accent-primary)] px-5 py-2.5 text-sm font-medium text-white hover:bg-[color:var(--accent-primary-hover)]"
-        >
-          Export Report
-        </button>
-      ) : null}
+      <div className="flex flex-wrap items-center gap-3">
+        {canOffboard ? <CustomerOffboardButton kind="kyc" customerId={detail.id} /> : null}
+        {showExportReport ? (
+          <button
+            type="button"
+            className="shrink-0 rounded-lg bg-[color:var(--accent-primary)] px-5 py-2.5 text-sm font-medium text-white hover:bg-[color:var(--accent-primary-hover)]"
+          >
+            Export Report
+          </button>
+        ) : null}
+      </div>
     </div>
   );
 }

@@ -44,7 +44,7 @@ export function TransactionsTable({
               {columns.map((column) => (
                 <th
                   key={column || "actions"}
-                  className="px-4 py-3 text-xs font-medium text-[color:var(--text-muted)]"
+                  className="whitespace-nowrap px-4 py-3 text-xs font-medium text-[color:var(--text-muted)]"
                 >
                   {column === "Transaction ID" ? (
                     <span className="inline-flex items-center gap-1">
@@ -88,7 +88,7 @@ export function TransactionsTable({
                       {record.transactionId}
                     </Link>
                   </td>
-                  <td className="px-4 py-4">
+                  <td className="whitespace-nowrap px-4 py-4">
                     <div className="flex flex-col gap-0.5">
                       <span className="font-medium text-[color:var(--text-primary)]">
                         {record.relativeTime}
@@ -99,10 +99,12 @@ export function TransactionsTable({
                       </span>
                     </div>
                   </td>
-                  <td className="px-4 py-4 text-[color:var(--text-primary)]">
-                    {record.customerName}
+                  <td className="max-w-[200px] px-4 py-4 text-[color:var(--text-primary)]">
+                    <span className="block truncate" title={record.customerName}>
+                      {record.customerName}
+                    </span>
                   </td>
-                  <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
+                  <td className="whitespace-nowrap px-4 py-4 font-medium text-[color:var(--text-primary)]">
                     {record.amountLabel}
                   </td>
                   <td className="px-4 py-4">

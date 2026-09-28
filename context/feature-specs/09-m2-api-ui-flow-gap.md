@@ -100,9 +100,10 @@ When Figma is missing, **build the flow** and note “API-derived / no Figma” 
 | P1 | Account purpose step/panel (KYC + KYB) | **Done** — API-derived / no Figma |
 | P1 | Start verification (check picker from `available-checks`) | **Done** — after intake; lookup unchanged |
 | P1 | Wire KYC/KYB list + detail reads | **Done** — list = verification queue (2026-09-15); detail = customers; mock unsupported panels |
-| P2 | Shareholder create/edit | API-derived if no Figma |
+| P2 | Shareholder create/edit | **Done** — Add shareholder modal on KYB Shareholders tab (API-derived) |
 | P2 | Tenant apps selector / settings | **Done** on Settings; lookup App dropdown still mock |
-| P2 | Flag status actions | Map into existing alert UI |
+| P2 | Flag status actions | **Done** — `CustomerFlagsPanel` on Document tab (warning → investigating → revised); Approve/Reject/Escalate unchanged |
+| P2 | Document requirements checklist | **Done** — `DocumentRequirementsChecklist` on KYC/KYB Document tabs |
 
 ---
 

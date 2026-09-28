@@ -191,10 +191,14 @@ export type TmPartyDetails = {
   riskLabel?: string;
   dateOfBirth?: string;
   nationalCode?: string;
+  activities?: string;
+  activityDescription?: string;
+  registrationDate?: string;
 };
 
 export type TmTransactionDetail = {
   id: string;
+  customerId?: string;
   transactionId: string;
   direction: TmTxDirection;
   category: TmTxCategory;

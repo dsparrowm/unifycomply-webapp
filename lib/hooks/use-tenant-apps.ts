@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createTenantApp, listTenantApps } from "@/lib/api/apps";
 import type { CreateTenantAppDto } from "@/lib/api/types";
@@ -23,7 +23,7 @@ export function useSettingsAppSelection() {
   const selectedAppIdByTenant = useSettingsAppStore((state) => state.selectedAppIdByTenant);
   const persistSelectedAppId = useSettingsAppStore((state) => state.setSelectedAppId);
   const appsQuery = useTenantApps();
-  const apps = appsQuery.data ?? [];
+  const apps = useMemo(() => appsQuery.data ?? [], [appsQuery.data]);
   const storedId = tenantId ? selectedAppIdByTenant[tenantId] : undefined;
   const selectedAppId = apps.some((app) => app.id === storedId) ? storedId : undefined;
 

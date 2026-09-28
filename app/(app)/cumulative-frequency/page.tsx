@@ -1,6 +1,7 @@
-import { TmQueueListPanel } from "@/components/transaction-monitoring/TmQueueListPanel";
-import { tmCumulativeFrequencyQueueEmpty } from "@/lib/data/tm-queues";
+import { Suspense } from "react";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
+import { TmQueueContainer } from "@/components/transaction-monitoring/TmQueueContainer";
 
 export default function CumulativeFrequencyPage() {
-  return <TmQueueListPanel data={tmCumulativeFrequencyQueueEmpty} />;
+  return <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}><TmQueueContainer queueId="cumulative-frequency" /></Suspense>;
 }

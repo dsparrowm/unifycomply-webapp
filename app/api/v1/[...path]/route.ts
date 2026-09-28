@@ -11,6 +11,9 @@ const ALLOWED_PREFIXES = [
   "public/",
   "customers/",
   "verifications/",
+  "transactions/",
+  "transaction-monitoring/",
+  "dashboard/",
 ] as const;
 
 type RouteContext = {

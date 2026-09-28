@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import { AccountStatementPanel } from "@/components/transaction-monitoring/AccountStatementPanel";
-import { getAccountStatementForTransaction } from "@/lib/data/account-statement";
+import { Suspense } from "react";
+import { AccountStatementContainer } from "@/components/transaction-monitoring/AccountStatementContainer";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 
 type AccountStatementPageProps = {
   params: Promise<{ id: string }>;
@@ -10,11 +10,5 @@ export default async function AccountStatementPage({
   params,
 }: AccountStatementPageProps) {
   const { id } = await params;
-  const data = getAccountStatementForTransaction(id);
-
-  if (!data) {
-    notFound();
-  }
-
-  return <AccountStatementPanel transactionId={id} data={data} />;
+  return <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}><AccountStatementContainer transactionId={id} /></Suspense>;
 }

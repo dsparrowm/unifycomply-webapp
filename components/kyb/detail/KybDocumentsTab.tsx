@@ -1,14 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Download, Eye, FileText } from "lucide-react";
+import { Check, Download, Eye, FileText, Pencil } from "lucide-react";
 import { KybDetailSectionHeader } from "@/components/kyb/detail/KybDetailSectionHeader";
+import { KybDocumentMetadataModal } from "@/components/kyb/detail/KybDocumentMetadataModal";
 import { KybDocumentViewerModal } from "@/components/kyb/detail/KybDocumentViewerModal";
 import { downloadKybDocument } from "@/lib/kyb/download-document";
+import type { CreateTenantKybDocumentDto } from "@/lib/api/types";
 import type { KybSubmittedDocument, KybSubmittedDocumentsData } from "@/types/kyb";
 
 type KybDocumentsTabProps = {
   documents: KybSubmittedDocumentsData;
+  onUpdateDocument?: (documentId: string, body: CreateTenantKybDocumentDto) => Promise<void>;
 };
 
 function DocumentStatusBadge({ status }: { status: KybSubmittedDocument["status"] }) {
@@ -40,9 +43,10 @@ type KybDocumentRowProps = {
   document: KybSubmittedDocument;
   onView: () => void;
   onDownload: () => void;
+  onEdit: () => void;
 };
 
-function KybDocumentRow({ document, onView, onDownload }: KybDocumentRowProps) {
+function KybDocumentRow({ document, onView, onDownload, onEdit }: KybDocumentRowProps) {
   return (
     <article className="flex flex-col gap-4 rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-5 py-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-center gap-4">
@@ -79,13 +83,22 @@ function KybDocumentRow({ document, onView, onDownload }: KybDocumentRowProps) {
         >
           <Download className="h-4 w-4" />
         </button>
+        <button
+          type="button"
+          aria-label={`Edit ${document.name}`}
+          onClick={onEdit}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-[color:var(--text-muted)] transition-colors hover:bg-[color:var(--bg-muted)] hover:text-[color:var(--text-primary)]"
+        >
+          <Pencil className="h-4 w-4" />
+        </button>
       </div>
     </article>
   );
 }
 
-export function KybDocumentsTab({ documents }: KybDocumentsTabProps) {
+export function KybDocumentsTab({ documents, onUpdateDocument }: KybDocumentsTabProps) {
   const [viewerDocument, setViewerDocument] = useState<KybSubmittedDocument | null>(null);
+  const [editingDocument, setEditingDocument] = useState<KybSubmittedDocument | null>(null);
   const documentCount = documents.documents.length;
 
   return (
@@ -103,6 +116,7 @@ export function KybDocumentsTab({ documents }: KybDocumentsTabProps) {
               document={document}
               onView={() => setViewerDocument(document)}
               onDownload={() => downloadKybDocument(document)}
+              onEdit={() => setEditingDocument(document)}
             />
           ))}
         </div>
@@ -113,6 +127,13 @@ export function KybDocumentsTab({ documents }: KybDocumentsTabProps) {
         submittedDocument={viewerDocument}
         onClose={() => setViewerDocument(null)}
       />
+      {onUpdateDocument ? (
+        <KybDocumentMetadataModal
+          document={editingDocument}
+          onClose={() => setEditingDocument(null)}
+          onSave={(body) => onUpdateDocument(editingDocument!.id, body)}
+        />
+      ) : null}
     </>
   );
 }

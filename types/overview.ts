@@ -42,3 +42,8 @@ export type OverviewDashboardData = {
   activities: OverviewActivityItem[];
   apiCalls: OverviewApiCallsPoint[];
 };
+
+export type OverviewDashboardApiData = Pick<
+  OverviewDashboardData,
+  "verification" | "highRiskCount" | "activities" | "apiCalls"
+>;

@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
-import { SarRationaleWizardPanel } from "@/components/transaction-monitoring/SarRationaleWizardPanel";
-import { getTmTransactionDetail } from "@/lib/data/transactions";
+import { Suspense } from "react";
+import { SarRationaleContainer } from "@/components/transaction-monitoring/SarRationaleContainer";
+import { PageLoadingSkeleton } from "@/components/feedback/PageLoadingSkeleton";
 
 type SarRationalePageProps = {
   params: Promise<{ id: string }>;
@@ -8,11 +8,5 @@ type SarRationalePageProps = {
 
 export default async function SarRationalePage({ params }: SarRationalePageProps) {
   const { id } = await params;
-  const detail = getTmTransactionDetail(id);
-
-  if (!detail) {
-    notFound();
-  }
-
-  return <SarRationaleWizardPanel detail={detail} />;
+  return <Suspense fallback={<PageLoadingSkeleton variant="dashboard" />}><SarRationaleContainer transactionId={id} /></Suspense>;
 }
