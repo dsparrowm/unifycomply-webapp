@@ -4,12 +4,13 @@ import type {
   ApiTmOverview,
   ApiTmQueue,
 } from "@/lib/api/transaction-monitoring";
-import type { AccountStatementData } from "@/types/account-statement";
+import type { AccountStatementData, AccountStatementLine } from "@/types/account-statement";
 import type {
   TmActivityPoint,
   TmCategoryItem,
   TmOverviewData,
   TmQueueId,
+  TmListMetric,
   TmQueueListData,
   TmVolumePoint,
 } from "@/types/transaction-monitoring";
@@ -91,16 +92,18 @@ export function mapApiTmQueue(queueId: TmQueueId, queue: ApiTmQueue): TmQueueLis
     .filter((record): record is NonNullable<typeof record> => record !== null)
     .map((record) => ({ ...record, category: queueId }));
 
+  const metrics: TmListMetric[] = [
+    { id: "total", label: "Total Transaction", value: formatNumber(numberValue(summary?.totalTransactions, records.length)), tone: "neutral" },
+    { id: "amount", label: "Total Amount", value: compactAmount(summary?.totalAmount), tone: "neutral" },
+    { id: "pending", label: "Pending Review", value: formatNumber(numberValue(summary?.pendingReview)), tone: "warning" },
+    { id: "resolved", label: "Resolved", value: formatNumber(numberValue(summary?.resolved)), tone: "success" },
+  ];
+
   return {
     queueId,
     title: meta.title,
     subtitle: meta.subtitle,
-    metrics: [
-      { id: "total", label: "Total Transaction", value: formatNumber(numberValue(summary?.totalTransactions, records.length)), tone: "neutral" },
-      { id: "amount", label: "Total Amount", value: compactAmount(summary?.totalAmount), tone: "neutral" },
-      { id: "pending", label: "Pending Review", value: formatNumber(numberValue(summary?.pendingReview)), tone: "warning" },
-      { id: "resolved", label: "Resolved", value: formatNumber(numberValue(summary?.resolved)), tone: "success" },
-    ].slice(0, queueId === "tm-blocked" ? 2 : 4),
+    metrics: metrics.slice(0, queueId === "tm-blocked" ? 2 : 4),
     records,
     columns: meta.columns,
     showStatusFilter: meta.showStatusFilter,
@@ -113,6 +116,16 @@ function money(value: number | undefined, currency = "USD"): string {
     currency,
     maximumFractionDigits: 2,
   }).format(numberValue(value));
+}
+
+function asString(value: unknown): string | undefined {
+  if (typeof value === "string" && value.trim()) {
+    return value.trim();
+  }
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return String(value);
+  }
+  return undefined;
 }
 
 function readableDate(value: string | undefined): string {
@@ -128,19 +141,19 @@ function readableDate(value: string | undefined): string {
 
 export function mapApiCustomerStatement(statement: ApiCustomerStatement): AccountStatementData {
   const summary = statement.summary;
-  const lines = statement.data.map((transaction, index) => {
+  const lines: AccountStatementLine[] = statement.data.map((transaction, index) => {
     const amount = money(transaction.amount, transaction.currency);
     const isDebit = transaction.direction === "outbound";
     return {
       id: transaction.id ?? `statement-${index + 1}`,
       serial: index + 1,
       timestamp: transaction.occurredAt ?? transaction.createdAt ?? "",
-      description: transaction.paymentPurpose ?? transaction.reference ?? "Transaction",
-      channelLabel: transaction.channel ?? transaction.transactionType ?? "Transaction",
+      description: asString(transaction.paymentPurpose) ?? asString(transaction.reference) ?? "Transaction",
+      channelLabel: asString(transaction.channel) ?? asString(transaction.transactionType) ?? "Transaction",
       reference: transaction.reference ?? transaction.id ?? "",
       debitLabel: isDebit ? amount : null,
       creditLabel: isDebit ? null : amount,
-      balanceLabel: money(transaction.balance as number | undefined, transaction.currency),
+      balanceLabel: money(typeof transaction.balance === "number" ? transaction.balance : undefined, transaction.currency),
       status: "completed" as const,
     };
   });

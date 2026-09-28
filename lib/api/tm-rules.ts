@@ -2,7 +2,6 @@ import { apiFetch, apiFetchEnvelope } from "@/lib/api/client";
 import { unwrapCollection } from "@/lib/api/mappers/customers";
 import type { TmRuleDetail, TmRuleRecord } from "@/types/tm-rules";
 import type { TmRuleTemplate } from "@/types/tm-rule-templates";
-import type { TmRuleDetail } from "@/types/tm-rules";
 
 type ApiTmRule = {
   id?: string;

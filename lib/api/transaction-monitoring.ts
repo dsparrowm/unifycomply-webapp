@@ -173,7 +173,7 @@ export async function getCustomerStatement(customerId: string, appId?: string) {
 
   return {
     data: unwrapCollection(envelope.data) as ApiTransaction[],
-    summary: envelope.summary,
+    summary: envelope.summary as ApiCustomerStatement["summary"],
     meta: envelope.meta,
   } satisfies ApiCustomerStatement;
 }

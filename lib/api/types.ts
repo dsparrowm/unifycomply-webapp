@@ -11,6 +11,7 @@ export type ApiEnvelope<T> = {
   message: string;
   data: T;
   meta?: ApiPageMeta;
+  summary?: unknown;
 };
 
 export type ApiPlatform = "app" | "admin";

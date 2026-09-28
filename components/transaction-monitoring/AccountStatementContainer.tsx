@@ -13,7 +13,7 @@ export function AccountStatementContainer({ transactionId }: { transactionId: st
   const statement = useCustomerStatement(customerId);
 
   if (detail.isLoading || statement.isLoading) return <PageLoadingSkeleton variant="dashboard" />;
-  if (detail.isError || statement.isError || !statement.data) {
+  if (detail.isError || statement.isError || !detail.data || !statement.data) {
     return (
       <PageErrorState
         title="Could not load account statement"

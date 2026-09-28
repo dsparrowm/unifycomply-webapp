@@ -107,16 +107,17 @@ export function AdoptTemplateModal({
 
   const filteredPackages = useMemo(() => {
     const needle = query.trim().toLowerCase();
+    const sourcePackages = templates ?? tmRuleTemplateCatalog.packages;
     if (!needle) {
-      return tmRuleTemplateCatalog.packages;
+      return sourcePackages;
     }
 
-    return (templates ?? tmRuleTemplateCatalog.packages).filter((item) =>
+    return sourcePackages.filter((item) =>
       [item.name, item.industryLabel, item.description].some((value) =>
         value.toLowerCase().includes(needle),
       ),
     );
-  }, [query]);
+  }, [query, templates]);
 
   if (!open) {
     return null;
