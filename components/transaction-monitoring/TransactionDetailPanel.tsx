@@ -353,7 +353,7 @@ function SectionTitle({ icon: Icon, children }: { icon?: LucideIcon; children: R
   );
 }
 
-function riskTheme(category: TmTxCategory, score: number) {
+function riskTheme(category: TmTxCategory | null, score: number) {
   if (category === "cumulative-frequency") {
     return {
       text: "text-[color:var(--state-purple)]",

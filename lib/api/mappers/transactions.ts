@@ -178,7 +178,7 @@ function mapEntityType(raw: string | undefined): TmEntityType {
   return "individual";
 }
 
-function mapCategory(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTxCategory {
+function mapCategory(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTxCategory | null {
   const meta = metaOf(tx);
   const raw =
     asString(risk?.category) ??
@@ -187,29 +187,23 @@ function mapCategory(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTx
     asString(meta.tmCategory) ??
     asString(meta.queue);
   const value = (raw ?? "").toLowerCase().replace(/_/g, "-");
+  if (!value) return null;
   if (value.includes("stop")) return "stop-payment";
   if (value.includes("cumul") || value.includes("frequency")) return "cumulative-frequency";
-  if (value.includes("not-block") || value.includes("cleared")) return "tm-not-blocked";
+  if (value.includes("not-block")) return "tm-not-blocked";
   if (value.includes("block")) return "tm-blocked";
-  return "tm-not-blocked";
+  return null;
 }
 
-function mapStatus(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTxStatus | null {
-  const meta = metaOf(tx);
-  const raw =
-    asString(risk?.status) ??
-    asString(tx.status) ??
-    asString(meta.status) ??
-    asString(meta.analystStatus);
+const TM_TX_STATUSES: readonly TmTxStatus[] = ["pending", "cleared", "in-review", "blocked"];
+
+/** Status column only. Risk and analyst fields are a different vocabulary. */
+function mapStatus(raw: string | null | undefined): TmTxStatus | null {
   if (!raw) {
     return null;
   }
-  const value = raw.toLowerCase().replace(/_/g, "-");
-  if (value.includes("block")) return "blocked";
-  if (value.includes("review")) return "in-review";
-  if (value.includes("pending")) return "pending";
-  if (value.includes("clear") || value.includes("approved") || value.includes("pass")) return "cleared";
-  return null;
+  const value = raw.trim().toLowerCase().replace(/_/g, "-");
+  return TM_TX_STATUSES.includes(value as TmTxStatus) ? (value as TmTxStatus) : null;
 }
 
 function severityFromScore(score: number): string {
@@ -223,7 +217,10 @@ function severityOf(score: number, risk?: ApiTransactionRisk | null): string {
   return level ? humanize(level.toLowerCase()) : severityFromScore(score);
 }
 
-function categoryLabel(category: TmTxCategory): string {
+function categoryLabel(category: TmTxCategory | null): string {
+  if (!category) {
+    return "—";
+  }
   const labels: Record<TmTxCategory, string> = {
     "tm-not-blocked": "TM Not-Blocked",
     "stop-payment": "Stop Payment",
@@ -313,7 +310,7 @@ export function mapApiTransactionToRecord(
     category: mapCategory(tx),
     riskScore: score,
     rulesTriggered: rulesTriggeredOf(tx),
-    status: mapStatus(tx),
+    status: mapStatus(asString(tx.status)),
     entityType: mapEntityType(asString(tx.profileType)),
     severityLabel: severityFromScore(score),
   };
@@ -352,6 +349,8 @@ export function mapApiTransactionsToListData(
 type TmDetailContext = {
   customerName?: string | null;
   customerMaskedAccount?: string | null;
+  /** `data.status` on `GET /transactions/{id}/detail`, used when the nested transaction omits it. */
+  status?: string | null;
   risk?: ApiTransactionRisk | null;
   analystStatus?: string | null;
   riskNarrative?: string | null;
@@ -532,7 +531,7 @@ export function mapApiTransactionToDetail(
   const { risk } = context;
   const occurredAt = asString(tx.occurredAt) ?? asString(tx.createdAt);
   const category = mapCategory(tx, risk);
-  const status = mapStatus(tx, risk);
+  const status = mapStatus(asString(tx.status) ?? asString(context.status));
   const score = riskScoreOf(tx, risk);
   const rulesCount = rulesTriggeredOf(tx, risk);
   const severity = severityOf(score, risk);
@@ -558,8 +557,12 @@ export function mapApiTransactionToDetail(
     riskScore: score,
     riskHeadline:
       score > 0
-        ? `${score}% Alert triggered (${categoryLabel(category)})`
-        : `0% Risk Score (${categoryLabel(category)})`,
+        ? category
+          ? `${score}% Alert triggered (${categoryLabel(category)})`
+          : `${score}% Alert triggered`
+        : category
+          ? `0% Risk Score (${categoryLabel(category)})`
+          : "0% Risk Score",
     riskFindings: riskFindingsOf(score, rules, asString(context.riskNarrative)),
     amountLabel,
     typeLabel: direction === "incoming" ? "Incoming Payment" : "Outgoing Payment",
@@ -611,6 +614,7 @@ export function mapApiTransactionDetailPayload(
   return mapApiTransactionToDetail(payload.transaction, {
     customerName: payload.customer?.name,
     customerMaskedAccount: payload.customer?.maskedAccount,
+    status: payload.status,
     risk: payload.risk,
     analystStatus: payload.analystStatus,
     riskNarrative: payload.riskNarrative,

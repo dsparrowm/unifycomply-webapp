@@ -1054,7 +1054,9 @@ export type ApiTransaction = {
   counterparty?: string | Record<string, unknown> | null;
   metadata?: Record<string, unknown> | null;
   customerName?: string | null;
+  /** Real-time Monitoring Status column: pending | cleared | in-review | blocked. */
   status?: string | null;
+  statusUpdatedAt?: string | null;
   riskScore?: number | null;
   [key: string]: unknown;
 };
@@ -1088,6 +1090,8 @@ export type ApiTransactionRisk = {
 /** `GET /v1/transactions/{id}/detail` — transaction + customer + risk assessment. */
 export type ApiTransactionDetail = {
   transaction: ApiTransaction;
+  /** Same value as `transaction.status`, lifted onto the detail payload. */
+  status?: string | null;
   customer?: { name?: string | null; maskedAccount?: string | null } | null;
   risk?: ApiTransactionRisk | null;
   analystStatus?: string | null;

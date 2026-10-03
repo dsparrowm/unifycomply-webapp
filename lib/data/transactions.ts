@@ -462,11 +462,13 @@ export function getTmTransactionDetail(id: string): TmTransactionDetail | null {
       name: listRecord.customerName,
     },
     category: listRecord.category,
-    categoryLabel: categoryLabels[listRecord.category],
+    categoryLabel: listRecord.category ? categoryLabels[listRecord.category] : "—",
     severityLabel:
       listRecord.riskScore >= 80 ? "High" : listRecord.riskScore >= 40 ? "Medium" : "Low",
     riskScore: listRecord.riskScore,
-    riskHeadline: `${listRecord.riskScore}% Risk Score (${categoryLabels[listRecord.category]})`,
+    riskHeadline: listRecord.category
+      ? `${listRecord.riskScore}% Risk Score (${categoryLabels[listRecord.category]})`
+      : `${listRecord.riskScore}% Risk Score`,
     riskFindings:
       listRecord.riskScore === 0
         ? ["No elevated risk signals detected for this transaction."]

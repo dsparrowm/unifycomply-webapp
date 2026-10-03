@@ -22,7 +22,7 @@ Read `AGENTS.md` before starting.
 1. **Header** — “Real-time Monitoring”, subtitle fraud-detection dashboard
 2. **Metrics** — Total Transaction, Not Blocked, Stop Payment, Cumulative Frequency, TM-Blocked
 3. **Filters** — Date, Status, Category, More filters, Search, Export Report
-4. **Table** — checkbox, Transaction ID, Timestamp (relative + clock), Customer, Amount, TM Category, Risk Score bar, Rules Trigger, Status, view. Status is shown only when the list item sends `status`. A missing status renders "—". Do not derive it from the case or the PND listing.
+4. **Table** — checkbox, Transaction ID, Timestamp (relative + clock), Customer, Amount, TM Category, Risk Score bar, Rules Trigger, Status, view. Status is the list item `status` (`pending` | `cleared` | `in-review` | `blocked`). A missing or unknown value renders "—". Do not derive it from risk, the case, or the PND listing. Pill labels come from `transaction-statuses`. The Status dropdown keeps Figma **Review** for `in-review`.
 5. **Empty** — “No User Activity” (`TM Category-2`)
 6. **Pagination** — Previous / pages / Next
 

@@ -83,7 +83,7 @@ export type TmTransactionRecord = {
   absoluteTime: string;
   customerName: string;
   amountLabel: string;
-  category: TmTxCategory;
+  category: TmTxCategory | null;
   riskScore: number;
   rulesTriggered: number;
   status: TmTxStatus | null;
@@ -202,7 +202,7 @@ export type TmTransactionDetail = {
   customerId?: string;
   transactionId: string;
   direction: TmTxDirection;
-  category: TmTxCategory;
+  category: TmTxCategory | null;
   categoryLabel: string;
   severityLabel: string;
   riskScore: number;

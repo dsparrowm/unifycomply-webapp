@@ -37,7 +37,7 @@ export function TransactionsListPanel({ data }: TransactionsListPanelProps) {
         record.customerName,
         record.amountLabel,
         record.status ?? "",
-        record.category,
+        record.category ?? "",
         String(record.riskScore),
       ].some((value) => value.toLowerCase().includes(query)),
     );

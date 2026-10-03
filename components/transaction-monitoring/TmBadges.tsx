@@ -1,4 +1,7 @@
+"use client";
+
 import type { TmTxCategory, TmTxStatus } from "@/types/transaction-monitoring";
+import { useTransactionStatusLabels } from "@/lib/hooks/use-transaction-status-labels";
 import { cn } from "@/lib/utils";
 
 const categoryConfig: Record<
@@ -23,39 +26,30 @@ const categoryConfig: Record<
   },
 };
 
-const statusConfig: Record<TmTxStatus, { label: string; className: string }> = {
-  pending: {
-    label: "Pending",
-    className: "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]",
-  },
-  cleared: {
-    label: "Cleared",
-    className: "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]",
-  },
-  "in-review": {
-    label: "In Review",
-    className: "bg-[color:var(--state-info-soft)] text-[color:var(--state-info)]",
-  },
-  blocked: {
-    label: "Blocked",
-    className: "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
-  },
+const statusTone: Record<TmTxStatus, string> = {
+  pending: "bg-[color:var(--state-warning-soft)] text-[color:var(--state-warning)]",
+  cleared: "bg-[color:var(--state-success-soft)] text-[color:var(--state-success)]",
+  "in-review": "bg-[color:var(--state-info-soft)] text-[color:var(--state-info)]",
+  blocked: "bg-[color:var(--state-error-soft)] text-[color:var(--state-error)]",
 };
 
 const pillClass =
   "inline-flex items-center whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium";
 
-export function TmCategoryBadge({ category }: { category: TmTxCategory }) {
+export function TmCategoryBadge({ category }: { category: TmTxCategory | null }) {
+  if (!category) {
+    return <span className="text-sm text-[color:var(--text-muted)]">—</span>;
+  }
   const config = categoryConfig[category];
   return <span className={cn(pillClass, config.className)}>{config.label}</span>;
 }
 
 export function TmStatusText({ status }: { status: TmTxStatus | null }) {
+  const labels = useTransactionStatusLabels();
   if (!status) {
     return <span className="text-sm text-[color:var(--text-muted)]">—</span>;
   }
-  const config = statusConfig[status];
-  return <span className={cn(pillClass, config.className)}>{config.label}</span>;
+  return <span className={cn(pillClass, statusTone[status])}>{labels[status]}</span>;
 }
 
 export function TmRiskScoreBar({ score }: { score: number }) {

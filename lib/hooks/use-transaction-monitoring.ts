@@ -17,6 +17,7 @@ import {
   startSarDraft,
 } from "@/lib/api/transaction-monitoring";
 import { mapApiTmOverview, mapApiTmQueue } from "@/lib/api/mappers/transaction-monitoring";
+import { transactionKeys } from "@/lib/hooks/use-transactions";
 import type { TmQueueId } from "@/types/transaction-monitoring";
 
 export const transactionMonitoringKeys = {
@@ -65,23 +66,29 @@ export function useTransactionActions(id: string) {
   const { selectedAppId } = useSettingsAppSelection();
   const queryClient = useQueryClient();
   const appId = selectedAppId ?? undefined;
+  const refreshStatus = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["transaction-monitoring", "case", id] });
+    await queryClient.invalidateQueries({ queryKey: transactionKeys.listRoot });
+    await queryClient.invalidateQueries({ queryKey: ["transactions", "detail", id] });
+  };
+
   return {
     resolve: useMutation({
       mutationFn: (body: Parameters<typeof resolveTransactionCase>[1]) => resolveTransactionCase(id, body, appId),
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({ queryKey: ["transaction-monitoring", "case", id] });
-      },
+      onSuccess: refreshStatus,
     }),
-    escalate: useMutation({ mutationFn: (notes: string) => escalateTransactionCase(id, notes, appId) }),
+    escalate: useMutation({
+      mutationFn: (notes: string) => escalateTransactionCase(id, notes, appId),
+      onSuccess: refreshStatus,
+    }),
     assignCase: useMutation({
       mutationFn: (userId: string | null) => assignTransactionCase(id, userId, appId),
-      onSuccess: async () => {
-        await queryClient.invalidateQueries({
-          queryKey: ["transaction-monitoring", "case", id],
-        });
-      },
+      onSuccess: refreshStatus,
     }),
-    placePnd: useMutation({ mutationFn: (body: Parameters<typeof placeTransactionPnd>[1]) => placeTransactionPnd(id, body, appId) }),
+    placePnd: useMutation({
+      mutationFn: (body: Parameters<typeof placeTransactionPnd>[1]) => placeTransactionPnd(id, body, appId),
+      onSuccess: refreshStatus,
+    }),
     sarRationale: useMutation({ mutationFn: (body: Parameters<typeof generateTransactionSarRationale>[1]) => generateTransactionSarRationale(id, body, appId) }),
   };
 }

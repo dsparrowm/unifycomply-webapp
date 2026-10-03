@@ -26,7 +26,11 @@ export const tmDateFilterOptions: TmFilterOption<TmDateFilter>[] = [
   { value: "last-month", label: "Last Month" },
 ];
 
-/** Figma `TM Category-4` — Status dropdown */
+/**
+ * Figma `TM Category-4` — Status dropdown.
+ * Values match `transaction-statuses`. The frame says Review; the option set says In Review.
+ * Pill labels (In Review) load from that option set.
+ */
 export const tmStatusFilterOptions: TmFilterOption<TmStatusFilter>[] = [
   { value: "all", label: "All" },
   { value: "pending", label: "Pending" },
