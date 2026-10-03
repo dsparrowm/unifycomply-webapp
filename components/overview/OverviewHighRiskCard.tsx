@@ -2,7 +2,7 @@ import { ShieldAlert } from "lucide-react";
 import { OverviewSectionHeader } from "@/components/overview/OverviewSectionHeader";
 
 type OverviewHighRiskCardProps = {
-  count: number;
+  count: number | null;
 };
 
 export function OverviewHighRiskCard({ count }: OverviewHighRiskCardProps) {
@@ -33,7 +33,7 @@ export function OverviewHighRiskCard({ count }: OverviewHighRiskCardProps) {
       </div>
 
       <p className="mt-auto pt-10 text-[60px] font-semibold leading-none text-[color:var(--text-primary)]">
-        {count}
+        {count ?? "—"}
       </p>
     </section>
   );

@@ -28,13 +28,18 @@ export function KycDetailHeader({ detail, status, canOffboard = false }: KycDeta
         </Link>
 
         <div className="flex flex-wrap items-center gap-3">
-          <p className="text-sm font-medium">
-            <span className="text-[color:var(--text-muted)]">KYC / </span>
-            <span className="text-[color:var(--accent-primary-hover)]">{detail.documentType} / </span>
-            <span className="text-[color:var(--text-primary)]">
-              {detail.customerName.toUpperCase()}
-            </span>
-          </p>
+          <div>
+            <p className="text-sm font-medium">
+              <span className="text-[color:var(--text-muted)]">KYC / </span>
+              <span className="text-[color:var(--accent-primary-hover)]">{detail.documentType} / </span>
+              <span className="text-[color:var(--text-primary)]">
+                {detail.customerName.toUpperCase()}
+              </span>
+            </p>
+            {detail.resubmission ? (
+              <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">Resubmission</p>
+            ) : null}
+          </div>
           <KycStatusBadge status={status} uppercase />
         </div>
       </div>

@@ -7,6 +7,7 @@ import { KybMetricCards } from "@/components/kyb/KybMetricCards";
 import { KybPageHeader } from "@/components/kyb/KybPageHeader";
 import { KybTable } from "@/components/kyb/KybTable";
 import { KycPagination } from "@/components/kyc/KycPagination";
+import type { AssigneeChoice } from "@/components/kyc/KycAssignedToCell";
 import { filterKybBatches, filterKybRecords } from "@/lib/kyb/filter-kyb-records";
 import type { KybListData, KybListFilters } from "@/types/kyb";
 
@@ -15,9 +16,18 @@ const PAGE_SIZE = 10;
 type KybListPanelProps = {
   data: KybListData;
   initialSearchMode?: KybListFilters["searchMode"];
+  assignees?: AssigneeChoice[];
+  onAssign?: (workflowId: string, userId: string | null) => void;
+  assigningWorkflowId?: string | null;
 };
 
-export function KybListPanel({ data, initialSearchMode }: KybListPanelProps) {
+export function KybListPanel({
+  data,
+  initialSearchMode,
+  assignees,
+  onAssign,
+  assigningWorkflowId,
+}: KybListPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<KybListFilters>({
     ...kybDefaultFilters,
@@ -122,7 +132,13 @@ export function KybListPanel({ data, initialSearchMode }: KybListPanelProps) {
         {isBulkSearch ? (
           <KybBatchTable batches={paginatedBatches} emptyMessage={emptyMessage} />
         ) : (
-          <KybTable records={paginatedRecords} emptyMessage={emptyMessage} />
+          <KybTable
+            records={paginatedRecords}
+            emptyMessage={emptyMessage}
+            assignees={assignees}
+            onAssign={onAssign}
+            assigningWorkflowId={assigningWorkflowId}
+          />
         )}
         {visibleItems.length > 0 ? (
           <KycPagination

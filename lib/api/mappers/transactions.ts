@@ -2,6 +2,7 @@ import type {
   ApiTransaction,
   ApiTransactionDetail,
   ApiTransactionRisk,
+  ApiTransactionTimelineEvent,
 } from "@/lib/api/types";
 import type {
   TmListMetric,
@@ -193,24 +194,22 @@ function mapCategory(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTx
   return "tm-not-blocked";
 }
 
-function mapStatus(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTxStatus {
+function mapStatus(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmTxStatus | null {
   const meta = metaOf(tx);
   const raw =
     asString(risk?.status) ??
     asString(tx.status) ??
     asString(meta.status) ??
     asString(meta.analystStatus);
-  const value = (raw ?? "").toLowerCase().replace(/_/g, "-");
+  if (!raw) {
+    return null;
+  }
+  const value = raw.toLowerCase().replace(/_/g, "-");
   if (value.includes("block")) return "blocked";
   if (value.includes("review")) return "in-review";
   if (value.includes("pending")) return "pending";
   if (value.includes("clear") || value.includes("approved") || value.includes("pass")) return "cleared";
-  const category = mapCategory(tx, risk);
-  if (category === "tm-blocked") return "blocked";
-  if (category === "stop-payment" || category === "cumulative-frequency") {
-    return "pending";
-  }
-  return "cleared";
+  return null;
 }
 
 function severityFromScore(score: number): string {
@@ -234,7 +233,10 @@ function categoryLabel(category: TmTxCategory): string {
   return labels[category];
 }
 
-function statusLabel(status: TmTxStatus): string {
+function statusLabel(status: TmTxStatus | null): string {
+  if (!status) {
+    return "—";
+  }
   const labels: Record<TmTxStatus, string> = {
     pending: "Pending",
     cleared: "Cleared",
@@ -353,6 +355,7 @@ type TmDetailContext = {
   risk?: ApiTransactionRisk | null;
   analystStatus?: string | null;
   riskNarrative?: string | null;
+  timeline?: ApiTransactionTimelineEvent[] | null;
 };
 
 function mapRules(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmRuleResult[] {
@@ -360,7 +363,8 @@ function mapRules(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmRuleR
     return risk.matchedRules.map((rule, index) => ({
       id: asString(rule.ruleId) ?? `r${index + 1}`,
       label: asString(rule.ruleName) ?? `Rule ${index + 1}`,
-      outcome: "flagged",
+      outcome: "flagged" as const,
+      reason: asString(rule.reason) ?? asString(rule.description),
     }));
   }
 
@@ -385,10 +389,37 @@ function mapRules(tx: ApiTransaction, risk?: ApiTransactionRisk | null): TmRuleR
   });
 }
 
+function mapApiTimeline(events: ApiTransactionTimelineEvent[]): TmTimelineStep[] {
+  return events.map((event, index) => {
+    const kind = (asString(event.kind) ?? "event").toLowerCase();
+    const label =
+      kind === "initiated"
+        ? "Transaction initiated"
+        : kind === "analysis-complete"
+          ? "System Analysis Complete"
+          : kind === "flagged-for-review"
+            ? "Flagged for Review"
+            : humanize(kind);
+    const tone: TmTimelineStep["tone"] =
+      kind === "initiated" || kind === "analysis-complete"
+        ? "success"
+        : kind === "flagged-for-review"
+          ? "error"
+          : "info";
+    return {
+      id: `${kind}-${index}`,
+      label,
+      detail: asString(event.message),
+      timestamp: formatDateTime(asString(event.occurredAt)),
+      tone,
+    };
+  });
+}
+
 function mapTimeline(
   occurredAt: string | undefined,
   risk: ApiTransactionRisk | null | undefined,
-  status: TmTxStatus,
+  status: TmTxStatus | null,
   rulesCount: number,
 ): TmTimelineStep[] {
   const flagged = rulesCount > 0 || status === "blocked" || status === "pending";
@@ -482,7 +513,7 @@ function riskFindingsOf(score: number, rules: TmRuleResult[], narrative?: string
   }
   const flagged = rules.filter((rule) => rule.outcome === "flagged");
   if (flagged.length > 0) {
-    return flagged.map((rule) => `${rule.label} rule matched`);
+    return flagged.map((rule) => rule.reason ?? `${rule.label} rule matched`);
   }
   return score > 0
     ? ["Risk score contributed by risk-score rules; no detection rule matched."]
@@ -550,7 +581,10 @@ export function mapApiTransactionToDetail(
     rules,
     relatedTransactions: [],
     relatedTotalCount: 0,
-    timeline: mapTimeline(occurredAt, risk, status, rulesCount),
+    timeline:
+      context.timeline && context.timeline.length > 0
+        ? mapApiTimeline(context.timeline)
+        : mapTimeline(occurredAt, risk, status, rulesCount),
     quickStats: [
       { label: "Customer ID", value: asString(tx.customerId) ?? "—" },
       { label: "Email", value: asString(meta.email) ?? asString(meta.customerEmail) ?? "-" },
@@ -580,5 +614,6 @@ export function mapApiTransactionDetailPayload(
     risk: payload.risk,
     analystStatus: payload.analystStatus,
     riskNarrative: payload.riskNarrative,
+    timeline: payload.timeline,
   });
 }

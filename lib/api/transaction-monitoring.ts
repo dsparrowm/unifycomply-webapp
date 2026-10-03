@@ -192,6 +192,13 @@ export function resolveTransactionCase(id: string, body: ResolveCasePayload, app
   );
 }
 
+export function assignTransactionCase(id: string, userId: string | null, appId?: string) {
+  return apiFetch<unknown>(
+    `/api/v1/transactions/${encodeURIComponent(id)}/actions/assign-case`,
+    { method: "POST", body: { userId }, headers: appHeaders(appId) },
+  );
+}
+
 export function escalateTransactionCase(id: string, notes: string, appId?: string) {
   return apiFetch<unknown>(
     `/api/v1/transactions/${encodeURIComponent(id)}/actions/escalate-case`,
@@ -203,6 +210,42 @@ export function placeTransactionPnd(id: string, body: PlacePndPayload, appId?: s
   return apiFetch<unknown>(
     `/api/v1/transactions/${encodeURIComponent(id)}/actions/place-pnd`,
     { method: "POST", body, headers: appHeaders(appId) },
+  );
+}
+
+export type SarDraftStart = {
+  id: string;
+};
+
+export type SarDraftReply = {
+  conversation?: { id?: string; messages?: { role?: string; content?: string }[] };
+  draftNarrative?: {
+    narrative?: {
+      openingStatement?: string;
+      activityDescription?: string;
+      whyItsSuspicious?: string;
+      investigationStepsTaken?: string;
+      summaryAndRecommendation?: string;
+    };
+  } | null;
+};
+
+export function startSarDraft(id: string, appId?: string) {
+  return apiFetch<SarDraftStart>(
+    `/api/v1/transactions/${encodeURIComponent(id)}/sar-draft/start`,
+    { method: "POST", headers: appHeaders(appId) },
+  );
+}
+
+export function sendSarDraftMessage(
+  id: string,
+  conversationId: string,
+  message: string,
+  appId?: string,
+) {
+  return apiFetch<SarDraftReply>(
+    `/api/v1/transactions/${encodeURIComponent(id)}/sar-draft/${encodeURIComponent(conversationId)}/messages`,
+    { method: "POST", body: { message }, headers: appHeaders(appId) },
   );
 }
 

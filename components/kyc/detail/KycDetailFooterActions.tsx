@@ -9,6 +9,8 @@ export type KycDetailFooterVariant = "standard" | "resubmission-primary";
 type KycDetailFooterActionsProps = {
   riskScore: number;
   variant?: KycDetailFooterVariant;
+  approveDisabled?: boolean;
+  rejectDisabled?: boolean;
   onRequestResubmission: () => void;
   onReject: () => void;
   onApprove: () => void;
@@ -21,6 +23,8 @@ const footerShellClassName =
 export function KycDetailFooterActions({
   riskScore,
   variant = "standard",
+  approveDisabled = false,
+  rejectDisabled = false,
   onRequestResubmission,
   onReject,
   onApprove,
@@ -35,7 +39,8 @@ export function KycDetailFooterActions({
           <button
             type="button"
             onClick={onReject}
-            className="h-11 min-w-[135px] rounded-lg border border-[color:var(--state-error)] bg-[color:var(--bg-surface)] px-5 text-sm font-medium text-[color:var(--state-error)] transition-colors hover:bg-[color:var(--state-error-soft)]"
+            disabled={rejectDisabled}
+            className="h-11 min-w-[135px] rounded-lg border border-[color:var(--state-error)] bg-[color:var(--bg-surface)] px-5 text-sm font-medium text-[color:var(--state-error)] transition-colors hover:bg-[color:var(--state-error-soft)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Reject
           </button>
@@ -96,15 +101,17 @@ export function KycDetailFooterActions({
         <button
           type="button"
           onClick={onReject}
-          className="h-11 min-w-[135px] rounded-lg border border-[color:var(--state-error)] bg-[color:var(--bg-surface)] px-5 text-sm font-medium text-[color:var(--state-error)] transition-colors hover:bg-[color:var(--state-error-soft)]"
+          disabled={rejectDisabled}
+          className="h-11 min-w-[135px] rounded-lg border border-[color:var(--state-error)] bg-[color:var(--bg-surface)] px-5 text-sm font-medium text-[color:var(--state-error)] transition-colors hover:bg-[color:var(--state-error-soft)] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Reject
         </button>
         <button
           type="button"
           onClick={onApprove}
+          disabled={approveDisabled}
           className={cn(
-            "h-11 min-w-[135px] rounded-lg bg-[color:var(--accent-primary-hover)] px-5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]",
+            "h-11 min-w-[135px] rounded-lg bg-[color:var(--accent-primary-hover)] px-5 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)] disabled:cursor-not-allowed disabled:opacity-50",
           )}
         >
           Approve

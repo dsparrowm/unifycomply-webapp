@@ -8,14 +8,28 @@ import {
 } from "@/lib/data/kyc-assignees";
 import { cn } from "@/lib/utils";
 
+export type AssigneeChoice = {
+  value: string;
+  label: string;
+};
+
 type KycAssignedToCellProps = {
   assignedTo: string | null;
+  assignedToId?: string | null;
   customerName: string;
+  /** Live officers. When set, the cell writes `userId` instead of a display name. */
+  assignees?: AssigneeChoice[];
+  onAssign?: (userId: string | null) => void;
+  disabled?: boolean;
 };
 
 export function KycAssignedToCell({
   assignedTo,
+  assignedToId,
   customerName,
+  assignees,
+  onAssign,
+  disabled = false,
 }: KycAssignedToCellProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(assignedTo ?? "");
@@ -51,8 +65,14 @@ export function KycAssignedToCell({
     };
   }, [open]);
 
-  const label = value || KYC_UNASSIGNED_LABEL;
-  const isUnassigned = value === "";
+  const live = Boolean(assignees);
+  const options = assignees ?? kycAssigneeOptions;
+  const selected = live ? (assignedToId ?? "") : value;
+  const label =
+    options.find((option) => option.value === selected)?.label ||
+    assignedTo ||
+    KYC_UNASSIGNED_LABEL;
+  const isUnassigned = label === KYC_UNASSIGNED_LABEL;
 
   return (
     <div ref={containerRef} className="relative">
@@ -61,6 +81,7 @@ export function KycAssignedToCell({
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Assigned to ${label} for ${customerName}`}
+        disabled={disabled}
         onClick={() => setOpen((current) => !current)}
         className={cn(
           "inline-flex max-w-full items-center gap-1 text-left text-sm",
@@ -84,28 +105,32 @@ export function KycAssignedToCell({
           aria-label="Assign reviewer"
           className="absolute left-0 top-[calc(100%+4px)] z-50 min-w-[200px] overflow-hidden rounded-lg border border-[color:var(--border-subtle)] bg-[color:var(--bg-surface)] py-1 shadow-[0px_12px_16px_-4px_rgba(16,24,40,0.08),0px_4px_6px_-2px_rgba(16,24,40,0.03)]"
         >
-          {kycAssigneeOptions.map((option) => {
-            const selected = option.value === value;
+          {options.map((option) => {
+            const isSelected = option.value === selected;
 
             return (
               <button
                 key={option.value || "unassigned"}
                 type="button"
                 role="option"
-                aria-selected={selected}
+                aria-selected={isSelected}
                 onClick={() => {
-                  setValue(option.value);
+                  if (live && onAssign) {
+                    onAssign(option.value || null);
+                  } else {
+                    setValue(option.value);
+                  }
                   setOpen(false);
                 }}
                 className={cn(
                   "flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-sm font-medium text-[color:var(--text-primary)] transition-colors",
-                  selected
+                  isSelected
                     ? "bg-[color:var(--bg-muted)]"
                     : "hover:bg-[color:var(--bg-muted)]",
                 )}
               >
                 <span className="flex-1">{option.label}</span>
-                {selected ? (
+                {isSelected ? (
                   <Check className="h-5 w-5 shrink-0 text-[color:var(--accent-primary)]" />
                 ) : (
                   <span className="h-5 w-5 shrink-0" aria-hidden />

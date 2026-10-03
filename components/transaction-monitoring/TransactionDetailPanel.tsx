@@ -20,7 +20,13 @@ import { ResolveCaseModal } from "@/components/transaction-monitoring/ResolveCas
 import { PlacePndModal } from "@/components/transaction-monitoring/PlacePndModal";
 import type { TmTransactionDetail, TmTxCategory } from "@/types/transaction-monitoring";
 import { cn } from "@/lib/utils";
+import { CaseManagementPanel } from "@/components/transaction-monitoring/CaseManagementPanel";
+import { resolveOptionValue } from "@/lib/investigation/option-values";
+import { useAssignableOfficers } from "@/lib/hooks/use-assignment";
+import { useInvestigationOptions } from "@/lib/hooks/use-investigation-options";
 import { useTransactionActions, useTransactionCase } from "@/lib/hooks/use-transaction-monitoring";
+import { useRbac } from "@/lib/hooks/use-rbac";
+import { runAction, toastError, toastSuccess } from "@/lib/toast";
 
 type TransactionDetailPanelProps = {
   detail: TmTransactionDetail;
@@ -35,6 +41,15 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
   const [escalateOpen, setEscalateOpen] = useState(false);
   const caseQuery = useTransactionCase(detail.id, tab === "case");
   const actions = useTransactionActions(detail.id);
+  const investigationOptions = useInvestigationOptions();
+  const officers = useAssignableOfficers();
+  const { canPerform } = useRbac();
+  const reportingActions = [
+    { label: "Resolve Case", permission: "case:resolve" },
+    { label: "Place PND", permission: "pnd:manage" },
+    { label: "Generate SAR Rationale", permission: "sar:file" },
+    { label: "Escalate Case", permission: "case:escalate" },
+  ].map((action) => ({ ...action, disabled: !canPerform(action.permission) }));
 
   const resolveCase = (payload: {
     resolutionType: string;
@@ -42,12 +57,12 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
     actionsTaken: string[];
     notes: string;
   }) => {
-    const resolutionTypeMap: Record<string, "cleared-no-issues" | "false-positive" | "escalated-to-authorities" | "resolved-after-contact" | "documentation-provided-cleared"> = {
-      cleared: "cleared-no-issues",
-      "false-positive": "false-positive",
-      escalated: "escalated-to-authorities",
-      "customer-contact": "resolved-after-contact",
-      documentation: "documentation-provided-cleared",
+    const resolutionTypeMap: Record<string, { label: string; value: "cleared-no-issues" | "false-positive" | "escalated-to-authorities" | "resolved-after-contact" | "documentation-provided-cleared" }> = {
+      cleared: { label: "Cleared - No Issues Found", value: "cleared-no-issues" },
+      "false-positive": { label: "False Positive", value: "false-positive" },
+      escalated: { label: "Escalated to Authorities", value: "escalated-to-authorities" },
+      "customer-contact": { label: "Resolved After Customer Contact", value: "resolved-after-contact" },
+      documentation: { label: "Documentation Provided - Cleared", value: "documentation-provided-cleared" },
     };
     const actionMap: Record<string, string> = {
       "Customer verification completed": "customer-verification-completed",
@@ -59,12 +74,24 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
       "Business relationship reviewed": "business-relationship-reviewed",
       "Sanctions screening passed": "sanctions-screening-passed",
     };
-    void actions.resolve.mutateAsync({
-      resolutionType: resolutionTypeMap[payload.resolutionType] ?? "cleared-no-issues",
-      outcomeSummary: payload.outcomeSummary,
-      actionsTaken: payload.actionsTaken.map((action) => actionMap[action] ?? action),
-      resolutionNotes: payload.notes,
-    });
+    const resolution = resolutionTypeMap[payload.resolutionType] ?? resolutionTypeMap.cleared;
+    const optionSets = investigationOptions.data;
+    void runAction(
+      () =>
+        actions.resolve.mutateAsync({
+          resolutionType: resolveOptionValue(
+            optionSets?.["case-resolution-types"],
+            resolution.label,
+            resolution.value,
+          ) as typeof resolution.value,
+          outcomeSummary: payload.outcomeSummary,
+          actionsTaken: payload.actionsTaken.map((action) =>
+            resolveOptionValue(optionSets?.["case-actions-taken"], action, actionMap[action] ?? action),
+          ),
+          resolutionNotes: payload.notes,
+        }),
+      { success: "Case resolved", error: "Could not resolve this case" },
+    ).catch(() => undefined);
   };
 
   const handleAction = (label: string) => {
@@ -90,6 +117,7 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
         actionsOpen={actionsOpen}
         onActionsOpenChange={setActionsOpen}
         onAction={handleAction}
+        reportingActions={reportingActions}
       />
 
       <ResolveCaseModal
@@ -104,7 +132,26 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
         transactionId={detail.transactionId}
         customerName={detail.customerName}
         onClose={() => setPndOpen(false)}
-        onSubmit={(payload) => void actions.placePnd.mutateAsync(payload)}
+        onSubmit={(payload) => {
+          const optionSets = investigationOptions.data;
+          void runAction(
+            () =>
+              actions.placePnd.mutateAsync({
+                ...payload,
+                entityType: resolveOptionValue(
+                  optionSets?.["investigation-entity-types"],
+                  payload.entityType === "business" ? "Business" : "Individual",
+                  payload.entityType,
+                ) as typeof payload.entityType,
+                riskLevel: resolveOptionValue(
+                  optionSets?.["investigation-risk-levels"],
+                  payload.riskLevel,
+                  payload.riskLevel,
+                ) as typeof payload.riskLevel,
+              }),
+            { success: "PND placed", error: "Could not place this PND" },
+          ).catch(() => undefined);
+        }}
       />
 
       <EscalateCaseModal
@@ -112,7 +159,12 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
         transactionId={detail.transactionId}
         customerName={detail.customerName}
         onClose={() => setEscalateOpen(false)}
-        onConfirm={(notes) => void actions.escalate.mutateAsync(notes)}
+        onConfirm={(notes) => {
+          void runAction(() => actions.escalate.mutateAsync(notes), {
+            success: "Case escalated",
+            error: "Could not escalate this case",
+          }).catch(() => undefined);
+        }}
       />
 
       <div className="inline-flex w-fit items-center gap-1 rounded-lg bg-[color:var(--bg-muted)] p-1">
@@ -151,7 +203,27 @@ export function TransactionDetailPanel({ detail }: TransactionDetailPanelProps) 
           </div>
         </div>
       ) : (
-        <CaseManagementPlaceholder data={caseQuery.data} isLoading={caseQuery.isLoading} />
+        <CaseManagementPanel
+          data={caseQuery.data}
+          isLoading={caseQuery.isLoading}
+          isError={caseQuery.isError}
+          accountNumber={detail.customer.maskedId}
+          assignees={officers.data}
+          assigning={actions.assignCase.isPending}
+          onAssign={(userId) => {
+            void actions.assignCase
+              .mutateAsync(userId)
+              .then(() => toastSuccess(userId ? "Case assigned" : "Case unassigned"))
+              .catch((error: unknown) => toastError(error, "Could not assign this case"));
+          }}
+          sidebar={
+            <>
+              <TimelineCard steps={detail.timeline} />
+              <KeyValueCard title="Quick Stats" rows={detail.quickStats} />
+              <KeyValueCard title="Full Metadata" rows={detail.metadata} grid />
+            </>
+          }
+        />
       )}
     </div>
   );
@@ -162,11 +234,13 @@ function DetailHeader({
   actionsOpen,
   onActionsOpenChange,
   onAction,
+  reportingActions,
 }: {
   detail: TmTransactionDetail;
   actionsOpen: boolean;
   onActionsOpenChange: (open: boolean) => void;
   onAction: (label: string) => void;
+  reportingActions: { label: string; disabled: boolean }[];
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -222,20 +296,16 @@ function DetailHeader({
               <p className="px-3.5 py-2 text-xs font-medium uppercase tracking-wide text-[color:var(--text-light)]">
                 Reporting Actions
               </p>
-              {[
-                "Resolve Case",
-                "Place PND",
-                "Generate SAR Rationale",
-                "Escalate Case",
-              ].map((label) => (
+              {reportingActions.map((action) => (
                 <button
-                  key={label}
+                  key={action.label}
                   type="button"
                   role="menuitem"
-                  onClick={() => onAction(label)}
-                  className="flex w-full px-3.5 py-2.5 text-left text-sm font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-muted)]"
+                  disabled={action.disabled}
+                  onClick={() => onAction(action.label)}
+                  className="flex w-full px-3.5 py-2.5 text-left text-sm font-medium text-[color:var(--text-primary)] hover:bg-[color:var(--bg-muted)] disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {label}
+                  {action.label}
                 </button>
               ))}
             </div>
@@ -680,38 +750,6 @@ function KeyValueCard({
           </div>
         ))}
       </dl>
-    </div>
-  );
-}
-
-function CaseManagementPlaceholder({
-  data,
-  isLoading,
-}: {
-  data?: Record<string, unknown>;
-  isLoading: boolean;
-}) {
-  const entries = Object.entries(data ?? {}).filter(([, value]) => value !== null && value !== undefined);
-
-  return (
-    <div className="rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] px-6 py-16 text-center shadow-sm">
-      <p className="text-lg font-medium text-[color:var(--text-primary)]">Case Management</p>
-      {isLoading ? <p className="mt-2 text-sm text-[color:var(--text-muted)]">Loading case details...</p> : null}
-      {!isLoading && entries.length === 0 ? (
-        <p className="mt-2 text-sm text-[color:var(--text-muted)]">No case data is available for this transaction.</p>
-      ) : null}
-      {entries.length > 0 ? (
-        <dl className="mx-auto mt-6 grid max-w-2xl gap-2 text-left sm:grid-cols-2">
-          {entries.map(([label, value]) => (
-            <div key={label} className="rounded-lg bg-[color:var(--bg-muted)] px-3 py-2">
-              <dt className="text-xs text-[color:var(--text-muted)]">{label}</dt>
-              <dd className="mt-1 text-sm font-medium text-[color:var(--text-primary)]">
-                {typeof value === "string" || typeof value === "number" ? String(value) : JSON.stringify(value)}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
     </div>
   );
 }

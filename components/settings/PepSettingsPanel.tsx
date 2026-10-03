@@ -5,6 +5,7 @@ import { EditPepTierModal } from "@/components/settings/EditPepTierModal";
 import { PepTierCard } from "@/components/settings/PepTierCard";
 import { runAction } from "@/lib/toast";
 import type { SettingsPepSettings, SettingsPepTier } from "@/types/settings";
+import { useRbac } from "@/lib/hooks/use-rbac";
 import { cn } from "@/lib/utils";
 
 type PepSettingsPanelProps = {
@@ -13,6 +14,8 @@ type PepSettingsPanelProps = {
 };
 
 export function PepSettingsPanel({ pepSettings, onSaveTier }: PepSettingsPanelProps) {
+  const { canPerform } = useRbac();
+  const settingsLocked = !canPerform("tenant-settings:update");
   const [tiers, setTiers] = useState<SettingsPepTier[]>(pepSettings.tiers);
   const [editingTierId, setEditingTierId] = useState<string | null>(null);
   const [isDirty, setIsDirty] = useState(false);
@@ -74,7 +77,7 @@ export function PepSettingsPanel({ pepSettings, onSaveTier }: PepSettingsPanelPr
           <button
             type="button"
             onClick={handleSave}
-            disabled={!isDirty || isSubmitting}
+            disabled={!isDirty || isSubmitting || settingsLocked}
             className={cn(
               "inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-2.5 text-xs font-medium transition-colors",
               isDirty

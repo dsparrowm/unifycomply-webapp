@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Eye } from "lucide-react";
 import type { KybRecord } from "@/types/kyb";
-import { KycAssignedToCell } from "@/components/kyc/KycAssignedToCell";
+import { KycAssignedToCell, type AssigneeChoice } from "@/components/kyc/KycAssignedToCell";
 import { KycPriorityBadge, KycStatusBadge } from "@/components/kyc/KycStatusBadge";
 import { verificationDetailHref } from "@/lib/compliance/detail-href";
 
@@ -21,12 +21,18 @@ type KybTableProps = {
   records: KybRecord[];
   emptyMessage?: string;
   showViewAction?: boolean;
+  assignees?: AssigneeChoice[];
+  onAssign?: (workflowId: string, userId: string | null) => void;
+  assigningWorkflowId?: string | null;
 };
 
 export function KybTable({
   records,
   emptyMessage = "No User Activity",
   showViewAction = false,
+  assignees,
+  onAssign,
+  assigningWorkflowId,
 }: KybTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
@@ -96,9 +102,10 @@ export function KybTable({
                     >
                       {record.businessName}
                     </Link>
-                    <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">
-                      {record.businessType}
-                    </p>
+                    <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">{record.businessType}</p>
+                    {record.resubmission ? (
+                      <p className="text-xs text-[color:var(--text-muted)]">Resubmission</p>
+                    ) : null}
                   </td>
                   <td className="px-4 py-4 text-[color:var(--text-primary)]">
                     {record.verificationType}
@@ -116,7 +123,15 @@ export function KybTable({
                   <td className="px-4 py-4">
                     <KycAssignedToCell
                       assignedTo={record.assignedTo}
+                      assignedToId={record.assignedToId}
                       customerName={record.businessName}
+                      assignees={record.workflowId ? assignees : undefined}
+                      disabled={assigningWorkflowId === record.workflowId}
+                      onAssign={
+                        record.workflowId && onAssign
+                          ? (userId) => onAssign(record.workflowId as string, userId)
+                          : undefined
+                      }
                     />
                   </td>
                   <td className="px-4 py-4 text-[color:var(--text-muted)]">

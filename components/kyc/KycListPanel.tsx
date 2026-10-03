@@ -6,6 +6,7 @@ import { KycMetricCards } from "@/components/kyc/KycMetricCards";
 import { KycPageHeader } from "@/components/kyc/KycPageHeader";
 import { KycPagination } from "@/components/kyc/KycPagination";
 import { KycTable } from "@/components/kyc/KycTable";
+import type { AssigneeChoice } from "@/components/kyc/KycAssignedToCell";
 import { filterKycRecords } from "@/lib/kyc/filter-kyc-records";
 import type { KycListData, KycListFilters } from "@/types/kyc";
 
@@ -13,9 +14,17 @@ const PAGE_SIZE = 10;
 
 type KycListPanelProps = {
   data: KycListData;
+  assignees?: AssigneeChoice[];
+  onAssign?: (workflowId: string, userId: string | null) => void;
+  assigningWorkflowId?: string | null;
 };
 
-export function KycListPanel({ data }: KycListPanelProps) {
+export function KycListPanel({
+  data,
+  assignees,
+  onAssign,
+  assigningWorkflowId,
+}: KycListPanelProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<KycListFilters>(kycDefaultFilters);
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +88,13 @@ export function KycListPanel({ data }: KycListPanelProps) {
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
         />
-        <KycTable records={paginatedRecords} emptyMessage={emptyMessage} />
+        <KycTable
+          records={paginatedRecords}
+          emptyMessage={emptyMessage}
+          assignees={assignees}
+          onAssign={onAssign}
+          assigningWorkflowId={assigningWorkflowId}
+        />
         {filteredRecords.length > 0 ? (
           <KycPagination
             currentPage={currentPage}

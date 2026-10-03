@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import { AUTH_PLATFORM } from "@/lib/api/config";
-import { jsonError } from "@/lib/api/server/http";
+import { setAuthCookies } from "@/lib/api/server/cookies";
+import { jsonError, stripTokensFromSignInData } from "@/lib/api/server/http";
 import { upstreamFetch } from "@/lib/api/server/upstream";
+import type { ApiAccessTokens } from "@/lib/api/types";
 
 type CompleteForgotPasswordBody = {
   token?: string;
   email?: string;
-  password?: string;
+};
+
+type ForgotPasswordSession = {
+  access?: ApiAccessTokens;
 };
 
 export async function POST(request: Request) {
@@ -14,7 +19,6 @@ export async function POST(request: Request) {
     const body = (await request.json()) as CompleteForgotPasswordBody;
     const token = body.token?.trim();
     const email = body.email?.trim();
-    const password = body.password;
 
     if (!token) {
       return NextResponse.json(
@@ -28,23 +32,29 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    if (!password || password.length < 8) {
-      return NextResponse.json(
-        { status: false, message: "Password must be at least 8 characters", data: null },
-        { status: 400 },
-      );
-    }
 
-    // Upstream OpenAPI references AuthEmailVerifyDto (email only); real completion
-    // needs the new password — send both.
-    const envelope = await upstreamFetch({
+    const envelope = await upstreamFetch<ForgotPasswordSession>({
       method: "POST",
       path: `/v1/auth/forgot-password/${encodeURIComponent(token)}`,
       query: { platform: AUTH_PLATFORM },
-      body: { email, password },
+      body: { email },
     });
 
-    return NextResponse.json(envelope, { status: 201 });
+    const access = envelope.data?.access;
+    if (access?.token && access.refreshToken) {
+      await setAuthCookies(access);
+    }
+
+    return NextResponse.json(
+      {
+        status: true,
+        message: envelope.message,
+        data: stripTokensFromSignInData(
+          (envelope.data ?? {}) as unknown as Record<string, unknown>,
+        ),
+      },
+      { status: 201 },
+    );
   } catch (error) {
     return jsonError(error, 400);
   }

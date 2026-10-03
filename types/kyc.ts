@@ -72,6 +72,10 @@ export type KycRecord = {
   riskScore: number;
   /** Reviewer display name, or `null` for Figma **Unassigned**. */
   assignedTo: string | null;
+  /** Officer user id when the queue row includes `assignedTo.id`. */
+  assignedToId?: string | null;
+  /** Send-back is open. The status pill stays Pending. */
+  resubmission?: boolean;
   timeInQueue: string;
   submittedAt: string;
 };
@@ -350,6 +354,9 @@ export type KycDetail = {
   documentAlert?: KycDocumentAlert;
   /** Live customer flags — investigation status via PATCH (not Approve/Reject). */
   flags?: CustomerFlag[];
+  /** From `nextReviewAt`. Null clocks read "no review scheduled". */
+  nextReviewLabel?: string;
+  resubmission?: boolean;
 };
 
 export type KycLookupType =

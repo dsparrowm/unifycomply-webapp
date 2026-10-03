@@ -25,10 +25,15 @@ export function KybDetailHeader({ detail, status, canOffboard = false }: KybDeta
         </Link>
 
         <div className="flex flex-wrap items-center gap-3">
-          <p className="text-sm font-medium">
-            <span className="text-[color:var(--text-muted)]">KYB / </span>
-            <span className="text-[color:var(--text-primary)]">{detail.businessName}</span>
-          </p>
+          <div>
+            <p className="text-sm font-medium">
+              <span className="text-[color:var(--text-muted)]">KYB / </span>
+              <span className="text-[color:var(--text-primary)]">{detail.businessName}</span>
+            </p>
+            {detail.resubmission ? (
+              <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">Resubmission</p>
+            ) : null}
+          </div>
           <KycStatusBadge status={status} uppercase />
         </div>
       </div>

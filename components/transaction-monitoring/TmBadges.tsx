@@ -50,7 +50,10 @@ export function TmCategoryBadge({ category }: { category: TmTxCategory }) {
   return <span className={cn(pillClass, config.className)}>{config.label}</span>;
 }
 
-export function TmStatusText({ status }: { status: TmTxStatus }) {
+export function TmStatusText({ status }: { status: TmTxStatus | null }) {
+  if (!status) {
+    return <span className="text-sm text-[color:var(--text-muted)]">—</span>;
+  }
   const config = statusConfig[status];
   return <span className={cn(pillClass, config.className)}>{config.label}</span>;
 }

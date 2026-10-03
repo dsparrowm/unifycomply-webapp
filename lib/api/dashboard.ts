@@ -15,9 +15,17 @@ export type ApiDashboardActivity = {
   message?: string;
   user?: string;
   actor?: string;
+  customerName?: string;
   createdAt?: string;
   timestamp?: string;
   status?: string;
+};
+
+export type ApiDashboardVerificationType = {
+  type?: string;
+  label?: string;
+  count?: number;
+  percentage?: number;
 };
 
 export type ApiDashboardCallPoint = {
@@ -44,6 +52,10 @@ export async function getDashboardActivity() {
     query: { page: "1", limit: "5" },
   });
   return unwrapCollection(response.data) as ApiDashboardActivity[];
+}
+
+export async function getDashboardVerificationTypes() {
+  return apiFetch<ApiDashboardVerificationType[]>("/api/v1/dashboard/verification-types");
 }
 
 export async function getDashboardApiCalls(year = String(new Date().getFullYear())) {

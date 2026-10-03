@@ -1,4 +1,5 @@
 import { countryLabelFromCode } from "@/lib/api/mappers/onboarding";
+import { assignedToIdFrom, hasResubmission } from "@/lib/api/mappers/review-state";
 import { clampRiskScore } from "@/lib/kyc/risk-score";
 import type { ApiAvailableCheck, ApiAvailableChecks, ApiCustomerListStats } from "@/lib/api/types";
 import type { KycListData, KycMetric, KycPriority, KycRecord, KycVerificationStatus } from "@/types/kyc";
@@ -294,6 +295,8 @@ export function mapApiVerificationToKycRecord(item: unknown): KycRecord | null {
     priority: mapPriority(record.priority, riskScore),
     riskScore,
     assignedTo: mapAssignedTo(record),
+    assignedToId: assignedToIdFrom(record),
+    resubmission: hasResubmission(record),
     timeInQueue: timeFromMs ?? formatTimeInQueueFromIso(asString(record.createdAt) ?? asString(record.updatedAt)),
     submittedAt: formatSubmittedAt(asString(record.createdAt) ?? asString(record.updatedAt)),
   };
@@ -329,6 +332,8 @@ export function mapApiVerificationToKybRecord(item: unknown): KybRecord | null {
     priority: mapPriority(record.priority, riskScore),
     riskScore,
     assignedTo: mapAssignedTo(record),
+    assignedToId: assignedToIdFrom(record),
+    resubmission: hasResubmission(record),
     timeInQueue: timeFromMs ?? formatTimeInQueueFromIso(asString(record.createdAt) ?? asString(record.updatedAt)),
     submittedAt: formatSubmittedAt(asString(record.createdAt) ?? asString(record.updatedAt)),
   };

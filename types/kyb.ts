@@ -39,6 +39,10 @@ export type KybRecord = {
   status: KybVerificationStatus;
   priority: KybPriority;
   assignedTo: string | null;
+  /** Officer user id when the queue row includes `assignedTo.id`. */
+  assignedToId?: string | null;
+  /** Send-back is open. The status pill stays Pending. */
+  resubmission?: boolean;
   /** Composite risk score on the 0–4 scale (Settings → Approvals). */
   riskScore: number;
   timeInQueue: string;
@@ -247,6 +251,9 @@ export type KybDetail = {
   riskAnalysisAvailable?: boolean;
   /** Live customer flags — investigation status via PATCH (not Approve/Reject). */
   flags?: CustomerFlag[];
+  /** From `nextReviewAt`. Null clocks read "no review scheduled". */
+  nextReviewLabel?: string;
+  resubmission?: boolean;
 };
 
 export type KybRegistryLookupResult = {

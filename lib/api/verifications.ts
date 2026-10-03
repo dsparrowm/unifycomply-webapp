@@ -80,6 +80,14 @@ export function listAllKybVerifications(appId?: string) {
   return listAllVerificationRows("/api/v1/verifications/kyb", appId);
 }
 
+export function assignVerification(workflowId: string, userId: string | null, appId?: string) {
+  return apiFetch<unknown>(`/api/v1/verifications/${encodeURIComponent(workflowId)}/assignee`, {
+    method: "PUT",
+    body: { userId },
+    headers: appHeaders(appId),
+  });
+}
+
 export function getVerification(workflowId: string, appId?: string) {
   return apiFetch<ApiVerificationDetail>(`/api/v1/verifications/${workflowId}`, {
     headers: appHeaders(appId),

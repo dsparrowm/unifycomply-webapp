@@ -1,0 +1,6943 @@
+
+===== PAGE 1 =====
+UnifyComply API — Frontend Integration
+
+Guide
+
+Every HTTP endpoint core-platform exposes today — what each one is for, who can call it, a real
+
+request and a real response, and the gotchas a generated schema will not tell you.
+
+Generated 2026-10-01
+
+Base URL {API_BASE}/v1 — core-platform is the only service a frontend ever calls. It fans out to compliance-domain, provider-
+
+gateway, risk-decisioning, transaction-monitoring and investigation-sar; none of those are reachable directly.
+
+How the examples were made Every request and response below was captured live on 2026-10-01 against a fresh sandbox tenant
+
+("Docs Demo Fintech Ltd") created for this guide. IDs are real but belong to that throwaway tenant. Tokens, API secrets, webhook
+
+secrets and OTP secrets are redacted; long arrays are shortened with /* … N more */ .
+
+Interactive schema Swagger is served live by core-platform at /v1/docs — use it for exact validator rules; use this guide for
+
+behaviour.
+
+Contents
+
+0. How to read this
+
+1. Fundamentals — auth, headers, envelope, errors,
+
+limits
+
+2. Authentication & account
+
+3. Tenant onboarding & user profile
+
+4. Apps & API keys
+
+5. App configuration — risk, PEP, compliance rules,
+
+webhooks
+
+6. Team, roles, business information, domain
+
+7. Public option sets (enum lookups)
+
+8. Customers — KYC (individuals) & KYB (businesses)
+
+9. Verifications
+
+10. Verification review tabs
+
+11. Dashboard & webhooks
+
+12. Transactions — ingestion, detail, statement
+
+13. Transaction-monitoring settings & Re-KYC triggers
+
+14. Transaction-monitoring dashboard & queues
+
+15. Investigations — reporting actions & case
+
+management
+
+16. PND watchlist & SAR reports
+
+17. What's left — known gaps
+
+0. How to read this
+
+Every endpoint card carries a status badge and the credential types it accepts:
+
+LIVE endpoint exists, was called for this guide, and behaves as documented. PARTIAL endpoint works, but one
+
+or more fields are always null / empty by design today, or a dependency is missing in some environments.
+
+NOT BUILT nothing exists yet.
+
+SESSION a signed-in user's JWT. API KEY an app-scoped secret sk_… . PUBLIC no credentials.
+
+Method colours: GET blue, POST green, PUT purple, PATCH amber, DELETE red. Paths are shown with the /v1
+
+prefix exactly as you send them.
+===== PAGE 2 =====
+1. Fundamentals — auth, headers, envelope, errors, limits
+
+TWO CREDENTIAL TYPES
+
+Credential How to send it Use it for
+
+Session
+
+JWT
+
+Authorization: Bearer <token> from sign-in / onboarding /
+
+refresh, plus x-app-id: <appId> to pick which of the tenant's
+
+apps you act on (omit → the tenant's default app)
+
+Everything a human does in the dashboard:
+
+settings, team, investigations, verification
+
+review tabs.
+
+API key Authorization: Bearer sk_<domain>-<random> . App and
+
+domain are baked into the key; x-app-id is ignored.
+
+Server-to-server integration: customers,
+
+documents, verifications, transactions,
+
+webhooks, dashboard reads.
+
+Routes guarded by CombinedAuthGuard accept either credential. Routes guarded only by PermissionsGuard are
+
+session-only — an API key gets 401 Unauthorized , not 403 (see 1.4). Session routes also check the signed-in
+
+user's role permissions ( dashboard:access , tenant-settings:update , case:resolve , case:escalate ,
+
+pnd:manage , sar:file , …); a role without the permission gets 403.
+
+API-KEY SCOPES
+
+Scope Grants
+
+customers:read / customers:write Customer roster, profile CRUD, account purpose, TM subscription, flags,
+
+approve/reject, offboard
+
+documents:write Uploading or replacing documents (customer and shareholder)
+
+verifications:read /
+
+verifications:write
+
+Starting/reading verifications, available checks, the /dashboard/* reads
+
+webhooks:read / webhooks:write Reading webhook deliveries / requeueing one
+
+transactions:read /
+
+transactions:write
+
+Transaction ingestion and reads, TM dashboard/queues, account statement
+
+A key missing the scope a route needs gets 403 (the key is valid, it just isn't allowed).
+
+HEADERS & CORS
+
+Allowed request headers: Authorization , Content-Type , x-app-id . Allowed methods: GET POST PUT DELETE
+
+PATCH OPTIONS . Your origin must be in core-platform's CORS_ORIGINS . Bodies are application/json ; files travel as
+
+base64 data URIs inside JSON (never multipart).
+
+RESPONSE ENVELOPE
+
+{
+
+"status": true, // false on any error
+
+"message": "…", // human-readable, safe to toast
+
+"data": { … } | [ … ] | null,
+
+"meta"?: { "totalItems", "itemsCount", "itemsPerPage", "totalPages", "currentPage" }, // paginated lists
+
+only
+
+"summary"?: { … } // list screens that also need tile counts (TM queues, PND, SAR,
+
+statement)
+
+}
+
+Paginated lists accept page (1-based) and limit (default 20).
+===== PAGE 3 =====
+ERRORS — REAL EXAMPLES
+
+400 — validation failure (one message string listing every failed rule)
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/notification-preferences
+
+{"eventCallbackUrl": "http://localhost:4999/webhooks/unifycomply", "webhookEnabled": true}
+
+// response — HTTP 400
+
+{"status": false, "message": "eventCallbackUrl must be a URL address"}
+
+401 — bad credentials
+
+// response — HTTP 401
+
+{"status": false, "message": "User authentication failed. Invalid username or password"}
+
+401 — API key on a session-only route
+
+// response — HTTP 401
+
+{"status": false, "message": "Unauthorized"}
+
+404 — unknown id
+
+// response — HTTP 404
+
+{
+
+"status": false,
+
+"message": "No SAR filing found with a matching id: 00000000000000000000000000000000"
+
+}
+
+429 — rate limited
+
+// response — HTTP 429
+
+{"status": false, "message": "ThrottlerException: Too Many Requests", "data": null}
+
+Rate limits are per client and stacked: 10 requests / second, 40 / 10 seconds, 200 / minute. A burst (e.g. firing every
+
+dashboard tile plus a table at once) can hit the 10/s window — fetch lazily, debounce search inputs, and retry 429s with
+
+backoff.
+
+DOMAIN — SANDBOX VS PRODUCTION
+
+Every tenant has two isolated domains. A sandbox customer is invisible to a production request. API keys are bound
+
+to one domain at issue ( sk_sandbox-… / sk_production-… ). A session switches with POST
+
+/v1/tenants/settings/domain/switch (§6.4), which re-issues the token. Sandbox calls deterministic provider
+
+simulators — nothing billed, nothing sent to a real watchlist; the AML simulator flags any name containing "sanction"
+
+or "pep".
+===== PAGE 4 =====
+2. Authentication & account
+
+Sign-up → verify email → sign-in → onboard the tenant (§3). All /v1/auth/* sign-in style routes take ?
+
+platform=app|admin .
+
+2.1 Sign up LIVE PUBLIC
+
+POST /v1/auth/sign-up
+
+// request — POST /v1/auth/sign-up
+
+{
+
+"firstName": "Ada", "lastName": "Okafor", "email": "docs.demo.1790894194091@unifycomply.test",
+
+"countryCode": "NG", "password": "<redacted>"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Sign up successful.",
+
+"data": {
+
+"id": "f0e9c73b09f1448a94175812f9f2f4ed", "createdAt": "2026-10-01T22:36:34.146Z",
+
+"updatedAt": "2026-10-01T22:36:34.146Z", "email": "docs.demo.1790894194091@unifycomply.test",
+
+"phone": null, "firstName": "Ada", "lastName": "Okafor", "countryCode": "NG",
+
+"status": "created", "lastActivityAt": null, "language": "en-US", "timezone": "Africa/Lagos",
+
+"imageUrl": null
+
+}
+
+}
+
+Creates the user only (status created ). They cannot sign in until the email is verified. Password must be
+
+"strong" (upper, lower, digit, symbol, 8+).
+
+2.2 Email verification — send code, then confirm LIVE PUBLIC
+
+POST /v1/auth/email/verify
+
+POST /v1/auth/email/verify/:token?platform=app
+
+// request — POST /v1/auth/email/verify
+
+{"email": "docs.demo.1790894194091@unifycomply.test"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Verification email sent successfully.",
+
+"data": {"email": "docs.demo.1790894194091@unifycomply.test", "expires": 300}
+
+}
+
+// request — POST /v1/auth/email/verify/:token?platform=app
+
+{"email": "docs.demo.1790894194091@unifycomply.test"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Email verified successfully.",
+
+"data": {
+
+"user": {
+
+"id": "f0e9c73b09f1448a94175812f9f2f4ed",
+
+"email": "docs.demo.1790894194091@unifycomply.test", "phone": null, "firstName": "Ada",
+
+"lastName": "Okafor", "countryCode": "NG", "status": "created", "lastActivityAt": null,
+
+"language": "en-US", "timezone": "Africa/Lagos", "imageUrl": null
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+===== PAGE 5 =====
+}
+
+}
+
+Confirming returns a full session (same shape as sign-in) — the user is signed in immediately.
+
+The code is 4 characters and expires after 300 seconds. Show a countdown from expires and a resend button
+
+that calls the first route again.
+
+2.3 Sign in LIVE PUBLIC
+
+POST /v1/auth/sign-in?platform=app
+
+// request — POST /v1/auth/sign-in?platform=app
+
+{"email": "docs.demo.1790894194091@unifycomply.test", "password": "<redacted>"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Sign in successful",
+
+"data": {
+
+"user": {
+
+"id": "f0e9c73b09f1448a94175812f9f2f4ed",
+
+"email": "docs.demo.1790894194091@unifycomply.test", "phone": null, "firstName": "Ada",
+
+"lastName": "Okafor", "countryCode": "NG", "status": "active",
+
+"lastActivityAt": "2026-10-01T22:38:31.477Z", "language": "en-US",
+
+"timezone": "Africa/Lagos", "imageUrl": null
+
+},
+
+"userAccess": [
+
+{
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+}
+
+],
+
+"currentAccess": {
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+
+}
+
+}
+
+access.token is the bearer for every session call; keep access.refreshToken for §2.4. currentAccess is the
+
+tenant the token acts as — null until the user has onboarded or been invited to a tenant.
+
+When MFA is enabled — continue with §2.8 mfa/validate using data.userId
+
+// request — POST /v1/auth/sign-in?platform=app
+
+{"email": "docs.demo.1790894194091@unifycomply.test", "password": "<redacted>"}
+
+// response — HTTP 401
+
+{
+
+"status": false, "message": "Multifactor Authentication required.",
+
+"data": {"userId": "f0e9c73b09f1448a94175812f9f2f4ed"}
+
+}
+===== PAGE 6 =====
+2.4 Refresh the access token LIVE REFRESH TOKEN
+
+POST /v1/auth/refresh
+
+Send the refresh token (not the access token) as Authorization: Bearer <refreshToken> . No body.
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Token refresh successful",
+
+"data": {
+
+"currentAccess": {
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+},
+
+"currentRole": {
+
+"id": "0f4e5a4603234018bb80791780ac9295", "name": "Administrator", "department": null,
+
+"description": null, "isDefault": true, "riskLevelMinimum": 0, "riskLevelMaximum": 4,
+
+"permissions": ["dashboard:access", "team-member:create", "team-member:update", "… 12 more"]
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": null}
+
+}
+
+}
+
+access.refreshToken comes back null . Refresh issues a new access token only — keep using the refresh
+
+token you already hold. currentRole.permissions is the list to gate UI actions on.
+
+2.5 Current user & tenant access LIVE SESSION
+
+GET /v1/auth/user
+
+GET /v1/auth/access
+
+POST /v1/auth/access/switch
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "User auth profile retrieved successfully.",
+
+"data": {
+
+"id": "f0e9c73b09f1448a94175812f9f2f4ed", "createdAt": "2026-10-01T22:36:34.146Z",
+
+"updatedAt": "2026-10-01T22:36:47.579Z", "email": "docs.demo.1790894194091@unifycomply.test",
+
+"phone": null, "firstName": "Ada", "lastName": "Okafor", "countryCode": "NG",
+
+"status": "active", "lastActivityAt": "2026-10-01T22:36:47.579Z", "language": "en-US",
+
+"timezone": "Africa/Lagos", "imageUrl": null
+
+}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "User access information retrieved successfully",
+
+"data": {
+
+"userAccess": [
+
+{
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+}
+
+],
+
+"currentAccess": {
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+===== PAGE 7 =====
+}
+
+}
+
+}
+
+// request — POST /v1/auth/access/switch
+
+{"accessId": "34bfd0c7b0b24af9913abd453024ee04"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "User access switched successfully",
+
+"data": {
+
+"currentAccess": {
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+
+}
+
+}
+
+Switching tenants returns a new token — replace the stored one.
+
+2.6 Change password LIVE SESSION
+
+PUT /v1/auth/password
+
+// request — PUT /v1/auth/password
+
+{"password": "<redacted>"}
+
+// response — HTTP 200
+
+{"status": true, "message": "User password updated successfully", "data": null}
+
+2.7 Forgot password LIVE PUBLIC
+
+POST /v1/auth/forgot-password
+
+POST /v1/auth/forgot-password/:token?platform=app
+
+// request — POST /v1/auth/forgot-password
+
+{"email": "docs.demo.1790894194091@unifycomply.test"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Forgot password initiated successfully",
+
+"data": {"email": "docs.demo.1790894194091@unifycomply.test", "expires": 300}
+
+}
+
+// request — POST /v1/auth/forgot-password/:token?platform=app
+
+{"email": "docs.demo.1790894194091@unifycomply.test"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Account retrieved successfully",
+
+"data": {
+
+"user": {
+
+"id": "f0e9c73b09f1448a94175812f9f2f4ed",
+
+"email": "docs.demo.1790894194091@unifycomply.test", "phone": "+2348020000001",
+
+"firstName": "Ada", "lastName": "Okafor", "countryCode": "NG", "status": "active",
+
+"lastActivityAt": "2026-10-01T22:38:43.379Z", "language": "en-US",
+
+"timezone": "Africa/Lagos", "imageUrl": null
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+===== PAGE 8 =====
+}
+
+}
+
+Completing the reset signs the user in — it does not take a new password. Route straight to a "set new
+
+password" screen and call §2.6 PUT /v1/auth/password with the returned session.
+
+2.8 Multi-factor authentication (TOTP) LIVE SESSION
+
+GET /v1/auth/mfa/status
+
+POST /v1/auth/mfa/setup
+
+PUT /v1/auth/mfa/enable
+
+POST /v1/auth/mfa/validate?platform=app
+
+PUT /v1/auth/mfa/disable
+
+// response — HTTP 200
+
+{"status": true, "message": "User MFA status retrieved successfully", "data": {"MFAEnabled": false}}
+
+// request — POST /v1/auth/mfa/setup
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "User MFA setup initiated successfully",
+
+"data": {
+
+"secret": "<redacted>",
+
+"keyUri": "otpauth://totp/unifycomply:docs.demo.1790894194091%40unifycomply.test?secret=
+
+<redacted>&period=30&digits=6&algorithm=SHA1&issuer=unifycomply"
+
+}
+
+}
+
+Render keyUri as a QR code for authenticator apps; show secret as the manual-entry fallback.
+
+Enable — body is a current 6-digit code from the authenticator
+
+// request — PUT /v1/auth/mfa/enable
+
+{"token": "401946"}
+
+// response — HTTP 200
+
+{"status": true, "message": "User MFA enabled successfully", "data": {"MFAEnabled": true}}
+
+Validate — public; completes a sign-in that returned 401 "Multifactor Authentication required"
+
+// request — POST /v1/auth/mfa/validate?platform=app
+
+{"userId": "f0e9c73b09f1448a94175812f9f2f4ed", "token": "401946"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Validation completed",
+
+"data": {
+
+"user": {
+
+"id": "f0e9c73b09f1448a94175812f9f2f4ed",
+
+"email": "docs.demo.1790894194091@unifycomply.test", "phone": "+2348020000001",
+
+"firstName": "Ada", "lastName": "Okafor", "countryCode": "NG", "status": "active",
+
+"lastActivityAt": "2026-10-01T22:38:45.867Z", "language": "en-US",
+
+"timezone": "Africa/Lagos", "imageUrl": null
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+===== PAGE 9 =====
+}
+
+}
+
+// request — PUT /v1/auth/mfa/disable
+
+{"token": "843575"}
+
+// response — HTTP 200
+
+{"status": true, "message": "User MFA disabled successfully", "data": {"MFAEnabled": false}}
+
+2.9 Google sign-in LIVE PUBLIC
+
+GET /v1/auth/google/sign-in?redirect=<your-callback-url>
+
+GET /v1/auth/google/callback
+
+POST /v1/auth/sign-in/intent
+
+Navigate the browser (not fetch ) to /v1/auth/google/sign-in . It answers 302 to Google's consent screen
+
+(captured: HTTP 302 → https://accounts.google.com/o/oauth2/v2/auth?… ). Google returns to
+
+/v1/auth/google/callback , which redirects to your redirect URL with a one-time intent . Exchange it:
+
+POST /v1/auth/sign-in/intent?platform=app
+
+{ "intent": "<intent from the redirect>" }
+
+// → same session shape as §2.3
+
+Not captured live. The callback and intent exchange need a real Google account; shapes are from the controller.
+
+3. Tenant onboarding & user profile
+
+3.1 Onboard a tenant LIVE SESSION
+
+POST /v1/tenants/onboarding
+
+// request — POST /v1/tenants/onboarding
+
+{
+
+"name": "Docs Demo Fintech Ltd", "registrationNumber": "RC-1029384", "countryCode": "NG",
+
+"timezone": "Africa/Lagos", "website": "https://docs-demo.unifycomply.test",
+
+"industry": "fintech", "companySize": "11-50"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Tenant created successfully",
+
+"data": {
+
+"tenant": {
+
+"id": "7c9e91f81e064c6a9eada352ffeaf9c7", "name": "Docs Demo Fintech Ltd",
+
+"registrationNumber": "RC-1029384", "tin": null, "industry": "fintech",
+
+"website": "https://docs-demo.unifycomply.test", "yearFounded": null,
+
+"companySize": "11-50", "countryCode": "NG", "timezone": "Africa/Lagos",
+
+"address": {
+
+"city": null, "state": null, "street": null, "country": null, "houseNo": null,
+
+"zipCode": null, "formatted": "()", "stateCode": null,
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": null
+
+}
+
+},
+===== PAGE 10 =====
+"userAccess": [
+
+{
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+}
+
+],
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+
+}
+
+}
+
+Call once, right after the first sign-in. Required: name , registrationNumber , countryCode , timezone .
+
+Provisions everything a first verification needs: a default app, sandbox + production API keys, an Administrator
+
+role, risk/PEP/compliance defaults, default transaction-monitoring rules and the nine Re-KYC triggers.
+
+Swap the token. data.access.token is now tenant-scoped; the sign-in token you used to call this has no tenant.
+
+3.2 My profile LIVE SESSION
+
+GET /v1/users/me/profiles
+
+PUT /v1/users/me/profiles
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "User profile retrieved succeessfully",
+
+"data": {
+
+"personalInformation": {
+
+"firstName": "Ada", "lastName": "Okafor",
+
+"email": "docs.demo.1790894194091@unifycomply.test", "phone": null,
+
+"role": "Administrator", "department": null
+
+},
+
+"preferences": {"timezone": "Africa/Lagos", "language": "en-US"}
+
+}
+
+}
+
+// request — PUT /v1/users/me/profiles
+
+{
+
+"personalInformation": {"firstName": "Ada", "lastName": "Okafor", "phone": "+2348020000001"},
+
+"preferences": {"language": "en-US", "timezone": "Africa/Lagos"}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "User profile updated succeessfully",
+
+"data": {
+
+"personalInformation": {
+
+"firstName": "Ada", "lastName": "Okafor",
+
+"email": "docs.demo.1790894194091@unifycomply.test", "phone": "+2348020000001",
+
+"role": "Administrator", "department": null
+
+},
+
+"preferences": {"timezone": "Africa/Lagos", "language": "en-US"}
+
+}
+
+}
+
+Distinct from GET /v1/auth/user (bare user record) — this is the profile-settings screen's data.
+===== PAGE 11 =====
+4. Apps & API keys
+
+Session only, permission tenant-settings:update . An app is a separately-configured integration under one tenant
+
+(its own keys, webhook URL, rules). Everything customer- or transaction-related is scoped to an app.
+
+4.1 Apps — list, read, create, rename, disable LIVE SESSION
+
+GET /v1/tenants/apps
+
+GET /v1/tenants/apps/:appId
+
+POST /v1/tenants/apps
+
+PUT /v1/tenants/apps/:appId
+
+DELETE /v1/tenants/apps/:appId
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Apps retrieved successfully",
+
+"data": [
+
+{
+
+"id": "1f62a4c6854e404385bf807eea9a7b5e", "name": "Default",
+
+"description": "Created with the tenant", "status": "active", "isDefault": true
+
+}
+
+],
+
+"meta": {"totalItems": 1, "itemsCount": 1, "itemsPerPage": 25, "totalPages": 1, "currentPage": 1}
+
+}
+
+// request — POST /v1/tenants/apps
+
+{"name": "Docs Demo — Payouts", "description": "Second app used to demonstrate app CRUD"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "App created successfully",
+
+"data": {
+
+"id": "56110b2661184dab96a2c9f33781b075", "createdAt": "2026-10-01T22:36:51.229Z",
+
+"updatedAt": "2026-10-01T22:36:51.229Z", "name": "Docs Demo — Payouts",
+
+"description": "Second app used to demonstrate app CRUD", "status": "active",
+
+"isDefault": false, "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// request — PUT /v1/tenants/apps/56110b2661184dab96a2c9f33781b075
+
+{"name": "Docs Demo — Payouts (renamed)"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App updated successfully",
+
+"data": {
+
+"id": "56110b2661184dab96a2c9f33781b075", "createdAt": "2026-10-01T22:36:51.229Z",
+
+"updatedAt": "2026-10-01T22:36:51.626Z", "name": "Docs Demo — Payouts (renamed)",
+
+"description": "Second app used to demonstrate app CRUD", "status": "active",
+
+"isDefault": false, "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// request — DELETE /v1/tenants/apps/56110b2661184dab96a2c9f33781b075
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App disabled successfully",
+
+"data": {
+
+"id": "56110b2661184dab96a2c9f33781b075", "createdAt": "2026-10-01T22:36:51.229Z",
+===== PAGE 12 =====
+"updatedAt": "2026-10-01T22:36:52.000Z", "name": "Docs Demo — Payouts (renamed)",
+
+"description": "Second app used to demonstrate app CRUD", "status": "disabled",
+
+"isDefault": false, "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+Delete is a soft disable ( status: "disabled" ): customers and verdicts are kept. Creating an app seeds its TM rules and Re-
+
+KYC triggers automatically.
+
+4.2 API keys — list, issue, rotate, revoke LIVE SESSION
+
+GET /v1/tenants/apps/:appId/keys
+
+POST /v1/tenants/apps/:appId/keys
+
+POST /v1/tenants/apps/:appId/keys/:keyId/rotate
+
+DELETE /v1/tenants/apps/:appId/keys/:keyId
+
+// request — POST /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/keys
+
+{"name": "Docs demo integration", "scopes": ["customers:read", "customers:write", "… 7 more"]}
+
+// response — HTTP 201
+
+{
+
+"status": true,
+
+"message": "Key issued successfully. Copy the secret now — it is not shown again.",
+
+"data": {
+
+"id": "6fd6d4ef168e4181a5060ad4b129e1bb", "createdAt": "2026-10-01T22:36:49.174Z",
+
+"updatedAt": "2026-10-01T22:36:49.174Z", "publicKey": "pk_sandbox-YBWsJoTdgbq…",
+
+"secretKey": "sk_sandbox-<redacted>", "domain": "sandbox", "lastUsedAt": null,
+
+"name": "Docs demo integration",
+
+"scopes": ["customers:read", "customers:write", "… 7 more"],
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e"
+
+}
+
+}
+
+secretKey is returned exactly once — on create and on rotate. Show it in a copy-once dialog. Lists return the
+
+record without a usable secret. Rotating kills the old secret immediately — warn before confirming.
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Keys retrieved successfully",
+
+"data": [
+
+{
+
+"id": "ab1243ffea424c728053e065912ee6a3", "publicKey": "pk_sandbox-PDOATkLTdCn…",
+
+"lastUsedAt": null, "name": "Default key",
+
+"scopes": ["customers:read", "customers:write", "… 7 more"]
+
+}
+
+]
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Key rotated successfully. The previous secret no longer works.",
+
+"data": {
+
+"id": "489b9ed234d540eda9cccdbdfeb68b26", "createdAt": "2026-10-01T22:36:49.557Z",
+
+"updatedAt": "2026-10-01T22:36:49.940Z", "publicKey": "pk_sandbox-eNPTKUBKMqJ…",
+
+"secretKey": "sk_sandbox-<redacted>", "domain": "sandbox", "lastUsedAt": null,
+
+"name": "Read-only dashboard key", "scopes": ["verifications:read"],
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e"
+===== PAGE 13 =====
+}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Key revoked successfully",
+
+"data": {"id": "489b9ed234d540eda9cccdbdfeb68b26"}
+
+}
+
+Available scopes are the nine in §1. Keys are issued in the caller's current domain.
+
+4.3 App's primary API key LIVE SESSION
+
+GET /v1/tenants/apps/:appId/api-key
+
+POST /v1/tenants/apps/:appId/api-key/rotate
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App API keys retrieved successfully",
+
+"data": {
+
+"id": "ab1243ffea424c728053e065912ee6a3", "createdAt": "2026-10-01T22:36:34.547Z",
+
+"updatedAt": "2026-10-01T22:36:34.547Z", "publicKey": "pk_sandbox-PDOATkLTdCn…",
+
+"secretKey": "sk_sandbox-<redacted>", "domain": "sandbox", "lastUsedAt": null,
+
+"name": "Default key",
+
+"scopes": ["customers:read", "customers:write", "… 7 more"],
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e"
+
+}
+
+}
+
+The key provisioned at onboarding. rotate behaves like §4.2's rotate.
+
+4.4 App-scope backfill (operational) LIVE SESSION
+
+GET /v1/tenants/apps/scope/status
+
+POST /v1/tenants/apps/scope/backfill
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App scope status retrieved successfully",
+
+"data": {"compliance": {"scopable": 0, "orphaned": 0}, "risk": {"scopable": 0, "orphaned": 0}}
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "App scope backfill completed",
+
+"data": {
+
+"tenants": 5, "workflows": 0, "complianceRows": 0, "riskRows": 0,
+
+"unscoped": {"compliance": {"scopable": 0, "orphaned": 0}, "risk": {"scopable": 0, "orphaned":
+
+0}}
+
+}
+
+}
+===== PAGE 14 =====
+Assigns legacy rows that pre-date apps to the tenant's default app. Not something a normal settings screen
+
+needs.
+
+5. App configuration — risk, PEP, compliance rules, webhooks
+
+Session only, tenant-settings:update . Each is a GET/PUT pair under /v1/tenants/apps/:appId/… . This is the
+
+configuration snapshotted onto every verification run.
+
+5.1 Risk factor configurations LIVE SESSION
+
+GET /v1/tenants/apps/:appId/risk-factor-configurations
+
+PUT /v1/tenants/apps/:appId/risk-factor-configurations/:slug
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App risk factor configurations retrieved successfully",
+
+"data": [
+
+{
+
+"name": "Politically Exposed Person (PEP) Association",
+
+"description": "Name similarity or known association with politically exposed persons",
+
+"type": "regulatory", "slug": "pep-association", "riskWeight": 1, "enabled": true
+
+},
+
+{
+
+"name": "Sanctions List Match",
+
+"description": "Name appears on international sanctions lists (OFAC, EU, UN)",
+
+"type": "regulatory", "slug": "sanctions-list-match", "riskWeight": 1, "enabled": true
+
+},
+
+"… 4 more"
+
+]
+
+}
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/risk-factor-configurations/pep-
+
+association
+
+{"riskWeight": 2, "enabled": true}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App risk factor configurations updated successfully",
+
+"data": {
+
+"createdAt": "2026-10-01T22:36:34.547Z", "updatedAt": "2026-10-01T22:36:55.858Z",
+
+"name": "Politically Exposed Person (PEP) Association",
+
+"description": "Name similarity or known association with politically exposed persons",
+
+"type": "regulatory", "slug": "pep-association", "riskWeight": 2, "enabled": true,
+
+"domain": "sandbox", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+===== PAGE 15 =====
+5.2 Risk score threshold LIVE SESSION
+
+GET /v1/tenants/apps/:appId/risk-score-threshold
+
+PUT /v1/tenants/apps/:appId/risk-score-threshold
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/risk-score-threshold
+
+{"warningThreshold": 2, "blockThreshold": 3}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App risk score thresholds updated successfully",
+
+"data": {
+
+"createdAt": "2026-10-01T22:36:34.547Z", "updatedAt": "2026-10-01T22:36:56.232Z",
+
+"warningThreshold": 2, "blockThreshold": 3, "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+On the KYC/KYB 0–4 scale: at or above warningThreshold a run goes to review; at or above
+
+blockThreshold it is blocked.
+
+5.3 PEP tier configurations LIVE SESSION
+
+GET /v1/tenants/apps/:appId/pep-tier-configurations
+
+PUT /v1/tenants/apps/:appId/pep-tier-configurations/:tier
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/pep-tier-configurations/tier-1
+
+{"riskScoreImpact": 4, "requiresApproval": true, "autoEscalation": true}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App PEP tier configurations updated successfully",
+
+"data": {
+
+"createdAt": "2026-10-01T22:36:34.549Z", "updatedAt": "2026-10-01T22:36:56.609Z",
+
+"name": "Senior Foreign PEP", "tier": "tier-1",
+
+"description": "Heads of state, government ministers, senior officials",
+
+"riskScoreImpact": 4, "requiresApproval": true, "autoEscalation": true,
+
+"positionDescription": "Holds the highest offices of state, operates in high-corruption
+
+jurisdictions, or has adve…",
+
+"positionExamples": ["President", "Prime Minister", "… 2 more"], "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+5.4 Compliance rules LIVE SESSION
+
+GET /v1/tenants/apps/:appId/compliance-rules
+
+PUT /v1/tenants/apps/:appId/compliance-rules
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/compliance-rules
+
+{"flaggedCountryCodes": ["IR", "KP"], "kycExpiryDays": 365}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App compliance rules updated successfully",
+
+"data": {
+
+"createdAt": "2026-10-01T22:36:34.549Z", "updatedAt": "2026-10-01T22:36:57.364Z",
+===== PAGE 16 =====
+"kycExpiryDays": 365, "kybExpiryDays": 365,
+
+"kycDocuments": ["id-document", "liveness-check", "… 1 more"],
+
+"kybDocuments": ["certificate-of-incorporation", "directors-id", "… 2 more"],
+
+"flaggedCountryCodes": ["IR", "KP"], "activityBreachMultiplier": 2, "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+kycDocuments / kybDocuments drive each customer's document requirements (§8.9). flaggedCountryCodes
+
+blocks onboarding from those countries and powers the High-Risk Country transaction check (§12). PUT
+
+accepts any subset of fields.
+
+5.5 Webhook settings & signing secret LIVE SESSION
+
+GET /v1/tenants/apps/:appId/notification-preferences
+
+PUT /v1/tenants/apps/:appId/notification-preferences
+
+POST /v1/tenants/apps/:appId/webhook/rotate-secret
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/notification-preferences
+
+{"eventCallbackUrl": "https://example.com/webhooks/unifycomply", "webhookEnabled": true}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "App developer config updated successfully",
+
+"data": {
+
+"id": "849b46839a254d6a874b972dd4e13d0b", "createdAt": "2026-10-01T22:36:34.547Z",
+
+"updatedAt": "2026-10-01T22:37:00.826Z", "domain": "sandbox",
+
+"eventCallbackUrl": "https://example.com/webhooks/unifycomply",
+
+"webhookSecret": "whsec_<redacted>", "webhookEnabled": true, "ipWhitelistEnabled": false,
+
+"allowedIps": [], "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+Rejected: a callback URL that resolves to a private address
+
+// request — PUT /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/notification-preferences
+
+{
+
+"eventCallbackUrl": "http://webhooks.docs-demo.localhost:4999/unifycomply",
+
+"webhookEnabled": true
+
+}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "Webhook host webhooks.docs-demo.localhost resolves to a non-public address (::1)"
+
+}
+
+Callback URLs must resolve to a public address. localhost , 127.0.0.1 , *.localhost and private ranges
+
+are refused (SSRF protection). For local development use a public tunnel (ngrok, Cloudflare Tunnel).
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Webhook signing secret rotated successfully",
+
+"data": {
+
+"id": "849b46839a254d6a874b972dd4e13d0b", "createdAt": "2026-10-01T22:36:34.547Z",
+
+"updatedAt": "2026-10-01T22:36:57.748Z", "domain": "sandbox", "eventCallbackUrl": null,
+
+"webhookSecret": "whsec_<redacted>", "webhookEnabled": true, "ipWhitelistEnabled": false,
+
+"allowedIps": [], "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+===== PAGE 17 =====
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+Rotation invalidates signatures made with the old secret immediately, including retries already queued.
+===== PAGE 18 =====
+6. Team, roles, business information, domain
+
+Session only, tenant-settings:update . Tenant-wide by design — teams and roles are not per-app.
+
+6.1 Team invites LIVE SESSION
+
+GET /v1/tenants/settings/teams
+
+POST /v1/tenants/settings/teams
+
+POST /v1/tenants/settings/teams/resend
+
+DELETE /v1/tenants/settings/teams/:inviteId/revoke
+
+// request — POST /v1/tenants/settings/teams
+
+{
+
+"fullName": "Bola Analyst", "email": "bola.analyst.1790894322184@unifycomply.test",
+
+"roleId": "0f4e5a4603234018bb80791780ac9295"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Tenant team invite created successfully",
+
+"data": {
+
+"id": "515dbf7316a14b7a826148716b658ab4", "createdAt": "2026-10-01T22:38:42.599Z",
+
+"updatedAt": "2026-10-01T22:38:42.599Z", "fullName": "Bola Analyst",
+
+"email": "bola.analyst.1790894322184@unifycomply.test", "status": "pending",
+
+"expiryDate": "2026-10-04T22:38:42.595Z", "roleId": "0f4e5a4603234018bb80791780ac9295",
+
+"userId": null, "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// request — POST /v1/tenants/settings/teams/resend
+
+{"id": "515dbf7316a14b7a826148716b658ab4"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Tenant team invite resend successfully",
+
+"data": {
+
+"id": "515dbf7316a14b7a826148716b658ab4", "createdAt": "2026-10-01T22:38:42.599Z",
+
+"updatedAt": "2026-10-01T22:38:43.005Z", "fullName": "Bola Analyst",
+
+"email": "bola.analyst.1790894322184@unifycomply.test", "status": "pending",
+
+"expiryDate": "2026-10-04T22:38:43.005Z", "roleId": "0f4e5a4603234018bb80791780ac9295",
+
+"userId": null, "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+id goes in the JSON body, not the query string.
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Tenant team information retrieved successfully",
+
+"data": [
+
+{
+
+"email": "bola.analyst.1790894322184@unifycomply.test",
+
+"id": "515dbf7316a14b7a826148716b658ab4", "name": "Bola Analyst", "imageUrl": null,
+
+"status": "pending", "lastActivityAt": null, "roleName": "Administrator"
+
+},
+
+{
+
+"email": "bola.analyst.1790894315945@unifycomply.test",
+
+"id": "1b35dbd6213641928667128c190bcfd9", "name": "Bola Analyst", "imageUrl": null,
+
+"status": "revoked", "lastActivityAt": null, "roleName": "Administrator"
+
+}
+===== PAGE 19 =====
+]
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Tenant team invite revoked successfully",
+
+"data": {
+
+"id": "1b35dbd6213641928667128c190bcfd9", "createdAt": "2026-10-01T22:38:36.331Z",
+
+"updatedAt": "2026-10-01T22:38:37.494Z", "fullName": "Bola Analyst",
+
+"email": "bola.analyst.1790894315945@unifycomply.test", "status": "revoked",
+
+"expiryDate": "2026-10-04T22:38:36.330Z", "roleId": "0f4e5a4603234018bb80791780ac9295",
+
+"userId": null, "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+6.2 Roles & permissions LIVE SESSION
+
+GET /v1/tenants/settings/roles-permissions
+
+POST /v1/tenants/settings/roles-permissions
+
+GET /v1/tenants/settings/roles-permissions/options
+
+GET /v1/tenants/settings/roles-permissons/:roleId
+
+PUT /v1/tenants/settings/roles-permissons/:roleId
+
+DELETE /v1/tenants/settings/roles-permissons/:roleId
+
+Single-role routes are spelled roles-permissons (missing "i"). That is the real path; the collection routes use the
+
+correct spelling.
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Tenant role permission options retrieved successfully",
+
+"data": [
+
+{
+
+"value": "team-member:create", "label": "Can Add Team Members",
+
+"description": "Allow this role to invite and add new team members to the tenant"
+
+},
+
+{
+
+"value": "team-member:update", "label": "Can Update Team Members",
+
+"description": "Allow this role to update team member details and assignments"
+
+},
+
+{
+
+"value": "role-permission:create", "label": "Can Create Roles & Permissions",
+
+"description": "Allow this role to create new roles and assign permissions to them"
+
+},
+
+"… 9 more"
+
+]
+
+}
+
+The permission vocabulary — render it as the checkbox list. 12 permissions today.
+
+// request — POST /v1/tenants/settings/roles-permissions
+
+{
+
+"name": "Compliance Analyst", "description": "Works cases and drafts SARs",
+
+"department": "Compliance", "riskLevelMinimum": 0, "riskLevelMaximum": 2,
+
+"permissions": ["dashboard:access", "customers:retrieve", "… 3 more"]
+
+}
+
+// response — HTTP 201
+===== PAGE 20 =====
+{
+
+"status": true, "message": "Tenant roles and permissions created successfully",
+
+"data": {
+
+"id": "746aaacf52f84b828659d2da624efd5e", "createdAt": "2026-10-01T22:38:37.872Z",
+
+"updatedAt": "2026-10-01T22:38:37.872Z", "name": "Compliance Analyst",
+
+"department": "Compliance", "description": "Works cases and drafts SARs", "isDefault": false,
+
+"riskLevelMinimum": 0, "riskLevelMaximum": 2,
+
+"permissions": ["dashboard:access", "customers:retrieve", "… 3 more"],
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// request — PUT /v1/tenants/settings/roles-permissons/746aaacf52f84b828659d2da624efd5e
+
+{
+
+"name": "Compliance Analyst", "riskLevelMinimum": 0, "riskLevelMaximum": 3,
+
+"permissions": ["dashboard:access", "customers:retrieve", "… 4 more"]
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Tenant roles permissions updated successfully",
+
+"data": {
+
+"id": "746aaacf52f84b828659d2da624efd5e", "createdAt": "2026-10-01T22:38:37.872Z",
+
+"updatedAt": "2026-10-01T22:38:38.630Z", "name": "Compliance Analyst",
+
+"department": "Compliance", "description": "Works cases and drafts SARs", "isDefault": false,
+
+"riskLevelMinimum": 0, "riskLevelMaximum": 3,
+
+"permissions": ["dashboard:access", "customers:retrieve", "… 4 more"],
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// response — HTTP 200
+
+{"status": true, "message": "Tenant roles permissions deleted successfully", "data": null}
+
+400 — riskLevelMinimum must be ≤ riskLevelMaximum (0–4 scale)
+
+// request — POST /v1/tenants/settings/roles-permissions
+
+{"name": "Broken", "riskLevelMinimum": 3, "riskLevelMaximum": 1, "permissions": ["dashboard:access"]}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "`role.riskLevelMinimum` should be less than or equals to `role.riskLevelMaximum`
+
+value."
+
+}
+
+6.3 Business information LIVE SESSION
+
+GET /v1/tenants/settings/business-information
+
+PUT /v1/tenants/settings/business-information
+
+// request — PUT /v1/tenants/settings/business-information
+
+{"website": "https://docs-demo.unifycomply.test", "tin": "TIN-0099887"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Tenant business information updated successfully",
+
+"data": {
+
+"name": "Docs Demo Fintech Ltd", "registrationNumber": "RC-1029384", "tin": "TIN-0099887",
+
+"industry": "fintech", "website": "https://docs-demo.unifycomply.test", "yearFounded": null,
+
+"companySize": "11-50",
+
+"address": {
+===== PAGE 21 =====
+"city": null, "state": null, "street": null, "country": null, "houseNo": null,
+
+"zipCode": null, "formatted": "()", "stateCode": null,
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": null
+
+}
+
+}
+
+}
+
+6.4 Switch domain (sandbox ↔ production) LIVE SESSION
+
+POST /v1/tenants/settings/domain/switch
+
+// request — POST /v1/tenants/settings/domain/switch
+
+{"domain": "production"}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "User access switched successfully",
+
+"data": {
+
+"currentAccess": {
+
+"id": "34bfd0c7b0b24af9913abd453024ee04", "tenantName": "Docs Demo Fintech Ltd",
+
+"status": "active", "roleId": "0f4e5a4603234018bb80791780ac9295"
+
+},
+
+"access": {"token": "<jwt>", "refreshToken": "<jwt>"}
+
+}
+
+}
+
+Same customer list, now in production — empty, because sandbox data is isolated
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customers kyc retrieved successfully", "data": [],
+
+"meta": {"totalItems": 0, "itemsCount": 0, "itemsPerPage": 5, "totalPages": 0, "currentPage": 1}
+
+}
+
+Store the returned token; every subsequent call operates in the new domain.
+
+6.5 Deprecated tenant-wide settings routes LIVE SESSION
+
+GET
+
+/v1/tenants/settings/{api-key | risk-factor-configurations | risk-score-threshold
+
+| pep-tier-configurations | notification-preferences | compliance-rules |
+
+webhook/deliveries}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Tenant complaince rules retrieved successfully",
+
+"data": {
+
+"createdAt": "2026-10-01T22:36:34.549Z", "updatedAt": "2026-10-01T22:36:57.364Z",
+
+"kycExpiryDays": 365, "kybExpiryDays": 365,
+
+"kycDocuments": ["id-document", "liveness-check", "… 1 more"],
+
+"kybDocuments": ["certificate-of-incorporation", "directors-id", "… 2 more"],
+
+"flaggedCountryCodes": ["IR", "KP"], "activityBreachMultiplier": 2, "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+===== PAGE 22 =====
+These still work and read/write the tenant's default app, but are marked deprecated in Swagger. Build against
+
+the /v1/tenants/apps/:appId/… equivalents in §4–§5. Includes their PUT / rotate / redeliver siblings.
+
+7. Public option sets (enum lookups)
+
+7.1 Option sets LIVE PUBLIC
+
+GET /v1/public/misc/options/keys
+
+GET /v1/public/misc/options?keys=a,b
+
+GET /v1/public/misc/options/:key
+
+Every closed vocabulary the API validates against, served as data. Load once per session and cache; never
+
+hardcode dropdown values that can drift from the server.
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Items retrieved successfully",
+
+"data": [
+
+"countries",
+
+"profile-types",
+
+"domains",
+
+"genders",
+
+"business-types",
+
+"business-industries",
+
+"employee-counts",
+
+"shareholder-types",
+
+"individual-verification-types",
+
+"business-verification-types",
+
+"shared-verification-types",
+
+"kyc-document-categories",
+
+"kyb-document-categories",
+
+"individual-document-types",
+
+"business-document-types",
+
+"workflow-statuses",
+
+"workflow-priorities",
+
+"verification-run-statuses",
+
+"verification-outcomes",
+
+"verification-provider-keys",
+
+"verification-reason-severities",
+
+"document-statuses",
+
+"customer-lifecycle-statuses",
+
+"risk-bands",
+
+"risk-decisions",
+
+"risk-priorities",
+
+"risk-factor-types",
+
+"pep-tiers",
+
+"role-permissions",
+
+"team-invite-statuses",
+
+"transaction-types",
+
+"transaction-directions",
+
+"tm-categories",
+
+"tm-rule-severities",
+
+"tm-rule-statuses",
+
+"tm-risk-levels",
+
+"tm-condition-operators",
+
+"tm-condition-fields",
+
+"transaction-risk-statuses",
+
+"transaction-timeline-events"
+===== PAGE 23 =====
+]
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Items retrieved successfully",
+
+"data": {
+
+"key": "<redacted>",
+
+"description": "Comparison a transaction-monitoring rule's condition applies",
+
+"options": [{"value": "equals", "label": "Equals"}, {"value": "not-equals", "label": "Not
+
+Equals"}, "… 4 more"]
+
+}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Items retrieved successfully",
+
+"data": {
+
+"sets": [
+
+{
+
+"key": "<redacted>", "description": "Whether a customer is a person or a company",
+
+"options": [{"value": "individual", "label": "Individual"}, {"value": "business", "label":
+
+"Business"}]
+
+},
+
+{
+
+"key": "genders", "description": "Gender values on an individual customer",
+
+"options": [{"value": "male", "label": "Male"}, {"value": "female", "label": "Female"}]
+
+},
+
+{
+
+"key": "<redacted>",
+
+"description": "Which of the four transaction-monitoring queues a matched rule routes to",
+
+"options": [
+
+{"value": "tm-not-blocked", "label": "TM Not Blocked"},
+
+{"value": "stop-payment", "label": "Stop Payment"},
+
+{"value": "cumulative-frequency", "label": "Cumulative Frequency"},
+
+"… 1 more"
+
+]
+
+}
+
+],
+
+"constants": {"riskScore": {"min": 0, "max": 4}}
+
+}
+
+}
+
+Investigation vocabularies are not registered here yet. Case resolution types, case actions-taken, PND resolution
+
+types and investigation risk levels must be hardcoded from §15–§16 for now (see §17).
+===== PAGE 24 =====
+8. Customers — KYC (individuals) & KYB (businesses)
+
+Two parallel trees, /v1/customers/kyc and /v1/customers/kyb , with the same shape. Session or API key.
+
+tenantId , appId and domain are always resolved from the credential — never send them.
+
+8.1 Create an individual LIVE SESSION API KEY
+
+POST /v1/customers/kyc
+
+// request — POST /v1/customers/kyc
+
+{
+
+"firstName": "Chidinma", "lastName": "Eze", "dob": "1991-04-12", "gender": "female",
+
+"email": "chidinma.eze@example.com", "phone": "+2348031234567", "countryCode": "NG",
+
+"address": {
+
+"houseNo": "12", "street": "Admiralty Way", "city": "Lekki", "state": "Lagos",
+
+"stateCode": "LA", "country": "Nigeria", "countryCode": "NG", "zipCode": "105102"
+
+}
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyc created successfully",
+
+"data": {
+
+"id": "33c479186e2741be98bce2af145959af", "createdAt": "2026-10-01T22:37:01.390Z",
+
+"updatedAt": "2026-10-01T22:37:01.390Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"firstName": "Chidinma", "lastName": "Eze", "middleName": null,
+
+"email": "chidinma.eze@example.com", "phone": "+2348031234567", "countryCode": "NG",
+
+"dob": "1991-04-12",
+
+"address": {
+
+"city": "Lekki", "state": "Lagos", "street": "Admiralty Way", "country": "Nigeria",
+
+"houseNo": "12", "zipCode": "105102",
+
+"formatted": "12 Admiralty Way, Lekki, Lagos LA, 105102, Nigeria (NG)", "stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"gender": "female", "emailChangedAt": null, "phoneChangedAt": null, "addressChangedAt": null,
+
+"status": "pending", "statusReasons": [], "statusChangedAt": null, "statusRunId": null,
+
+"riskScore": null, "lastReviewedAt": null, "nextReviewAt": null, "flags": [],
+
+"documentTypes": []
+
+}
+
+}
+
+Required: firstName , lastName , dob (ISO date), gender ( male|female ), email , phone , countryCode
+
+(ISO-2), address (object; every field optional). New customers start status: "pending" with nextReviewAt
+
+set by the app's kycExpiryDays . Creation from a country in flaggedCountryCodes is refused.
+
+Requires: customers:write
+
+8.2 Create a business LIVE SESSION API KEY
+
+POST /v1/customers/kyb
+
+// request — POST /v1/customers/kyb
+
+{
+
+"businessName": "Kora Logistics Limited", "registrationDate": "2018-03-15",
+
+"contactEmail": "compliance@koralogistics.example", "contactPhone": "+2348091234567",
+
+"countryCode": "NG", "industry": "technology", "website": "https://koralogistics.example",
+
+"address": {
+
+"houseNo": "27", "street": "Adeola Odeku Street", "city": "Victoria Island",
+
+"state": "Lagos", "stateCode": "LA", "country": "Nigeria", "countryCode": "NG",
+
+"zipCode": "101241"
+===== PAGE 25 =====
+}
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyb created successfully",
+
+"data": {
+
+"id": "eab4159c3215435d9b12806cdd629c96", "createdAt": "2026-10-01T22:37:12.339Z",
+
+"updatedAt": "2026-10-01T22:37:12.339Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"businessName": "Kora Logistics Limited", "businessType": null, "countryCode": "NG",
+
+"address": {
+
+"city": "Victoria Island", "state": "Lagos", "street": "Adeola Odeku Street",
+
+"country": "Nigeria", "houseNo": "27", "zipCode": "101241",
+
+"formatted": "27 Adeola Odeku Street, Victoria Island, Lagos LA, 101241, Nigeria (NG)",
+
+"stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"registrationDate": "2018-03-15", "industry": "technology",
+
+"contactEmail": "compliance@koralogistics.example", "contactPhone": "+2348091234567",
+
+"website": "https://koralogistics.example", "contactEmailChangedAt": null,
+
+"contactPhoneChangedAt": null, "addressChangedAt": null, "status": "pending",
+
+"statusReasons": [], "statusChangedAt": null, "statusRunId": null, "riskScore": null,
+
+"lastReviewedAt": null, "nextReviewAt": null, "flags": [], "documentTypes": []
+
+}
+
+}
+
+Required: businessName , registrationDate , contactEmail , contactPhone , countryCode , address .
+
+Optional: industry , website .
+
+Requires: customers:write
+
+8.3 Read, list & stats LIVE SESSION API KEY
+
+GET /v1/customers/kyc/:customerId
+
+GET /v1/customers/kyc
+
+GET /v1/customers/kyc/stats
+
+GET /v1/customers/kyb/:customerId
+
+GET /v1/customers/kyb
+
+GET /v1/customers/kyb/stats
+
+Query: page , limit , status ( pending|onboarded|review|blocked|offboarded ; omitted → offboarded excluded),
+
+search (name, email, phone), dateFrom , dateTo .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customer retrieved successfully",
+
+"data": {
+
+"id": "33c479186e2741be98bce2af145959af", "createdAt": "2026-10-01T22:37:01.390Z",
+
+"updatedAt": "2026-10-01T22:37:30.296Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"firstName": "Chidinma", "lastName": "Eze", "middleName": null,
+
+"email": "chidinma.eze@example.com", "phone": "+2348031234500", "countryCode": "NG",
+
+"dob": "1991-04-12",
+
+"address": {
+
+"city": "Lekki", "state": "Lagos", "street": "Admiralty Way", "country": "Nigeria",
+
+"houseNo": "12", "zipCode": "105102",
+
+"formatted": "12 Admiralty Way, Lekki, Lagos LA, 105102, Nigeria (NG)", "stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"gender": "female", "emailChangedAt": null, "phoneChangedAt": "2026-10-01T22:37:11.865Z",
+===== PAGE 26 =====
+"addressChangedAt": null, "status": "onboarded", "statusReasons": [],
+
+"statusChangedAt": "2026-10-01T22:37:30.294Z",
+
+"statusRunId": "081e121f775f4b53bf0a7758f4f474a5", "riskScore": 0,
+
+"lastReviewedAt": "2026-10-01T22:37:30.294Z", "nextReviewAt": "2027-10-01T22:37:30.296Z",
+
+"flags": [],
+
+"documentTypes": ["passport", "selfie-photo", "utility-bill"],
+
+"lifecycle": [
+
+{
+
+"id": "72f15473453b4afc950cc8622491358b", "profileType": "individual",
+
+"fromStatus": "pending", "toStatus": "onboarded", "actor": "risk-decisioning",
+
+"reasons": [], "riskScore": 0,
+
+"detail": {
+
+"band": "low", "workflowId": "7a10d4b1895741a48674bbe4769d05df", "blockThreshold": 3,
+
+"warningThreshold": 2
+
+},
+
+"customerId": "33c479186e2741be98bce2af145959af",
+
+"runId": "081e121f775f4b53bf0a7758f4f474a5"
+
+}
+
+]
+
+}
+
+}
+
+Individual detail additionally carries lifecycle (status history). flags holds monitoring findings (§8.7);
+
+documentTypes lists what has been uploaded.
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customers kyc retrieved successfully",
+
+"data": [
+
+{
+
+"id": "ac906f738a7647668077edd4b9105234", "firstName": "Tunde", "lastName": "Bakare",
+
+"middleName": null, "email": "tunde.bakare@example.com", "phone": "+2348039876543",
+
+"countryCode": "NG", "dob": "1986-09-02",
+
+"address": {
+
+"city": "Ikoyi", "state": "Lagos", "street": "Awolowo Road", "country": "Nigeria",
+
+"houseNo": "4", "zipCode": "105102",
+
+"formatted": "4 Awolowo Road, Ikoyi, Lagos LA, 105102, Nigeria (NG)", "stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"gender": "male", "emailChangedAt": null, "phoneChangedAt": null, "addressChangedAt": null,
+
+"status": "pending", "statusReasons": [], "statusChangedAt": null, "statusRunId": null,
+
+"riskScore": null, "lastReviewedAt": null, "nextReviewAt": null, "flags": [],
+
+"documentTypes": []
+
+},
+
+"… 1 more"
+
+],
+
+"meta": {"totalItems": 2, "itemsCount": 2, "itemsPerPage": 10, "totalPages": 1, "currentPage": 1}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customers kyc stats retrieved successfully",
+
+"data": {"successful": 0, "pending": 2, "highRisk": 0, "rejected": 0}
+
+}
+
+Counts derive from each customer's latest verification, not the customer row.
+
+Roster vs queue. This is the roster (who). Priority, assignee and time-in-queue live on the verification queue (§9.4).
+
+Join on customerId when a screen needs both.
+
+Requires: customers:read
+===== PAGE 27 =====
+8.4 Update (full replace) LIVE SESSION API KEY
+
+PUT /v1/customers/kyc/:customerId
+
+PUT /v1/customers/kyb/:customerId
+
+// request — PUT /v1/customers/kyc/33c479186e2741be98bce2af145959af
+
+{
+
+"firstName": "Chidinma", "lastName": "Eze", "dob": "1991-04-12", "gender": "female",
+
+"email": "chidinma.eze@example.com", "phone": "+2348031234500", "countryCode": "NG",
+
+"address": {
+
+"houseNo": "12", "street": "Admiralty Way", "city": "Lekki", "state": "Lagos",
+
+"stateCode": "LA", "country": "Nigeria", "countryCode": "NG", "zipCode": "105102"
+
+}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customer kyc updated successfully",
+
+"data": {
+
+"id": "33c479186e2741be98bce2af145959af", "createdAt": "2026-10-01T22:37:01.390Z",
+
+"updatedAt": "2026-10-01T22:37:11.865Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"firstName": "Chidinma", "lastName": "Eze", "middleName": null,
+
+"email": "chidinma.eze@example.com", "phone": "+2348031234500", "countryCode": "NG",
+
+"dob": "1991-04-12",
+
+"address": {
+
+"city": "Lekki", "state": "Lagos", "street": "Admiralty Way", "country": "Nigeria",
+
+"houseNo": "12", "zipCode": "105102",
+
+"formatted": "12 Admiralty Way, Lekki, Lagos LA, 105102, Nigeria (NG)", "stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"gender": "female", "emailChangedAt": null, "phoneChangedAt": "2026-10-01T22:37:11.865Z",
+
+"addressChangedAt": null, "status": "pending", "statusReasons": [], "statusChangedAt": null,
+
+"statusRunId": null, "riskScore": null, "lastReviewedAt": null, "nextReviewAt": null,
+
+"flags": [],
+
+"documentTypes": ["passport", "… 2 more"]
+
+}
+
+}
+
+400 — sending only the changed field
+
+// request — PUT /v1/customers/kyc/33c479186e2741be98bce2af145959af
+
+{"phone": "+2348031234500"}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "firstName must be a string, lastName must be a string, email must be a string,
+
+countryCode ($value) is not a valid ISO 3166-1 alpha-2 country code rec…"
+
+}
+
+PUT is a full replace. Send every required field, pre-filled from the current record, even to change one value.
+
+Changing two of email / phone / address within 72 hours on an onboarded customer raises a suspected
+
+account-takeover Re-KYC trigger. The customer's verified workflow flips to in-review (configurable in §13).
+
+Requires: customers:write
+===== PAGE 28 =====
+8.5 Approve / reject after review LIVE SESSION API KEY
+
+POST /v1/customers/{kyc|kyb}/:customerId/approve
+
+POST /v1/customers/{kyc|kyb}/:customerId/reject
+
+// request — POST /v1/customers/kyb/eab4159c3215435d9b12806cdd629c96/approve
+
+{"reason": "Directors cleared on manual review; CAC records match."}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyb onboarding approved",
+
+"data": {"customerId": "eab4159c3215435d9b12806cdd629c96", "status": "onboarded"}
+
+}
+
+// request — POST /v1/customers/kyc/12c1a2ae64ec4a29882031494f7f21f7/reject
+
+{"reason": "Confirmed sanctions match against OFAC SDN list."}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyc onboarding rejected",
+
+"data": {"customerId": "12c1a2ae64ec4a29882031494f7f21f7", "status": "blocked"}
+
+}
+
+400 — reject without a reason
+
+// request — POST /v1/customers/kyc/ac906f738a7647668077edd4b9105234/reject
+
+{}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "reason must not be blank, reason should not be empty, reason must be a string"
+
+}
+
+reason is required on reject, optional on approve. Rejecting blocks the customer and fails their verification, so it
+
+must say why (blank or whitespace-only is refused). Make it a required field in the reject dialog.
+
+A compliance officer's manual decision on a customer the engine left in review/blocked. Approve also settles
+
+the customer's latest verification to verified ; reject settles it to failed . Both write a
+
+customer.review.approved|rejected audit event (actor = the signed-in user's email, or api-key ) and fire the
+
+matching workflow.verified / workflow.failed webhook (§11.2), with the reason recorded on both.
+
+Requires: customers:write
+
+8.6 Offboard (soft delete) LIVE SESSION API KEY
+
+DELETE /v1/customers/{kyc|kyb}/:customerId
+
+// request — DELETE /v1/customers/kyc/ac906f738a7647668077edd4b9105234
+
+{"reason": "Customer closed their account"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customer kyc offboarded successfully",
+
+"data": {"customerId": "ac906f738a7647668077edd4b9105234", "status": "offboarded"}
+
+}
+
+Moves the customer to offboarded ; nothing is deleted and a later clean run never re-onboards them. Find
+
+them again with ?status=offboarded .
+===== PAGE 29 =====
+Requires: customers:write
+
+8.7 Flags (monitoring findings) PARTIAL SESSION API KEY
+
+PATCH /v1/customers/{kyc|kyb}/:customerId/flags/:flagId
+
+// request
+
+{ "status": "investigating", "note": "Reviewing adverse media" } // warning → investigating →
+
+revised
+
+404 — unknown flag id (real response; the demo customer had no flags)
+
+// response — HTTP 404
+
+{
+
+"status": false,
+
+"message": "No flag flg_does_not_exist on customer 33c479186e2741be98bce2af145959af"
+
+}
+
+Flags move forward only ( warning → investigating → revised ); skipping or going backwards returns 400,
+
+and note is required for revised .
+
+Field Status Why
+
+customer.flags empty after
+
+onboarding runs
+
+Flags are raised only from ongoing-monitoring observations (e.g. a new AML hit
+
+after onboarding), not from the onboarding verification itself. A sandbox run with
+
+a sanctions hit blocks the customer but raises no flag.
+
+Requires: customers:write
+
+8.8 Upload & replace documents LIVE SESSION API KEY
+
+POST /v1/customers/{kyc|kyb}/:customerId/documents
+
+PUT /v1/customers/{kyc|kyb}/:customerId/documents/:documentId
+
+GET /v1/customers/{kyc|kyb}/:customerId/documents
+
+// request — POST /v1/customers/kyc/33c479186e2741be98bce2af145959af/documents
+
+{
+
+"type": "passport", "idNumber": "A09876543", "issueDate": "2021-03-01",
+
+"expiryDate": "2031-02-28",
+
+"file": "data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iajw8L1R5cGUv…"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyc document created successfully",
+
+"data": {
+
+"id": "31ffc8f5f501420aab65d78325778d84", "createdAt": "2026-10-01T22:37:03.108Z",
+
+"updatedAt": "2026-10-01T22:37:03.632Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"type": "passport", "category": "id-document",
+
+"url": "http://blobs.rokswood.com/unifycomply/compliance-
+
+documents/t7c9e91f81e064c6a9eada352ffeaf9c7/individual/c33c479186e2741be98bce2af145959af/id-
+
+document",
+
+"idNumber": "A09876543", "issueDate": "2021-03-01", "expiryDate": "2031-02-28",
+
+"status": "validated", "reKycNotifiedAt": null, "key": "<redacted>",
+
+"contentType": "application/pdf", "customerId": "33c479186e2741be98bce2af145959af",
+
+"customerType": "individual", "shareholderId": null,
+===== PAGE 30 =====
+"verification": {
+
+"documentId": "31ffc8f5f501420aab65d78325778d84", "type": "passport", "valid": true,
+
+"reasons": [
+
+{
+
+"code": "document.ok", "severity": "info", "message": "passport accepted",
+
+"field": "passport"
+
+}
+
+]
+
+}
+
+}
+
+}
+
+file is a base64 data URI. Max 2 MB decoded; allowed types application/pdf , image/jpeg , image/png ,
+
+image/webp , image/heic , image/tiff . Uploading a second document of the same type updates the
+
+existing one. Individual types include passport , national-identity , driver-license , selfie-photo ,
+
+utility-bill , bank-statement ; business types include certificate-of-incorporation , tin , proof-of-
+
+business-address .
+
+400 — PUT without file
+
+// request — PUT
+
+/v1/customers/kyc/33c479186e2741be98bce2af145959af/documents/31ffc8f5f501420aab65d78325778d84
+
+{"type": "passport", "idNumber": "A09876543", "issueDate": "2021-03-01", "expiryDate": "2031-03-01"}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "passport requires a file upload; attach it as a base64 data URI on \"file\""
+
+}
+
+PUT must resend the file. Document types that require an upload reject a PUT without file . Changing an expiry
+
+date means re-sending the file too. Passports also require issueDate .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Customer kyc documents retrieved successfully",
+
+"data": [
+
+{
+
+"id": "5680310515d444d191de24f9d39034a1", "type": "selfie-photo",
+
+"category": "liveness-check",
+
+"url": "http://blobs.rokswood.com/unifycomply/compliance-
+
+documents/t7c9e91f81e064c6a9eada352ffeaf9c7/individual/c33c479186e2741be98bce2af145959af/liveness-
+
+che…",
+
+"idNumber": null, "issueDate": null, "expiryDate": null, "status": "validated",
+
+"reKycNotifiedAt": null, "key": "<redacted>", "contentType": "image/png",
+
+"customerId": "33c479186e2741be98bce2af145959af", "customerType": "individual",
+
+"shareholderId": null
+
+},
+
+"… 2 more"
+
+]
+
+}
+
+url points at a private bucket and does not fetch on its own; use the review tabs (§10) for time-limited signedUrl s.
+
+Requires: documents:write (writes), customers:read (reads)
+===== PAGE 31 =====
+8.9 Document requirements checklist LIVE SESSION API KEY
+
+GET /v1/customers/{kyc|kyb}/:customerId/documents/requirements
+
+Before any upload
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Document requirements retrieved successfully",
+
+"data": [
+
+{
+
+"category": "id-document",
+
+"acceptedTypes": ["national-identity", "passport", "… 1 more"], "satisfied": false,
+
+"documentIds": []
+
+},
+
+{
+
+"category": "liveness-check", "acceptedTypes": ["selfie-photo"], "satisfied": false,
+
+"documentIds": []
+
+},
+
+"… 1 more"
+
+]
+
+}
+
+After uploading passport, selfie and utility bill
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Document requirements retrieved successfully",
+
+"data": [
+
+{
+
+"category": "id-document",
+
+"acceptedTypes": ["national-identity", "passport", "… 1 more"], "satisfied": true,
+
+"documentIds": ["31ffc8f5f501420aab65d78325778d84"]
+
+},
+
+{
+
+"category": "liveness-check", "acceptedTypes": ["selfie-photo"], "satisfied": true,
+
+"documentIds": ["5680310515d444d191de24f9d39034a1"]
+
+},
+
+"… 1 more"
+
+]
+
+}
+
+Driven by the app's kycDocuments / kybDocuments (§5.4). Render it before letting someone start a verification
+
+so a missing document surfaces early.
+
+Requires: customers:read
+===== PAGE 32 =====
+8.10 Shareholders / directors (KYB only) LIVE SESSION API KEY
+
+GET /v1/customers/kyb/:customerId/shareholders
+
+POST /v1/customers/kyb/:customerId/shareholders
+
+PUT /v1/customers/kyb/:customerId/shareholders/:shareholderId
+
+GET /v1/customers/kyb/:customerId/shareholders/:shareholderId/documents
+
+POST /v1/customers/kyb/:customerId/shareholders/:shareholderId/documents
+
+PUT /v1/customers/kyb/:customerId/shareholders/:shareholderId/documents/:documentId
+
+// request — POST /v1/customers/kyb/eab4159c3215435d9b12806cdd629c96/shareholders
+
+{
+
+"firstName": "Ngozi", "lastName": "Adeyemi", "countryCode": "NG", "shareCountTotal": 60000,
+
+"sharePercentage": 60, "type": "individual", "email": "ngozi@koralogistics.example",
+
+"phone": "+2348052345678",
+
+"address": {
+
+"houseNo": "27", "street": "Adeola Odeku Street", "city": "Victoria Island",
+
+"state": "Lagos", "stateCode": "LA", "country": "Nigeria", "countryCode": "NG",
+
+"zipCode": "101241"
+
+},
+
+"dateAppointed": "2018-03-15", "role": "Managing Director / CEO"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyb shareholder created successfully",
+
+"data": {
+
+"id": "8d0e4ae691fe411cafaf609b41e21711", "createdAt": "2026-10-01T22:37:12.735Z",
+
+"updatedAt": "2026-10-01T22:37:12.735Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"firstName": "Ngozi", "lastName": "Adeyemi", "sharePercentage": 60, "shareCountTotal": 60000,
+
+"type": "individual", "dateAppointed": "2018-03-15", "role": "Managing Director / CEO",
+
+"email": "ngozi@koralogistics.example", "phone": "+2348052345678", "countryCode": "NG",
+
+"address": {
+
+"city": "Victoria Island", "state": "Lagos", "street": "Adeola Odeku Street",
+
+"country": "Nigeria", "houseNo": "27", "zipCode": "101241",
+
+"formatted": "27 Adeola Odeku Street, Victoria Island, Lagos LA, 101241, Nigeria (NG)",
+
+"stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"customerId": "eab4159c3215435d9b12806cdd629c96"
+
+}
+
+}
+
+Every shareholder is sanctions- and PEP-screened alongside the business on each KYB run. Shareholder PUT
+
+is a full replace, like §8.4.
+
+// request — POST
+
+/v1/customers/kyb/eab4159c3215435d9b12806cdd629c96/shareholders/8d0e4ae691fe411cafaf609b41e21711/docu
+
+ments
+
+{
+
+"type": "passport", "idNumber": "B01234567", "issueDate": "2020-01-02",
+
+"expiryDate": "2030-01-01", "file": "data:application/pdf;base64,JVBERi0xLjQKJSVFT0Y="
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Shareholder document created successfully",
+
+"data": {
+
+"id": "14fd000373c24b9494352a0a53f05cdc", "createdAt": "2026-10-01T22:37:21.705Z",
+
+"updatedAt": "2026-10-01T22:37:22.215Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"type": "passport", "category": "id-document",
+===== PAGE 33 =====
+"url": "http://blobs.rokswood.com/unifycomply/compliance-
+
+documents/t7c9e91f81e064c6a9eada352ffeaf9c7/business/ceab4159c3215435d9b12806cdd629c96/8d0e4ae691fe41
+
+…",
+
+"idNumber": "B01234567", "issueDate": "2020-01-02", "expiryDate": "2030-01-01",
+
+"status": "validated", "reKycNotifiedAt": null, "key": "<redacted>",
+
+"contentType": "application/pdf", "customerId": "eab4159c3215435d9b12806cdd629c96",
+
+"customerType": "business", "shareholderId": "8d0e4ae691fe411cafaf609b41e21711",
+
+"verification": {
+
+"documentId": "14fd000373c24b9494352a0a53f05cdc", "type": "passport", "valid": true,
+
+"reasons": [
+
+{
+
+"code": "document.ok", "severity": "info", "message": "passport accepted",
+
+"field": "passport"
+
+}
+
+]
+
+}
+
+}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Shareholder documents retrieved successfully",
+
+"data": [
+
+{
+
+"id": "14fd000373c24b9494352a0a53f05cdc", "type": "passport", "category": "id-document",
+
+"url": "http://blobs.rokswood.com/unifycomply/compliance-
+
+documents/t7c9e91f81e064c6a9eada352ffeaf9c7/business/ceab4159c3215435d9b12806cdd629c96/8d0e4ae691fe41
+
+…",
+
+"idNumber": "B01234567", "issueDate": "2020-01-02", "expiryDate": "2030-06-01",
+
+"status": "validated", "reKycNotifiedAt": null, "key": "<redacted>",
+
+"contentType": "application/pdf", "customerId": "eab4159c3215435d9b12806cdd629c96",
+
+"customerType": "business", "shareholderId": "8d0e4ae691fe411cafaf609b41e21711"
+
+}
+
+]
+
+}
+
+Fixed during this guide's capture run. Shareholder document uploads previously failed with 404 "No individual
+
+customer found". They now attach to the business customer ( customerType: "business" , shareholderId set),
+
+as shown above.
+
+Requires: customers:write , documents:write
+
+8.11 Account purpose & transaction-monitoring subscription LIVE SESSION API KEY
+
+GET /v1/customers/{kyc|kyb}/:customerId/account-purpose
+
+PUT /v1/customers/{kyc|kyb}/:customerId/account-purpose
+
+POST /v1/customers/{kyc|kyb}/:customerId/transaction-monitoring/subscribe
+
+POST /v1/customers/{kyc|kyb}/:customerId/transaction-monitoring/unsubscribe
+
+// request — PUT /v1/customers/kyc/33c479186e2741be98bce2af145959af/account-purpose
+
+{
+
+"purpose": "personal-banking", "sourceOfFunds": "salary",
+
+"purposeDetail": "Salary account, bills and family support", "expectedMonthlyTransactions": 20,
+
+"expectedMonthlyValue": 1500000, "expectedSingleTransactionValue": 300000, "currency": "NGN",
+
+"expectedCorridors": ["NG", "GB"],
+
+"expectedChannels": ["bank-transfer", "card"]
+
+}
+
+// response — HTTP 200
+
+{
+===== PAGE 34 =====
+"status": true, "message": "Account purpose recorded successfully",
+
+"data": {
+
+"id": "729ff97fe0ae424e9f01348ef5f60a15", "createdAt": "2026-10-01T22:37:08.111Z",
+
+"updatedAt": "2026-10-01T22:37:08.111Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"profileType": "individual", "purpose": "personal-banking",
+
+"purposeDetail": "Salary account, bills and family support", "sourceOfFunds": "salary",
+
+"sourceOfWealth": null, "expectedMonthlyTransactions": 20, "expectedMonthlyValue": 1500000,
+
+"expectedSingleTransactionValue": 300000, "currency": "NGN",
+
+"expectedCorridors": ["NG", "GB"],
+
+"expectedChannels": ["bank-transfer", "card"], "anticipatedCounterparties": null,
+
+"declaredBy": "api-key", "declaredAt": "2026-10-01T22:37:08.111Z",
+
+"monitoringEnabled": false, "subscribedAt": null,
+
+"customerId": "33c479186e2741be98bce2af145959af"
+
+}
+
+}
+
+What the customer said they would use the account for. Required: purpose , sourceOfFunds . The expected*
+
+fields are what real activity is compared against: a trailing-30-day breach (by the app's
+
+activityBreachMultiplier ) raises a monitoring alert.
+
+subscribe takes the same body as PUT and switches declared-vs-actual monitoring on
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyc subscribed to transaction monitoring successfully",
+
+"data": {
+
+"id": "729ff97fe0ae424e9f01348ef5f60a15", "createdAt": "2026-10-01T22:37:08.111Z",
+
+"updatedAt": "2026-10-01T22:37:56.101Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"profileType": "individual", "purpose": "personal-banking",
+
+"purposeDetail": "Salary account, bills and family support", "sourceOfFunds": "salary",
+
+"sourceOfWealth": null, "expectedMonthlyTransactions": 20, "expectedMonthlyValue": 1500000,
+
+"expectedSingleTransactionValue": 300000, "currency": "NGN",
+
+"expectedCorridors": ["NG", "GB"],
+
+"expectedChannels": ["bank-transfer", "card"], "anticipatedCounterparties": null,
+
+"declaredBy": "api-key", "declaredAt": "2026-10-01T22:37:56.101Z", "monitoringEnabled": true,
+
+"subscribedAt": "2026-10-01T22:37:56.099Z", "customerId": "33c479186e2741be98bce2af145959af"
+
+}
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true,
+
+"message": "Customer kyb unsubscribed from transaction monitoring successfully",
+
+"data": {
+
+"id": "13be91e3c4ad4b5f92adeb4ed7529798", "createdAt": "2026-10-01T22:37:19.390Z",
+
+"updatedAt": "2026-10-01T22:38:40.500Z", "domain": "sandbox",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"profileType": "business", "purpose": "business-operations", "purposeDetail": null,
+
+"sourceOfFunds": "business-income", "sourceOfWealth": null,
+
+"expectedMonthlyTransactions": 400, "expectedMonthlyValue": 85000000,
+
+"expectedSingleTransactionValue": 5000000, "currency": "NGN",
+
+"expectedCorridors": ["NG", "GH", "… 1 more"], "expectedChannels": ["bank-transfer"],
+
+"anticipatedCounterparties": null, "declaredBy": "api-key",
+
+"declaredAt": "2026-10-01T22:37:56.875Z", "monitoringEnabled": false,
+
+"subscribedAt": "2026-10-01T22:37:56.874Z", "customerId": "eab4159c3215435d9b12806cdd629c96"
+
+}
+
+}
+
+404 — unsubscribing a customer that never declared a purpose
+
+// response — HTTP 404
+
+{
+===== PAGE 35 =====
+"status": false,
+
+"message": "No account purpose declared for customer: ac906f738a7647668077edd4b9105234 — nothing to
+
+unsubscribe"
+
+}
+
+Rules-based monitoring needs no subscription. The detection rules in §13 run on every transaction for every
+
+customer; subscription only controls the declared-vs-actual comparison.
+
+Requires: customers:read / customers:write
+===== PAGE 36 =====
+9. Verifications
+
+A verification (workflow) runs a set of checks for one customer and settles to verified , in-review or failed .
+
+Session or API key.
+
+9.1 Available checks for a country LIVE SESSION API KEY
+
+GET /v1/verifications/available-checks?countryCode=NG&profileType=individual
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Available checks retrieved successfully",
+
+"data": {
+
+"countryCode": "NG", "profileType": "individual",
+
+"checks": [
+
+{
+
+"type": "national-id", "label": "National Identity Number",
+
+"authority": "National Identity Management Commission",
+
+"eligibleProviders": ["dojah", "qoreid", "interswitch", "… 2 more"]
+
+},
+
+{
+
+"type": "bank-account", "label": "Bank Verification Number",
+
+"authority": "Nigeria Inter-Bank Settlement System",
+
+"eligibleProviders": ["dojah", "interswitch", "sandbox", "… 1 more"]
+
+},
+
+{
+
+"type": "passport", "label": "Passport", "authority": null,
+
+"eligibleProviders": ["dojah", "qoreid", "sandbox", "… 1 more"]
+
+},
+
+"… 5 more"
+
+]
+
+}
+
+}
+
+Call before rendering a check picker. A check absent for a country genuinely is not offerable there and would
+
+be rejected at start.
+
+Requires: verifications:read
+
+9.2 Start a verification LIVE SESSION API KEY
+
+POST /v1/verifications/kyc
+
+POST /v1/verifications/kyb
+
+// request — POST /v1/verifications/kyc
+
+{
+
+"customerId": "33c479186e2741be98bce2af145959af",
+
+"verificationTypes": [{"type": "passport"}, {"type": "selfie"}]
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Customer kyc verification started successfully",
+
+"data": {
+
+"workflowId": "7a10d4b1895741a48674bbe4769d05df",
+
+"workflow": {
+
+"id": "7a10d4b1895741a48674bbe4769d05df", "timeInQueueMs": 0, "riskScore": 0,
+
+"assignedTo": null, "status": "processing", "priority": "standard",
+
+"verificationTypes": ["passport", "selfie", "… 2 more"], "profileType": "individual",
+
+"providerKey": null, "providerSubjectId": null, "providerRejectLabels": [],
+===== PAGE 37 =====
+"providerReviewedAt": null, "lastProviderEventAt": null,
+
+"customerId": "33c479186e2741be98bce2af145959af"
+
+},
+
+"run": {
+
+"run": {
+
+"id": "081e121f775f4b53bf0a7758f4f474a5", "status": "processing", "outcome": "pending",
+
+"profileType": "individual",
+
+"configSnapshot": {
+
+"pepTiers": [
+
+{
+
+"name": "Senior Foreign PEP", "tier": "tier-1", "autoEscalation": true,
+
+"riskScoreImpact": 4, "requiresApproval": true
+
+},
+
+{
+
+"name": "Domestic Senior PEP", "tier": "tier-2", "autoEscalation": true,
+
+"riskScoreImpact": 3, "requiresApproval": true
+
+},
+
+"… 2 more"
+
+],
+
+"riskFactors": [
+
+{
+
+"name": "Sanctions List Match", "slug": "sanctions-list-match",
+
+"type": "regulatory", "enabled": true, "riskWeight": 1
+
+},
+
+{
+
+"name": "Warnings and Regulatory Enforcement",
+
+"slug": "warnings-regulatory-enforcement", "type": "regulatory", "enabled": true,
+
+"riskWeight": 1
+
+},
+
+"… 4 more"
+
+],
+
+"kybDocuments": ["certificate-of-incorporation", "directors-id", "… 2 more"],
+
+"kycDocuments": ["id-document", "liveness-check", "… 1 more"], "kybExpiryDays": 365,
+
+"kycExpiryDays": 365,
+
+"riskScoreThreshold": {"blockThreshold": 3, "warningThreshold": 2},
+
+"flaggedCountryCodes": ["IR", "KP"], "activityBreachMultiplier": 2
+
+},
+
+"reasons": [], "startedAt": "2026-10-01T22:37:25.563Z", "completedAt": null,
+
+"resultPublishedAt": null, "workflowId": "7a10d4b1895741a48674bbe4769d05df",
+
+"customerId": "33c479186e2741be98bce2af145959af"
+
+},
+
+"tasks": [
+
+{
+
+"id": "b21dd60eb29f44e3bcb7efdc748a8d4b", "verificationType": "passport",
+
+"outcome": "pending", "reasons": [], "preferredProviderKey": null, "providerKey": null,
+
+"providerReference": null, "attempts": 1, "lastError": null, "completedAt": null,
+
+"runId": "081e121f775f4b53bf0a7758f4f474a5", "shareholderId": null
+
+},
+
+{
+
+"id": "22b6578dba6845e2a2f53f877aa7c53b", "verificationType": "selfie",
+
+"outcome": "pending", "reasons": [], "preferredProviderKey": null, "providerKey": null,
+
+"providerReference": null, "attempts": 1, "lastError": null, "completedAt": null,
+
+"runId": "081e121f775f4b53bf0a7758f4f474a5", "shareholderId": null
+
+},
+
+"… 2 more"
+
+]
+
+},
+
+"mandatoryAdded": ["sanctions-screening", "pep-screening"]
+
+}
+
+}
+
+Omit providerKey to run every eligible provider and reconcile (any real failed wins, then review-required ;
+
+unreachable providers do not vote). mandatoryAdded lists checks the server added (sanctions + PEP are
+
+always run). The response returns while checks are still processing .
+===== PAGE 38 =====
+400 — a type the country/profile does not offer
+
+// request — POST /v1/verifications/kyc
+
+{
+
+"customerId": "ac906f738a7647668077edd4b9105234",
+
+"verificationTypes": [{"type": "national-id-card"}]
+
+}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "verificationTypes.0.type must be one of the following values: national-id, bank-
+
+account, passport, driver-license, address-verification, selfie, sanct…"
+
+}
+
+Requires: verifications:write
+
+9.3 Read one verification (poll until settled) LIVE SESSION API KEY
+
+GET /v1/verifications/:workflowId
+
+A sandbox run against "Pep Sanction" — blocked on a sanctions + PEP hit
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Verification retrieved successfully",
+
+"data": {
+
+"workflow": {
+
+"id": "d2f3cecb18fb48d6a3746df20fcb65b7", "timeInQueueMs": 5001, "riskScore": 4,
+
+"assignedTo": null, "status": "failed", "priority": "standard",
+
+"verificationTypes": ["sanctions-screening", "pep-screening"], "profileType": "individual",
+
+"providerKey": null, "providerSubjectId": null,
+
+"providerRejectLabels": ["screening.sanctions-hit", "screening.pep-hit"],
+
+"providerReviewedAt": null, "lastProviderEventAt": "2026-10-01T22:37:50.116Z",
+
+"customerId": "12c1a2ae64ec4a29882031494f7f21f7"
+
+},
+
+"run": {
+
+"run": {
+
+"id": "b7529c22ff6848b08c14f2c4865b241d", "status": "completed", "outcome": "failed",
+
+"profileType": "individual",
+
+"configSnapshot": {
+
+"pepTiers": [
+
+{
+
+"name": "Senior Foreign PEP", "tier": "tier-1", "autoEscalation": true,
+
+"riskScoreImpact": 4, "requiresApproval": true
+
+},
+
+{
+
+"name": "Domestic Senior PEP", "tier": "tier-2", "autoEscalation": true,
+
+"riskScoreImpact": 3, "requiresApproval": true
+
+},
+
+"… 2 more"
+
+],
+
+"riskFactors": [
+
+{
+
+"name": "Sanctions List Match", "slug": "sanctions-list-match",
+
+"type": "regulatory", "enabled": true, "riskWeight": 1
+
+},
+
+{
+
+"name": "Warnings and Regulatory Enforcement",
+
+"slug": "warnings-regulatory-enforcement", "type": "regulatory", "enabled": true,
+
+"riskWeight": 1
+
+},
+
+"… 4 more"
+
+],
+===== PAGE 39 =====
+"kybDocuments": ["certificate-of-incorporation", "directors-id", "… 2 more"],
+
+"kycDocuments": ["id-document", "liveness-check", "… 1 more"], "kybExpiryDays": 365,
+
+"kycExpiryDays": 365,
+
+"riskScoreThreshold": {"blockThreshold": 3, "warningThreshold": 2},
+
+"flaggedCountryCodes": ["IR", "KP"], "activityBreachMultiplier": 2
+
+},
+
+"reasons": [
+
+{
+
+"code": "screening.match", "field": "sandbox-sanction-1",
+
+"message": "Matched \"Pep Sanction\" on sanctions list at 98% confidence — list:
+
+sandbox_default · programme: SANDBOX-PROGRA…",
+
+"evidence": {
+
+"score": 98, "aliases": [], "datasets": ["sandbox_default"], "countries": ["NG"],
+
+"positions": [], "categories": ["sanction"], "lastChange": null, "sourceUrls": [],
+
+"matchedName": "Pep Sanction", "matchSeverity": "exact",
+
+"providerEntityId": "sandbox-sanction-1", "sanctionPrograms": ["SANDBOX-PROGRAM"]
+
+},
+
+"severity": "blocking"
+
+},
+
+{
+
+"code": "screening.review-match", "field": "sandbox-pep-1",
+
+"message": "Matched \"Pep Sanction\" on politically exposed person at 85% confidence —
+
+list: sandbox_default · position: San…",
+
+"evidence": {
+
+"score": 85, "aliases": [], "datasets": ["sandbox_default"], "countries": ["NG"],
+
+"positions": ["Sandbox Minister"], "categories": ["pep"], "lastChange": null,
+
+"sourceUrls": [], "matchedName": "Pep Sanction", "matchSeverity": "high",
+
+"providerEntityId": "sandbox-pep-1", "sanctionPrograms": []
+
+},
+
+"severity": "warning"
+
+}
+
+],
+
+"startedAt": "2026-10-01T22:37:45.124Z", "completedAt": "2026-10-01T22:37:50.077Z",
+
+"resultPublishedAt": "2026-10-01T22:37:50.083Z",
+
+"workflowId": "d2f3cecb18fb48d6a3746df20fcb65b7",
+
+"customerId": "12c1a2ae64ec4a29882031494f7f21f7"
+
+},
+
+"tasks": [
+
+{
+
+"id": "ccec41e1037e4569b462e496d17abd47", "verificationType": "sanctions-screening",
+
+"outcome": "failed",
+
+"reasons": [
+
+{
+
+"code": "screening.match", "field": "sandbox-sanction-1",
+
+"message": "Matched \"Pep Sanction\" on sanctions list at 98% confidence — list:
+
+sandbox_default · programme: SANDBOX-PROGRA…",
+
+"evidence": {
+
+"score": 98, "aliases": [], "datasets": ["sandbox_default"], "countries": ["NG"],
+
+"positions": [], "categories": ["sanction"], "lastChange": null,
+
+"sourceUrls": [], "matchedName": "Pep Sanction", "matchSeverity": "exact",
+
+"providerEntityId": "sandbox-sanction-1",
+
+"sanctionPrograms": ["SANDBOX-PROGRAM"]
+
+},
+
+"severity": "blocking"
+
+}
+
+],
+
+"preferredProviderKey": null, "providerKey": "sandbox-aml", "providerReference": null,
+
+"attempts": 1, "lastError": null, "completedAt": "2026-10-01T22:37:50.073Z",
+
+"runId": "b7529c22ff6848b08c14f2c4865b241d", "shareholderId": null
+
+},
+
+{
+
+"id": "0b87332111694d0ab79963208f91a92e", "verificationType": "pep-screening",
+
+"outcome": "review-required",
+
+"reasons": [
+
+{
+
+"code": "screening.review-match", "field": "sandbox-pep-1",
+
+"message": "Matched \"Pep Sanction\" on politically exposed person at 85% confidence —
+
+list: sandbox_default · position: San…",
+===== PAGE 40 =====
+"evidence": {
+
+"score": 85, "aliases": [], "datasets": ["sandbox_default"], "countries": ["NG"],
+
+"positions": ["Sandbox Minister"], "categories": ["pep"], "lastChange": null,
+
+"sourceUrls": [], "matchedName": "Pep Sanction", "matchSeverity": "high",
+
+"providerEntityId": "sandbox-pep-1", "sanctionPrograms": []
+
+},
+
+"severity": "warning"
+
+}
+
+],
+
+"preferredProviderKey": null, "providerKey": "sandbox-aml", "providerReference": null,
+
+"attempts": 1, "lastError": null, "completedAt": "2026-10-01T22:37:50.047Z",
+
+"runId": "b7529c22ff6848b08c14f2c4865b241d", "shareholderId": null
+
+}
+
+]
+
+},
+
+"risk": {
+
+"runId": "b7529c22ff6848b08c14f2c4865b241d",
+
+"workflowId": "d2f3cecb18fb48d6a3746df20fcb65b7",
+
+"customerId": "12c1a2ae64ec4a29882031494f7f21f7", "profileType": "individual", "score": 4,
+
+"band": "high", "priority": "urgent", "canApprove": false, "requiresEscalation": true,
+
+"decision": "block",
+
+"contributions": [
+
+{
+
+"code": "screening.sanctions-hit", "points": 1, "source": "screening",
+
+"message": "Matched a sanctions, terrorism or asset-freeze list",
+
+"evidence": {
+
+"taskId": "ccec41e1037e4569b462e496d17abd47",
+
+"reasons": [
+
+{
+
+"code": "screening.match", "field": "sandbox-sanction-1",
+
+"message": "Matched \"Pep Sanction\" on sanctions list at 98% confidence — list:
+
+sandbox_default · programme: SANDBOX-PROGRA…",
+
+"evidence": {
+
+"score": 98, "aliases": [], "datasets": ["sandbox_default"],
+
+"countries": ["NG"], "positions": [], "categories": ["sanction"],
+
+"lastChange": null, "sourceUrls": [], "matchedName": "Pep Sanction",
+
+"matchSeverity": "exact", "providerEntityId": "sandbox-sanction-1",
+
+"sanctionPrograms": ["SANDBOX-PROGRAM"]
+
+},
+
+"severity": "blocking"
+
+}
+
+],
+
+"shareholderId": null
+
+},
+
+"factorSlug": "sanctions-list-match"
+
+},
+
+{
+
+"code": "screening.pep-hit", "points": 4, "source": "pep-tier",
+
+"message": "Politically exposed person matching Senior Foreign PEP",
+
+"evidence": {
+
+"tier": "tier-1", "taskId": "0b87332111694d0ab79963208f91a92e",
+
+"reasons": [
+
+{
+
+"code": "screening.review-match", "field": "sandbox-pep-1",
+
+"message": "Matched \"Pep Sanction\" on politically exposed person at 85% confidence
+
+— list: sandbox_default · position: San…",
+
+"evidence": {
+
+"score": 85, "aliases": [], "datasets": ["sandbox_default"],
+
+"countries": ["NG"], "positions": ["Sandbox Minister"], "categories": ["pep"],
+
+"lastChange": null, "sourceUrls": [], "matchedName": "Pep Sanction",
+
+"matchSeverity": "high", "providerEntityId": "sandbox-pep-1",
+
+"sanctionPrograms": []
+
+},
+
+"severity": "warning"
+
+}
+
+],
+
+"shareholderId": null, "requiresApproval": true
+
+},
+===== PAGE 41 =====
+"factorSlug": "pep-association"
+
+}
+
+],
+
+"warningThreshold": 2, "blockThreshold": 3, "decidedAt": "2026-10-01T22:37:50.103Z"
+
+},
+
+"events": [
+
+{
+
+"id": "844bf388f8fb4d26954138bc4ce8b3d3", "action": "risk.decision",
+
+"actor": "risk-decisioning", "fromStatus": "processing", "toStatus": "failed",
+
+"detail": {
+
+"band": "high", "runId": "b7529c22ff6848b08c14f2c4865b241d", "score": 4,
+
+"decision": "block", "messageId": "decision:b7529c22ff6848b08c14f2c4865b241d",
+
+"contributions": [
+
+{
+
+"code": "screening.sanctions-hit", "points": 1, "source": "screening",
+
+"message": "Matched a sanctions, terrorism or asset-freeze list",
+
+"evidence": {
+
+"taskId": "ccec41e1037e4569b462e496d17abd47",
+
+"reasons": [
+
+{
+
+"code": "screening.match", "field": "sandbox-sanction-1",
+
+"message": "Matched \"Pep Sanction\" on sanctions list at 98% confidence — list:
+
+sandbox_default · programme: SANDBOX-PROGRA…",
+
+"evidence": {
+
+"score": 98, "aliases": [], "datasets": ["sandbox_default"],
+
+"countries": ["NG"], "positions": [], "categories": ["sanction"],
+
+"lastChange": null, "sourceUrls": [], "matchedName": "Pep Sanction",
+
+"matchSeverity": "exact", "providerEntityId": "sandbox-sanction-1",
+
+"sanctionPrograms": ["SANDBOX-PROGRAM"]
+
+},
+
+"severity": "blocking"
+
+}
+
+],
+
+"shareholderId": null
+
+},
+
+"factorSlug": "sanctions-list-match"
+
+},
+
+{
+
+"code": "screening.pep-hit", "points": 4, "source": "pep-tier",
+
+"message": "Politically exposed person matching Senior Foreign PEP",
+
+"evidence": {
+
+"tier": "tier-1", "taskId": "0b87332111694d0ab79963208f91a92e",
+
+"reasons": [
+
+{
+
+"code": "screening.review-match", "field": "sandbox-pep-1",
+
+"message": "Matched \"Pep Sanction\" on politically exposed person at 85%
+
+confidence — list: sandbox_default · position: San…",
+
+"evidence": {
+
+"score": 85, "aliases": [], "datasets": ["sandbox_default"],
+
+"countries": ["NG"], "positions": ["Sandbox Minister"],
+
+"categories": ["pep"], "lastChange": null, "sourceUrls": [],
+
+"matchedName": "Pep Sanction", "matchSeverity": "high",
+
+"providerEntityId": "sandbox-pep-1", "sanctionPrograms": []
+
+},
+
+"severity": "warning"
+
+}
+
+],
+
+"shareholderId": null, "requiresApproval": true
+
+},
+
+"factorSlug": "pep-association"
+
+}
+
+],
+
+"blockThreshold": 3, "warningThreshold": 2
+
+},
+
+"customerName": "Pep Sanction", "workflowId": "d2f3cecb18fb48d6a3746df20fcb65b7"
+
+},
+
+{
+
+"id": "a9720c24384640fc846457f333994752", "action": "verification.completed",
+===== PAGE 42 =====
+"actor": "compliance-domain", "fromStatus": "processing", "toStatus": null,
+
+"detail": {
+
+"runId": "b7529c22ff6848b08c14f2c4865b241d",
+
+"tasks": [
+
+{
+
+"outcome": "failed",
+
+"reasons": [
+
+{
+
+"code": "screening.match", "field": "sandbox-sanction-1",
+
+"message": "Matched \"Pep Sanction\" on sanctions list at 98% confidence — list:
+
+sandbox_default · programme: SANDBOX-PROGRA…",
+
+"evidence": {
+
+"score": 98, "aliases": [], "datasets": ["sandbox_default"],
+
+"countries": ["NG"], "positions": [], "categories": ["sanction"],
+
+"lastChange": null, "sourceUrls": [], "matchedName": "Pep Sanction",
+
+"matchSeverity": "exact", "providerEntityId": "sandbox-sanction-1",
+
+"sanctionPrograms": ["SANDBOX-PROGRAM"]
+
+},
+
+"severity": "blocking"
+
+}
+
+],
+
+"providerKey": "sandbox-aml", "verificationType": "sanctions-screening"
+
+},
+
+{
+
+"outcome": "review-required",
+
+"reasons": [
+
+{
+
+"code": "screening.review-match", "field": "sandbox-pep-1",
+
+"message": "Matched \"Pep Sanction\" on politically exposed person at 85%
+
+confidence — list: sandbox_default · position: San…",
+
+"evidence": {
+
+"score": 85, "aliases": [], "datasets": ["sandbox_default"],
+
+"countries": ["NG"], "positions": ["Sandbox Minister"],
+
+"categories": ["pep"], "lastChange": null, "sourceUrls": [],
+
+"matchedName": "Pep Sanction", "matchSeverity": "high",
+
+"providerEntityId": "sandbox-pep-1", "sanctionPrograms": []
+
+},
+
+"severity": "warning"
+
+}
+
+],
+
+"providerKey": "sandbox-aml", "verificationType": "pep-screening"
+
+}
+
+],
+
+"outcome": "failed", "messageId": "run:b7529c22ff6848b08c14f2c4865b241d"
+
+},
+
+"customerName": "Pep Sanction", "workflowId": "d2f3cecb18fb48d6a3746df20fcb65b7"
+
+},
+
+"… 1 more"
+
+]
+
+}
+
+}
+
+There is no push to the browser — poll. Re-fetch every ~3 s until workflow.status is verified , in-review
+
+or failed and risk is non-null (about 6–12 s in sandbox). Your backend can listen for the workflow.verified
+
+/ workflow.failed webhooks (§11.2) instead.
+
+events is the audit trail a compliance officer reads ("why is this in review"). Every task carries reasons[] ,
+
+even on a pass.
+
+Requires: verifications:read
+===== PAGE 43 =====
+9.4 Verification queues LIVE SESSION API KEY
+
+GET /v1/verifications
+
+GET /v1/verifications/kyc
+
+GET /v1/verifications/kyb
+
+Query: page , limit , status , priority , verificationType (matches if included), dateFrom , dateTo , search
+
+(workflow id / displayId / provider subject id — not customer name).
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Kyc verifications retrieved successfully",
+
+"data": [
+
+{
+
+"id": "7a10d4b1895741a48674bbe4769d05df", "timeInQueueMs": 4659, "riskScore": 0,
+
+"assignedTo": null, "status": "verified", "priority": "standard",
+
+"verificationTypes": ["passport", "… 3 more"], "profileType": "individual",
+
+"providerKey": null, "providerSubjectId": null, "providerRejectLabels": [],
+
+"providerReviewedAt": null, "lastProviderEventAt": "2026-10-01T22:37:30.204Z",
+
+"customerId": "33c479186e2741be98bce2af145959af", "displayId": "9D05DF",
+
+"customerName": "Chidinma Eze", "country": "NG",
+
+"documentType": "Passport + Selfie + Sanctions Screening + PEP Screening"
+
+}
+
+],
+
+"meta": {"totalItems": 1, "itemsCount": 1, "itemsPerPage": 10, "totalPages": 1, "currentPage": 1}
+
+}
+
+/kyc and /kyb add displayId , customerName , country and a friendly documentType label.
+
+/verifications is the profile-agnostic version without that enrichment.
+
+Requires: verifications:read
+
+10. Verification review tabs
+
+The data behind one verification's review screen. Session only ( dashboard:access ) — an API key gets 401. Fetch
+
+each tab lazily when opened; hitting the KYC path for a business workflow (or vice versa) returns 404.
+
+404 — KYB path with a KYC workflow id
+
+// response — HTTP 404
+
+{
+
+"status": false,
+
+"message": "No kyb verification found with a matching workflowId: 7a10d4b1895741a48674bbe4769d05df"
+
+}
+
+10.1 KYC — documents LIVE SESSION
+
+GET /v1/verifications/kyc/:workflowId/documents
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Documents tab retrieved successfully",
+
+"data": {
+
+"workflowId": "7a10d4b1895741a48674bbe4769d05df",
+
+"documents": [
+===== PAGE 44 =====
+{
+
+"id": "693776d544504a098824df5efda2e7c9", "type": "utility-bill",
+
+"category": "proof-of-address",
+
+"url": "http://blobs.rokswood.com/unifycomply/compliance-
+
+documents/t7c9e91f81e064c6a9eada352ffeaf9…",
+
+"idNumber": null, "issueDate": "2026-08-15", "expiryDate": null, "status": "validated",
+
+"reKycNotifiedAt": null, "key": "<redacted>", "contentType": "application/pdf",
+
+"customerId": "33c479186e2741be98bce2af145959af", "customerType": "individual",
+
+"shareholderId": null,
+
+"signedUrl": "http://minio-api.apps.rokswood.com:9000/unifycomply/compliance-
+
+documents/t7c9e91f81e064c6a…",
+
+"extractedInformation": null
+
+},
+
+"… 2 more"
+
+],
+
+"riskScore": 0, "riskBand": "low",
+
+"timeline": [
+
+{
+
+"id": "5a0c9ca3f2b54d88bc74cc332f903f21", "action": "risk.decision",
+
+"actor": "risk-decisioning", "fromStatus": "processing", "toStatus": "verified",
+
+"detail": {
+
+"band": "low", "runId": "081e121f775f4b53bf0a7758f4f474a5", "score": 0,
+
+"decision": "onboard", "messageId": "decision:081e121f775f4b53bf0a7758f4f474a5",
+
+"contributions": [], "blockThreshold": 3, "warningThreshold": 2
+
+},
+
+"customerName": "Chidinma Eze", "workflowId": "7a10d4b1895741a48674bbe4769d05df"
+
+},
+
+"… 2 more"
+
+]
+
+}
+
+}
+
+Use signedUrl (valid about an hour) to display/download; it is null when no file was stored.
+
+extractedInformation is always null — no OCR yet.
+
+10.2 KYC / KYB — risk score LIVE SESSION
+
+GET /v1/verifications/kyc/:workflowId/risk-score
+
+GET /v1/verifications/kyb/:workflowId/risk-score
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Risk score analysis tab retrieved successfully",
+
+"data": {
+
+"available": true,
+
+"risk": {
+
+"runId": "081e121f775f4b53bf0a7758f4f474a5",
+
+"workflowId": "7a10d4b1895741a48674bbe4769d05df",
+
+"customerId": "33c479186e2741be98bce2af145959af", "profileType": "individual", "score": 0,
+
+"band": "low", "priority": "standard", "canApprove": true, "requiresEscalation": false,
+
+"decision": "onboard", "contributions": [], "warningThreshold": 2, "blockThreshold": 3,
+
+"decidedAt": "2026-10-01T22:37:30.186Z"
+
+}
+
+}
+
+}
+
+Score is on the 0–4 KYC/KYB scale. No narrative sentence is generated — template one from contributions
+
+if the design needs it.
+===== PAGE 45 =====
+10.3 KYC — AML screening LIVE SESSION
+
+GET /v1/verifications/kyc/:workflowId/aml-screening
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "AML screening tab retrieved successfully",
+
+"data": {
+
+"tasks": [
+
+{
+
+"id": "41be267fa4fa4475962a17ce6766bf56", "verificationType": "sanctions-screening",
+
+"outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "screening.clear", "message": "No sanctions match across 1 dataset(s)",
+
+"evidence": {"threshold": 70, "totalCandidates": 0, "datasetsSearched":
+
+["sandbox_default"]},
+
+"severity": "info"
+
+}
+
+],
+
+"preferredProviderKey": null, "providerKey": "sandbox-aml", "providerReference": null,
+
+"attempts": 1, "lastError": null, "completedAt": "2026-10-01T22:37:30.112Z",
+
+"runId": "081e121f775f4b53bf0a7758f4f474a5", "shareholderId": null
+
+},
+
+{
+
+"id": "5541018378ae4ee08e596d3dbd7cb1ba", "verificationType": "pep-screening",
+
+"outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "screening.clear",
+
+"message": "No PEP, warning or adverse media match across 1 dataset(s)",
+
+"evidence": {"threshold": 70, "totalCandidates": 0, "datasetsSearched":
+
+["sandbox_default"]},
+
+"severity": "info"
+
+}
+
+],
+
+"preferredProviderKey": null, "providerKey": "sandbox-aml", "providerReference": null,
+
+"attempts": 1, "lastError": null, "completedAt": "2026-10-01T22:37:30.082Z",
+
+"runId": "081e121f775f4b53bf0a7758f4f474a5", "shareholderId": null
+
+}
+
+]
+
+}
+
+}
+
+10.4 KYC — device information PARTIAL SESSION
+
+GET /v1/verifications/kyc/:workflowId/device-information
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Device information tab retrieved successfully",
+
+"data": {
+
+"available": false, "ip": null, "geolocation": null, "device": null, "vpnDetected": null,
+
+"proxyDetected": null, "reason": "IP and device capture is not implemented (see TODO D10)"
+
+}
+
+}
+===== PAGE 46 =====
+Field Status Why
+
+every
+
+field
+
+always
+
+null
+
+No IP or device capture exists anywhere in the platform. Render a permanent empty state using
+
+reason .
+
+10.5 KYC — liveness PARTIAL SESSION
+
+GET /v1/verifications/kyc/:workflowId/liveness
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Liveness detection tab retrieved successfully",
+
+"data": {
+
+"available": true, "livenessDetection": "skipped", "matchScoreRate": null,
+
+"providerKey": null, "providerReference": null, "attempts": 1,
+
+"completedAt": "2026-10-01T22:37:27.490Z",
+
+"reasons": [
+
+{
+
+"code": "verification.unsupported", "message": "\"selfie\" is not offerable in NG",
+
+"severity": "warning"
+
+}
+
+]
+
+}
+
+}
+
+Field Status Why
+
+matchScoreRate usually
+
+null
+
+A selfie check runs through the generic identity path; the dedicated biometric
+
+liveness capability is never invoked. Do not build UI expecting confidence %,
+
+face/mask/eyes checks.
+
+10.6 KYB — business overview LIVE SESSION
+
+GET /v1/verifications/kyb/:workflowId/business-overview
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Business overview tab retrieved successfully",
+
+"data": {
+
+"workflowId": "a20726b6d31b4f6bb2b6bcd201a91e6b",
+
+"business": {
+
+"id": "eab4159c3215435d9b12806cdd629c96", "businessName": "Kora Logistics Limited",
+
+"businessType": null, "countryCode": "NG",
+
+"address": {
+
+"city": "Victoria Island", "state": "Lagos", "street": "Adeola Odeku Street",
+
+"country": "Nigeria", "houseNo": "27", "zipCode": "101241",
+
+"formatted": "27 Adeola Odeku Street, Victoria Island, Lagos LA, 101241, Nigeria (NG)",
+
+"stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"registrationDate": "2018-03-15", "industry": "technology",
+
+"contactEmail": "compliance@koralogistics.example", "contactPhone": "+2348091234500",
+
+"website": "https://koralogistics.example", "contactEmailChangedAt": null,
+
+"contactPhoneChangedAt": "2026-10-01T22:37:19.781Z", "addressChangedAt": null,
+
+"status": "review", "statusReasons": [], "statusChangedAt": "2026-10-01T22:37:30.314Z",
+
+"statusRunId": "b0fc875f3328424b98b221d5fc4f3b04", "riskScore": 0,
+===== PAGE 47 =====
+"lastReviewedAt": "2026-10-01T22:37:30.314Z", "nextReviewAt": null, "flags": [],
+
+"documentTypes": ["certificate-of-incorporation", "tin"]
+
+},
+
+"registrationNumber": "RC-23456789", "tin": "TIN-12345678-0001", "activities": null,
+
+"status": "in-review", "riskScore": 0
+
+}
+
+}
+
+registrationNumber and tin are read off the uploaded certificate-of-incorporation / TIN documents'
+
+idNumber (null if not uploaded). business.status is the customer lifecycle; top-level status is the workflow
+
+— different fields.
+
+10.7 KYB — directors & officers, shareholders LIVE SESSION
+
+GET /v1/verifications/kyb/:workflowId/directors-officers
+
+GET /v1/verifications/kyb/:workflowId/shareholders
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Directors and officers tab retrieved successfully",
+
+"data": {
+
+"directors": [
+
+{
+
+"id": "74c08fd820f94e4b8e9b9bdce84ebc60", "firstName": "Emeka", "lastName": "Obi",
+
+"sharePercentage": 40, "shareCountTotal": 40000, "type": "individual",
+
+"dateAppointed": "2019-06-01", "role": "Director",
+
+"email": "emeka@koralogistics.example", "phone": "+2348057654321", "countryCode": "NG",
+
+"address": {
+
+"city": "Victoria Island", "state": "Lagos", "street": "Adeola Odeku Street",
+
+"country": "Nigeria", "houseNo": "27", "zipCode": "101241",
+
+"formatted": "27 Adeola Odeku Street, Victoria Island, Lagos LA, 101241, Nigeria (NG)",
+
+"stateCode": "LA",
+
+"coordinates": {"lat": null, "lng": null}, "countryCode": "NG"
+
+},
+
+"customerId": "eab4159c3215435d9b12806cdd629c96", "nationality": null, "idType": null,
+
+"idNumber": null, "riskLevel": "low", "needsReview": false,
+
+"screening": [
+
+{
+
+"verificationType": "sanctions-screening", "outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "screening.clear", "message": "No sanctions match across 1 dataset(s)",
+
+"evidence": {"threshold": 70, "totalCandidates": 0, "datasetsSearched":
+
+["sandbox_default"]},
+
+"severity": "info"
+
+}
+
+]
+
+},
+
+"… 1 more"
+
+]
+
+},
+
+"… 1 more"
+
+]
+
+}
+
+}
+
+screening[] is each director's own live sanctions/PEP result. nationality , idType , idNumber (and
+
+shareClass on /shareholders ) are always null — not captured.
+===== PAGE 48 =====
+10.8 KYB — documents, compliance checks LIVE SESSION
+
+GET /v1/verifications/kyb/:workflowId/document
+
+GET /v1/verifications/kyb/:workflowId/compliance-checks
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Compliance checks tab retrieved successfully",
+
+"data": {
+
+"tasks": [
+
+{
+
+"id": "d8f84b49cfdf4df096ec621717739bde", "verificationType": "sanctions-screening",
+
+"outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "screening.clear", "message": "No sanctions match across 1 dataset(s)",
+
+"evidence": {"threshold": 70, "totalCandidates": 0, "datasetsSearched":
+
+["sandbox_default"]},
+
+"severity": "info"
+
+}
+
+],
+
+"preferredProviderKey": null, "providerKey": "sandbox-aml", "providerReference": null,
+
+"attempts": 1, "lastError": null, "completedAt": "2026-10-01T22:37:30.250Z",
+
+"runId": "b0fc875f3328424b98b221d5fc4f3b04", "shareholderId": null
+
+},
+
+{
+
+"id": "0381e691cfbe4bfdaa9aba2be40a1027", "verificationType": "pep-screening",
+
+"outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "screening.clear",
+
+"message": "No PEP, warning or adverse media match across 1 dataset(s)",
+
+"evidence": {"threshold": 70, "totalCandidates": 0, "datasetsSearched":
+
+["sandbox_default"]},
+
+"severity": "info"
+
+}
+
+],
+
+"preferredProviderKey": null, "providerKey": "sandbox-aml", "providerReference": null,
+
+"attempts": 1, "lastError": null, "completedAt": "2026-10-01T22:37:30.158Z",
+
+"runId": "b0fc875f3328424b98b221d5fc4f3b04", "shareholderId": null
+
+}
+
+]
+
+}
+
+}
+
+Note the singular /document . compliance-checks is the business entity's own screening only; directors'
+
+results are on §10.7.
+===== PAGE 49 =====
+11. Dashboard & webhooks
+
+11.1 Dashboard tiles & feeds LIVE SESSION API KEY
+
+GET /v1/dashboard/summary
+
+GET /v1/dashboard/high-risk-alerts
+
+GET /v1/dashboard/verification-types
+
+GET /v1/dashboard/activity
+
+GET /v1/dashboard/api-calls?year=2026
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Dashboard summary retrieved successfully",
+
+"data": {"total": 2, "successRate": 50, "failureRate": 0, "pendingReviewRate": 50}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Verification type breakdown retrieved successfully",
+
+"data": [
+
+{"type": "pep-screening", "label": "PEP Screening", "count": 2, "percentage": 28.6},
+
+{"type": "sanctions-screening", "label": "Sanctions Screening", "count": 2, "percentage": 28.6},
+
+{"type": "passport", "label": "Passport Verification", "count": 1, "percentage": 14.3},
+
+"… 2 more"
+
+]
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Recent activity retrieved successfully",
+
+"data": [
+
+{
+
+"id": "937e7873802d4cbaabfec90312413e09", "message": "Risk decision recorded: review",
+
+"customerName": "Kora Logistics Limited", "workflowId": "a20726b6d31b4f6bb2b6bcd201a91e6b"
+
+},
+
+{
+
+"id": "df4870bdd94a4411a0ccde33d922f795", "message": "Verification failed",
+
+"customerName": "Kora Logistics Limited", "workflowId": "a20726b6d31b4f6bb2b6bcd201a91e6b"
+
+},
+
+"… 4 more"
+
+],
+
+"meta": {"totalItems": 6, "itemsCount": 6, "itemsPerPage": 10, "totalPages": 1, "currentPage": 1}
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "API call counts retrieved successfully",
+
+"data": [
+
+{"month": 1, "successful": 0, "failed": 0},
+
+{"month": 2, "successful": 0, "failed": 0},
+
+{"month": 3, "successful": 0, "failed": 0},
+
+"… 9 more"
+
+]
+
+}
+
+high-risk-alerts and activity are paginated. A workflow with three checks counts toward all three in
+
+verification-types .
+===== PAGE 50 =====
+Requires: verifications:read
+
+11.2 Webhook deliveries LIVE SESSION API KEY
+
+GET /v1/webhooks/deliveries
+
+GET /v1/webhooks/deliveries/:id
+
+POST /v1/webhooks/deliveries/:id/redeliver
+
+GET /v1/tenants/apps/:appId/webhook/deliveries
+
+POST /v1/tenants/apps/:appId/webhook/deliveries/:id/redeliver
+
+Query: workflowId , status ( pending|delivered|failed|dead ), page , limit .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Webhook delivery retrieved successfully",
+
+"data": {
+
+"id": "c7417ca429db4eb7886d8874f9ef3a42", "createdAt": "2026-10-01T22:37:30.241Z",
+
+"updatedAt": "2026-10-01T22:37:40.524Z", "domain": "sandbox", "event": "workflow.verified",
+
+"url": "https://example.com/webhooks/unifycomply",
+
+"payload": {
+
+"data": {
+
+"run": {
+
+"id": "081e121f775f4b53bf0a7758f4f474a5", "status": "completed", "outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "identity.field-match", "field": "firstName",
+
+"message": "firstName matches the record", "evidence": {"score": 100},
+
+"severity": "info"
+
+},
+
+"… 5 more"
+
+],
+
+"startedAt": "2026-10-01T22:37:25.563Z", "completedAt": "2026-10-01T22:37:30.126Z"
+
+},
+
+"risk": {
+
+"band": "low", "score": 0, "decision": "onboard", "priority": "standard",
+
+"canApprove": true, "contributions": [], "blockThreshold": 3, "warningThreshold": 2,
+
+"requiresEscalation": false
+
+},
+
+"tasks": [
+
+{
+
+"outcome": "passed",
+
+"reasons": [
+
+{
+
+"code": "identity.field-match", "field": "firstName",
+
+"message": "firstName matches the record", "evidence": {"score": 100},
+
+"severity": "info"
+
+},
+
+"… 2 more"
+
+],
+
+"providerKey": "sandbox", "verificationType": "passport", "providerReference": null
+
+},
+
+"… 3 more"
+
+],
+
+"customer": {
+
+"email": "chidinma.eze@example.com", "phone": "+2348031234500", "gender": "female",
+
+"address": {
+
+"city": "Lekki", "state": "Lagos", "street": "Admiralty Way", "zipCode": "105102",
+
+"formatted": "12 Admiralty Way, Lekki, Lagos LA, 105102, Nigeria (NG)",
+
+"countryCode": "NG"
+
+},
+
+"website": null, "industry": null, "lastName": "Eze", "firstName": "Chidinma",
+
+"customerId": "33c479186e2741be98bce2af145959af", "middleName": null,
+===== PAGE 51 =====
+"countryCode": "NG", "dateOfBirth": "1991-04-12", "profileType": "individual",
+
+"businessName": null, "businessType": null, "registrationDate": null
+
+},
+
+"workflow": {
+
+"id": "7a10d4b1895741a48674bbe4769d05df", "status": "verified", "priority": "standard",
+
+"riskScore": 0, "profileType": "individual", "providerKey": null,
+
+"providerSubjectId": null,
+
+"verificationTypes": ["passport", "… 3 more"]
+
+},
+
+"manualReview": null
+
+},
+
+"event": "workflow.verified", "timestamp": "2026-10-01T22:37:30.239Z",
+
+"workflowId": "7a10d4b1895741a48674bbe4769d05df"
+
+},
+
+"signature": "t=1790894250,v1=1be3e4102adbcb0105ea7857609d3a22168d71dc337c6df471185ac4848de4c5",
+
+"status": "failed", "attempts": 1, "availableAt": "2026-10-01T22:37:42.524Z",
+
+"deliveredAt": null, "responseStatus": 405,
+
+"responseBody": "<!doctype html><html lang=\"en\"><head><title>Example Domain</title><link
+
+rel=\"ico…",
+
+"lastError": "HTTP 405", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"workflowId": "7a10d4b1895741a48674bbe4769d05df"
+
+}
+
+}
+
+The demo app pointed at https://example.com/… , which answers 405 — so this delivery shows a real failure
+
+after 3 attempts with responseStatus and lastError filled. Redeliver re-sends the exact original payload.
+
+The /tenants/apps/:appId/… pair is the session-side mirror of the same data.
+
+EVENTS & SIGNATURE
+
+Two events today: workflow.verified and workflow.failed , fired when a workflow reaches that status —
+
+by the risk engine or by a manual approve/reject (§8.5) — never for in-review . A manual decision adds
+
+data.manualReview: { decision, actor, reason, decidedAt } (null for engine decisions) while data.risk
+
+still carries the engine's original verdict, so the receiver can see what was overridden. Every delivery carries x-
+
+unifycomply-signature: t=<unix-seconds>,v1=<hex-hmac-sha256> over ${t}.${rawBody} with the app's
+
+webhook secret. Verify against the raw body (not re-serialised JSON), compare in constant time, and reject
+
+stale timestamps.
+
+Requires: webhooks:read / webhooks:write
+
+12. Transactions — ingestion, detail, statement
+
+Feeding transactions in powers every transaction-monitoring screen. Each transaction is evaluated against the app's
+
+detection and risk-score rules (§13) within a second or two of ingestion.
+
+12.1 Record a transaction LIVE SESSION API KEY
+
+POST /v1/transactions
+
+// request — POST /v1/transactions
+
+{
+
+"customerId": "33c479186e2741be98bce2af145959af", "profileType": "individual",
+
+"currency": "USD", "direction": "inbound", "amount": 2500, "channel": "bank-transfer",
+
+"transactionType": "deposit", "reference": "DOCS-CLEAN-1790894286780",
+
+"occurredAt": "2026-10-01T21:18:06.780Z",
+
+"counterparty": {"name": "Acme Payroll Ltd", "accountNumber": "0123456789", "countryCode": "NG",
+
+"bic": "GTBINGLA"},
+===== PAGE 52 =====
+"paymentPurpose": "Salary", "sourceCountryCode": "NG", "destinationCountryCode": "NG",
+
+"deviceInfo": {"device": "iPhone 15", "ipAddress": "102.89.1.20", "isNewDevice": false},
+
+"debit": null, "credit": 2500, "balance": 502500
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Transaction recorded successfully",
+
+"data": {
+
+"id": "1e73ff91f0a14e86b52748fb21d02b88", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "domain": "sandbox",
+
+"customerId": "33c479186e2741be98bce2af145959af", "profileType": "individual",
+
+"direction": "inbound", "amount": 2500, "currency": "USD", "channel": "bank-transfer",
+
+"transactionType": "deposit", "corridorCountryCode": null, "payerDeclaredName": null,
+
+"counterparty": {"name": "Acme Payroll Ltd", "accountNumber": "0123456789", "countryCode": "NG",
+
+"bic": "GTBINGLA"},
+
+"sourceCountryCode": "NG", "destinationCountryCode": "NG", "paymentPurpose": "Salary",
+
+"merchant": null,
+
+"deviceInfo": {"device": "iPhone 15", "ipAddress": "102.89.1.20", "isNewDevice": false},
+
+"debit": null, "credit": 2500, "balance": 502500, "reference": "DOCS-CLEAN-1790894286780",
+
+"occurredAt": "2026-10-01T21:18:06.780Z", "metadata": {},
+
+"createdAt": "2026-10-01T22:38:07.213Z"
+
+}
+
+}
+
+Field Required Notes
+
+customerId , profileType ,
+
+direction , amount , currency ,
+
+channel , reference ,
+
+occurredAt
+
+yes direction : inbound|outbound . channel : free text
+
+payment rail ( bank-transfer , card , crypto , …).
+
+transactionType no transfer|withdrawal|deposit|payment|recall-debit
+
+— rule filters and the Recall Debit rule key off it.
+
+counterparty no { name, accountNumber, countryCode, bic }
+
+sourceCountryCode ,
+
+destinationCountryCode ,
+
+corridorCountryCode
+
+no Destination/source feed the High-Risk Country check (§5.4
+
+flaggedCountryCodes ).
+
+payerDeclaredName no Name on the payment instruction. Compared with the customer's
+
+registered name → BACS Mismatch.
+
+deviceInfo , merchant ,
+
+paymentPurpose , metadata
+
+no metadata keys are readable by rules (e.g. geo_mismatch ,
+
+geo_mismatch_distance ).
+
+debit , credit , balance no Tenant-supplied ledger values. UnifyComply never computes a
+
+balance; send them if you want the Account Statement (§12.4) to
+
+render.
+
+Retrying with the same reference returns the original row (same id ) — no duplicate
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Transaction recorded successfully",
+
+"data": {
+
+"id": "1e73ff91f0a14e86b52748fb21d02b88", "amount": 2500,
+
+"reference": "DOCS-CLEAN-1790894286780", "createdAt": "2026-10-01T22:38:07.213Z"
+
+}
+
+}
+
+reference is the idempotency key. Generate it once per real transaction, not per HTTP attempt.
+===== PAGE 53 =====
+400 — missing required fields
+
+// request — POST /v1/transactions
+
+{"customerId": "33c479186e2741be98bce2af145959af", "amount": 10}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "profileType must be one of the following values: individual, business, direction must
+
+be one of the following values: inbound, outbound, currency must…"
+
+}
+
+Requires: transactions:write
+
+12.2 List & read LIVE SESSION API KEY
+
+GET /v1/transactions
+
+GET /v1/transactions/:id
+
+Query: customerId , dateFrom , dateTo , page , limit .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Transactions retrieved successfully",
+
+"data": [
+
+{
+
+"id": "05ea12fc43d347a9adbc6b7edc2cfd06", "customerId": "33c479186e2741be98bce2af145959af",
+
+"profileType": "individual", "direction": "outbound", "amount": 6000, "currency": "USD",
+
+"channel": "crypto", "transactionType": "withdrawal", "corridorCountryCode": null,
+
+"payerDeclaredName": null, "counterparty": null, "sourceCountryCode": null,
+
+"destinationCountryCode": null, "paymentPurpose": null, "merchant": null,
+
+"deviceInfo": null, "debit": 6000, "credit": null, "balance": 397300,
+
+"reference": "DOCS-CRY-1790894286780", "occurredAt": "2026-10-01T22:28:06.780Z",
+
+"metadata": {}
+
+},
+
+"… 4 more"
+
+],
+
+"meta": {"totalItems": 8, "itemsCount": 5, "itemsPerPage": 5, "totalPages": 2, "currentPage": 1}
+
+}
+
+Requires: transactions:read
+
+12.3 Transaction detail (composed) PARTIAL SESSION API KEY
+
+GET /v1/transactions/:id/detail
+
+A 75,000 USD transfer — tripped High Value Transaction and Threshold Breach, auto-blocked
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Transaction detail retrieved successfully",
+
+"data": {
+
+"transaction": {
+
+"id": "03ee00beed0e4bc2a0c9a043ccb98da0", "customerId": "33c479186e2741be98bce2af145959af",
+
+"profileType": "individual", "direction": "outbound", "amount": 75000, "currency": "USD",
+
+"channel": "bank-transfer", "transactionType": "transfer", "corridorCountryCode": null,
+
+"payerDeclaredName": null,
+
+"counterparty": {"name": "Lekki Properties", "accountNumber": "1122334455", "countryCode":
+
+"NG", "bic": null},
+
+"sourceCountryCode": null, "destinationCountryCode": null, "paymentPurpose": null,
+===== PAGE 54 =====
+"merchant": null, "deviceInfo": null, "debit": 75000, "credit": null, "balance": 412500,
+
+"reference": "DOCS-THR-1790894286780", "occurredAt": "2026-10-01T21:38:06.780Z",
+
+"metadata": {}
+
+},
+
+"customer": {"name": "Chidinma Eze", "maskedAccount": null},
+
+"risk": {
+
+"category": "tm-blocked", "riskScore": 0, "riskLevel": "low", "status": "blocked",
+
+"rulesTriggerCount": 2,
+
+"matchedRules": [
+
+{
+
+"reason": "Flags transactions above $10,000 for review (transaction amount 75000 exceeds
+
+10000)",
+
+"ruleId": "ab4687262e07448cbb7fe8463068ca8f", "ruleName": "High Value Transaction",
+
+"ruleType": "detection", "description": "Flags transactions above $10,000 for review",
+
+"severityOrScore": "medium",
+
+"matchedConditions": [{"field": "transaction_amount", "value": "10000", "operator":
+
+"greater-than"}]
+
+},
+
+{
+
+"reason": "Transfer value exceeds the configured transaction threshold (transaction amount
+
+75000 exceeds 50000)",
+
+"ruleId": "24faf45dc8864ad4852ddf9a59ec3a4f", "ruleName": "Threshold Breach",
+
+"ruleType": "detection",
+
+"description": "Transfer value exceeds the configured transaction threshold.",
+
+"severityOrScore": "critical",
+
+"matchedConditions": [{"field": "transaction_amount", "value": "50000", "operator":
+
+"greater-than"}]
+
+}
+
+],
+
+"decidedAt": "2026-10-01T22:38:08.406Z"
+
+},
+
+"analystStatus": null, "riskNarrative": null,
+
+"timeline": [
+
+{"kind": "initiated", "message": null, "occurredAt": "2026-10-01T22:38:08.394Z"},
+
+{"kind": "analysis-complete", "message": null, "occurredAt": "2026-10-01T22:38:08.408Z"},
+
+{
+
+"kind": "flagged-for-review",
+
+"message": "Blocked (tm-blocked): High Value Transaction — Flags transactions above $10,000
+
+for review (transaction amount 75000 exceeds 10000); Threshold Breach — Transfer value exceeds the
+
+configured transaction threshold (transaction amount 75000 exceeds 50000)",
+
+"occurredAt": "2026-10-01T22:38:08.409Z"
+
+}
+
+]
+
+}
+
+}
+
+Every matched rule says why it fired. Each matchedRules[] entry carries description (what the rule catches)
+
+and reason (that description plus this transaction's actual values, e.g. "Transfer value exceeds the configured
+
+transaction threshold (transaction amount 75000 exceeds 50000)"). The flagged-for-review timeline entry lists
+
+the outcome and every reason. Show reason wherever a hold or block is displayed. Transactions assessed before
+
+2026-10-01 have no reason .
+
+A blocked transaction can show riskScore: 0 / riskLevel: "low" . Score and level come only from risk-
+
+score rules (§13.2); detection rules set category and status . Lead the UI with status and category , and
+
+show the score as secondary.
+
+Field Status Why
+
+customer.maskedAccount always
+
+null
+
+No customer account-number concept exists; only the counterparty's.
+===== PAGE 55 =====
+Field Status Why
+
+riskNarrative always
+
+null
+
+No narrative generation on the transaction side.
+
+risk null
+
+briefly
+
+Null for the second or two before evaluation completes.
+
+timeline grows initiated , analysis-complete , flagged-for-review (only if a rule
+
+matched), then the case status once an action from §15 has been taken.
+
+Every demo transaction produced the expected outcome:
+
+Demo transaction Result Rules matched
+
+Inbound 2,500 deposit cleared , no category none
+
+Outbound 15,000 transfer stop-payment ·
+
+pending
+
+High Value Transaction
+
+Outbound 75,000 transfer tm-blocked · blocked High Value Transaction + Threshold Breach
+
+1,200 recall-debit tm-blocked · blocked Recall Debit Payment
+
+3,000 to Iran stop-payment ·
+
+pending , score 40
+
+High-Risk Country List + Cross-border
+
+transfer (risk-score rule)
+
+800 with payerDeclaredName: "John
+
+Smith"
+
+stop-payment ·
+
+pending
+
+BACS Mismatch
+
+4,200 card, geo_mismatch_distance:
+
+6100
+
+tm-blocked · blocked Suspicious Geo-Location Pattern
+
+6,000 crypto withdrawal tm-blocked · blocked Large Crypto Payout (custom rule from
+
+§13.1)
+
+Requires: transactions:read
+
+12.4 Account statement LIVE SESSION API KEY
+
+GET /v1/customers/:id/statement
+
+Query: page , limit .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Account statement retrieved successfully",
+
+"data": [
+
+{
+
+"id": "05ea12fc43d347a9adbc6b7edc2cfd06", "customerId": "33c479186e2741be98bce2af145959af",
+
+"profileType": "individual", "direction": "outbound", "amount": 6000, "currency": "USD",
+
+"channel": "crypto", "transactionType": "withdrawal", "corridorCountryCode": null,
+
+"payerDeclaredName": null, "counterparty": null, "sourceCountryCode": null,
+
+"destinationCountryCode": null, "paymentPurpose": null, "merchant": null,
+
+"deviceInfo": null, "debit": 6000, "credit": null, "balance": 397300,
+
+"reference": "DOCS-CRY-1790894286780", "occurredAt": "2026-10-01T22:28:06.780Z",
+
+"metadata": {}
+
+},
+
+"… 4 more"
+
+],
+===== PAGE 56 =====
+"summary": {
+
+"currentBalance": 397300, "totalCredit": 2500, "totalDebit": 105200, "totalTransactions": 8,
+
+"accountOpeningDate": "2026-10-01T21:18:06.780Z", "openingBalance": 500000
+
+},
+
+"meta": {"totalItems": 8, "itemsCount": 5, "itemsPerPage": 5, "totalPages": 2, "currentPage": 1}
+
+}
+
+openingBalance / accountOpeningDate derive from the customer's earliest transaction. A customer whose
+
+transactions never carried balance gets null summary values — render an empty state, not 0.
+
+Requires: transactions:read
+===== PAGE 57 =====
+13. Transaction-monitoring settings & Re-KYC triggers
+
+Session only, tenant-settings:update . Base path /v1/tenants/apps/:appId/transaction-monitoring . Two
+
+independent entities: a detection rule routes a transaction to a queue (and can auto-block); a risk-score rule adds
+
+points to its 0–100 score.
+
+13.1 Detection rules LIVE SESSION
+
+GET /v1/tenants/apps/:appId/transaction-monitoring/rules
+
+POST /v1/tenants/apps/:appId/transaction-monitoring/rules
+
+PATCH /v1/tenants/apps/:appId/transaction-monitoring/rules/:ruleId
+
+DELETE /v1/tenants/apps/:appId/transaction-monitoring/rules/:ruleId
+
+// request — POST /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/transaction-monitoring/rules
+
+{
+
+"name": "Large Crypto Payout", "description": "Outbound crypto payouts above 5,000",
+
+"severityLevel": "high", "tmCondition": "stop-payment", "autoBlock": false, "sendAlerts": true,
+
+"conditions": [
+
+{"field": "channel", "operator": "equals", "value": "crypto"},
+
+{"field": "transaction_amount", "operator": "greater-than", "value": "5000"}
+
+],
+
+"transactionTypes": ["withdrawal", "transfer"], "status": "active"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Rule created successfully",
+
+"data": {
+
+"id": "311a11887924411badf3b37bcf510c03", "createdAt": "2026-10-01T22:37:59.079Z",
+
+"updatedAt": "2026-10-01T22:37:59.079Z", "name": "Large Crypto Payout",
+
+"description": "Outbound crypto payouts above 5,000", "severityLevel": "high",
+
+"tmCondition": "stop-payment", "autoBlock": false, "sendAlerts": true,
+
+"conditions": [
+
+{"field": "channel", "value": "crypto", "operator": "equals"},
+
+{"field": "transaction_amount", "value": "5000", "operator": "greater-than"}
+
+],
+
+"transactionTypes": ["withdrawal", "transfer"], "status": "active", "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// request — PATCH /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/transaction-
+
+monitoring/rules/311a11887924411badf3b37bcf510c03
+
+{"severityLevel": "critical", "autoBlock": true, "tmCondition": "tm-blocked"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Rule updated successfully",
+
+"data": {
+
+"id": "311a11887924411badf3b37bcf510c03", "createdAt": "2026-10-01T22:37:59.079Z",
+
+"updatedAt": "2026-10-01T22:37:59.471Z", "name": "Large Crypto Payout",
+
+"description": "Outbound crypto payouts above 5,000", "severityLevel": "critical",
+
+"tmCondition": "tm-blocked", "autoBlock": true, "sendAlerts": true,
+
+"conditions": [
+
+{"field": "channel", "value": "crypto", "operator": "equals"},
+
+{"field": "transaction_amount", "value": "5000", "operator": "greater-than"}
+
+],
+
+"transactionTypes": ["withdrawal", "transfer"], "status": "active", "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+===== PAGE 58 =====
+Conditions are AND-only. field and operator are closed enums — build the condition builder from
+
+/v1/public/misc/options/tm-condition-fields and tm-condition-operators . tmCondition is the queue
+
+( tm-not-blocked|stop-payment|cumulative-frequency|tm-blocked ); transactionTypes: null means all
+
+types.
+
+400 — a field outside the enum
+
+// request — POST /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/transaction-monitoring/rules
+
+{
+
+"name": "Bad", "severityLevel": "low", "tmCondition": "tm-blocked",
+
+"conditions": [{"field": "customer_age", "operator": "equals", "value": "1"}]
+
+}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "conditions.0.field must be one of the following values: transaction_amount, currency,
+
+channel, transaction_type, direction, profile_type, corridor_cou…"
+
+}
+
+Every new app starts with 8 rules (6 Fintech suite + Recall Debit + Threshold Breach)
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Rules retrieved successfully",
+
+"data": [
+
+{
+
+"id": "efad88fc444c4ec285d10e4ab8fa74f4", "name": "Suspicious Geo-Location Pattern",
+
+"description": "Detects transactions with significant geo-location mismatch (>5000km)",
+
+"severityLevel": "critical", "tmCondition": "tm-blocked", "autoBlock": true,
+
+"sendAlerts": true,
+
+"conditions": [
+
+{"field": "geo_mismatch", "value": "true", "operator": "equals"},
+
+{"field": "geo_mismatch_distance", "value": "5000", "operator": "greater-than"}
+
+],
+
+"transactionTypes": [], "status": "active"
+
+},
+
+{
+
+"id": "952d79db5cc24bcc8050a519eb21e9a8", "name": "High ML Fraud Probability",
+
+"description": "AI model detected high fraud probability (>80%)",
+
+"severityLevel": "critical", "tmCondition": "tm-blocked", "autoBlock": true,
+
+"sendAlerts": true, "conditions": [], "transactionTypes": [], "status": "active"
+
+},
+
+"… 6 more"
+
+],
+
+"meta": {"totalItems": 8, "itemsCount": 8, "itemsPerPage": 20, "totalPages": 1, "currentPage": 1}
+
+}
+
+4 of the 8 seeded rules have no conditions and never fire. High ML Fraud Probability, Large Withdrawal Pattern,
+
+New Device High Amount and Velocity Spike Detection describe patterns over time, which the single-transaction
+
+engine cannot express yet. Show them, but consider marking them "not evaluated".
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Rule deleted successfully",
+
+"data": {"id": "b38b6d52e29c4c458e193bc1504822af"}
+
+}
+===== PAGE 59 =====
+13.2 Risk-score rules LIVE SESSION
+
+GET /v1/tenants/apps/:appId/transaction-monitoring/risk-score-rules
+
+POST /v1/tenants/apps/:appId/transaction-monitoring/risk-score-rules
+
+PATCH /v1/tenants/apps/:appId/transaction-monitoring/risk-score-rules/:ruleId
+
+DELETE /v1/tenants/apps/:appId/transaction-monitoring/risk-score-rules/:ruleId
+
+// request — POST /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/transaction-monitoring/risk-
+
+score-rules
+
+{
+
+"name": "Cross-border transfer", "description": "Any transfer leaving Nigeria", "score": 35,
+
+"riskLevel": "medium", "transactionTypes": ["transfer"],
+
+"conditions": [{"field": "destination_country", "operator": "not-equals", "value": "NG"}],
+
+"status": "active"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Risk score rule created successfully",
+
+"data": {
+
+"id": "058a180990f64b38a7d82579676a2562", "createdAt": "2026-10-01T22:38:00.220Z",
+
+"updatedAt": "2026-10-01T22:38:00.220Z", "name": "Cross-border transfer",
+
+"description": "Any transfer leaving Nigeria", "score": 35, "riskLevel": "medium",
+
+"conditions": [{"field": "destination_country", "value": "NG", "operator": "not-equals"}],
+
+"transactionTypes": ["transfer"], "status": "active", "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+// request — PATCH /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/transaction-monitoring/risk-
+
+score-rules/058a180990f64b38a7d82579676a2562
+
+{"score": 40}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Risk score rule updated successfully",
+
+"data": {
+
+"id": "058a180990f64b38a7d82579676a2562", "createdAt": "2026-10-01T22:38:00.220Z",
+
+"updatedAt": "2026-10-01T22:38:00.603Z", "name": "Cross-border transfer",
+
+"description": "Any transfer leaving Nigeria", "score": 40, "riskLevel": "medium",
+
+"conditions": [{"field": "destination_country", "value": "NG", "operator": "not-equals"}],
+
+"transactionTypes": ["transfer"], "status": "active", "domain": "sandbox",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+score 0–100 (TM's own scale, unrelated to KYC 0–4). Scores of all matched rules add up; the total buckets
+
+into low (<40), medium (<70), high .
+
+13.3 Rule templates LIVE SESSION
+
+GET /v1/tenants/apps/:appId/transaction-monitoring/rule-templates
+
+POST /v1/tenants/apps/:appId/transaction-monitoring/rule-templates/:templateId/adopt
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Rule templates retrieved successfully",
+
+"data": [
+===== PAGE 60 =====
+{
+
+"id": "fintech-tm-detection-suite", "name": "Fintech TM Detection Suite",
+
+"industryLabel": "Fintech and Payment Processing Industry",
+
+"description": "Comprehensive fraud detection rules specifically designed for fintech companies
+
+and payment processors. Includes high-value transaction monitoring.",
+
+"popular": true,
+
+"keyFeatures": ["Withdrawal Monitoring", "Cross border Monitoring", "… 1 more"],
+
+"ruleCount": 6
+
+},
+
+{
+
+"id": "banking-financial-services-suite", "name": "Banking & Financial Services Suite",
+
+"industryLabel": "Banking and Financial Services",
+
+"description": "Comprehensive fraud detection rules specifically designed for fintech companies
+
+and payment processors. Includes high-value transaction monitoring.",
+
+"popular": true,
+
+"keyFeatures": ["Withdrawal Monitoring", "Cross border Monitoring", "… 1 more"],
+
+"ruleCount": 6
+
+},
+
+"… 4 more"
+
+]
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Adopted 6 rule(s) from \"E-Commerce Protection Package\"",
+
+"data": [
+
+{
+
+"id": "b38b6d52e29c4c458e193bc1504822af", "name": "Suspicious Geo-Location Pattern",
+
+"description": "Detects transactions with significant geo-location mismatch (>5000km)",
+
+"severityLevel": "critical", "tmCondition": "tm-blocked", "autoBlock": true,
+
+"sendAlerts": true,
+
+"conditions": [{"field": "geo_mismatch", "value": "true", "operator": "equals"}, "… 1 more"],
+
+"transactionTypes": [], "status": "active"
+
+},
+
+"… 5 more"
+
+]
+
+}
+
+Adopting is additive and does not de-duplicate. Adopting a package you already have doubles its rules (and their
+
+trigger counts). Only the Fintech package has distinct content today — the other five carry the same six rules under
+
+their own names.
+
+13.4 Re-KYC triggers PARTIAL SESSION
+
+GET /v1/tenants/apps/:appId/re-kyc/trigger-rules
+
+PATCH /v1/tenants/apps/:appId/re-kyc/trigger-rules/:kind
+
+A fixed catalogue of nine kinds per app — enable, disable or tune config ; no create or delete.
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Re-KYC trigger rules retrieved successfully",
+
+"data": [
+
+{
+
+"id": "aad5a9e225d14a7f9e7d7c5c0549889f", "kind": "high-risk-jurisdiction",
+
+"status": "active", "config": {}
+
+},
+
+{
+
+"id": "2869a89e649b474faa3bb995f9e094a1", "kind": "pep-sanctions", "status": "active",
+
+"config": {}
+===== PAGE 61 =====
+},
+
+"… 7 more"
+
+]
+
+}
+
+// request — PATCH /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/re-kyc/trigger-rules/suspected-
+
+ato
+
+{"status": "inactive"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Re-KYC trigger rule updated successfully",
+
+"data": {
+
+"id": "f807f26f4a844ce39543714ea52ac9c2", "createdAt": "2026-10-01T22:36:34.556Z",
+
+"updatedAt": "2026-10-01T22:38:02.873Z", "kind": "suspected-ato", "status": "inactive",
+
+"config": {}, "domain": "sandbox", "appId": "1f62a4c6854e404385bf807eea9a7b5e",
+
+"tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7"
+
+}
+
+}
+
+400 — unknown kind
+
+// request — PATCH /v1/tenants/apps/1f62a4c6854e404385bf807eea9a7b5e/re-kyc/trigger-rules/velocity-
+
+spike
+
+{"status": "inactive"}
+
+// response — HTTP 400
+
+{
+
+"status": false,
+
+"message": "kind must be one of the following values: high-risk-jurisdiction, pep-sanctions,
+
+transaction-monitoring-escalation, basic-kyc, expired-id, forged-id, …"
+
+}
+
+A Re-KYC audit event — every escalation carries trigger and reason
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Verification retrieved successfully",
+
+"data": {
+
+"events": [
+
+{
+
+"id": "11ac8993b9464cfd80c6b62d9990b69f", "action": "transaction.monitoring.alert",
+
+"actor": "risk-decisioning", "fromStatus": "in-review", "toStatus": null,
+
+"detail": {
+
+"reason": "Transaction-monitoring activity identifies risk requiring renewed customer due
+
+diligence. Activity used crypto, direct-debit, not among the declared channels.",
+
+"trigger": "transaction-monitoring-escalation",
+
+"messageId": "monitoring:05ea12fc43d347a9adbc6b7edc2cfd06",
+
+"contributions": [
+
+{
+
+"code": "activity.channel-not-declared", "points": 1, "source": "verification",
+
+"message": "Activity used crypto, direct-debit, not among the declared channels",
+
+"evidence": {"channels": ["crypto", "… 1 more"], "declared": ["bank-transfer", "… 1
+
+more"]},
+
+"factorSlug": "activity-inconsistent-with-purpose"
+
+}
+
+],
+
+"transactionId": "05ea12fc43d347a9adbc6b7edc2cfd06"
+
+},
+
+"customerName": "Chidinma Eze", "workflowId": "7a10d4b1895741a48674bbe4769d05df"
+
+},
+
+"… 7 more"
+
+]
+
+}
+
+}
+===== PAGE 62 =====
+Every Re-KYC escalation writes an audit event whose detail carries trigger (the kind below) and reason
+
+— the rules document's Trigger / Criteria wording followed by the specific finding (the expired document and
+
+date, the AML match, the changed fields, the monitoring finding). Render detail.reason as the "why is this in
+
+review" line.
+
+Kind Status Disabling it…
+
+pep-sanctions live stops a new AML match from flipping a verified customer to
+
+in-review (the match is still recorded)
+
+transaction-monitoring-escalation live stops a monitoring alert from flipping the workflow
+
+basic-kyc live skips the periodic re-screen for this app
+
+expired-id , proof-of-address live stops expiry of an ID / proof-of-address document from
+
+flipping the workflow
+
+suspected-ato live stops 2+ sensitive-field changes within 72 h from flipping the
+
+workflow
+
+high-risk-jurisdiction , forged-id ,
+
+immigration-check
+
+no-op nothing evaluates these yet — the toggle changes nothing
+
+14. Transaction-monitoring dashboard & queues
+
+14.1 Overview PARTIAL SESSION API KEY
+
+GET /v1/transaction-monitoring/overview
+
+Query: windowStart , windowEnd (ISO; default the trailing 24 h).
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Overview retrieved successfully",
+
+"data": {
+
+"windowStart": "2026-09-30T22:38:22.704Z", "windowEnd": "2026-10-01T22:38:22.704Z",
+
+"totalVolume": 9, "totalValue": 155700, "activeUsers": 2, "avgRiskScore": 9,
+
+"highRiskAlerts": 0, "activityChart": {"21": 5, "22": 4},
+
+"riskDistribution": {"low": 7, "medium": 2, "high": 0},
+
+"tmConditions": {"tm-not-blocked": 0, "stop-payment": 4, "cumulative-frequency": 0, "tm-blocked":
+
+4},
+
+"monthlyVolume": null
+
+}
+
+}
+
+Field Status Why
+
+monthlyVolume always null No day/month bucketed aggregation exists yet.
+
+activityChart hour-of-day Keys are hours 0–23 within the window, not a time series.
+
+Requires: transactions:read
+===== PAGE 63 =====
+14.2 The four category queues PARTIAL SESSION API KEY
+
+GET /v1/transaction-monitoring/tm-blocked
+
+GET /v1/transaction-monitoring/stop-payment
+
+GET /v1/transaction-monitoring/cumulative-frequency
+
+GET /v1/transaction-monitoring/tm-not-blocked
+
+Query: status ( pending|cleared|blocked ), page , limit .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Transactions retrieved successfully",
+
+"data": [
+
+{
+
+"id": "c9f6ae4512774176944c1dc05283b641",
+
+"transactionId": "88c0b44452304148bf0d6922ba869340",
+
+"customerId": "eab4159c3215435d9b12806cdd629c96", "riskScore": 40, "riskLevel": "medium",
+
+"category": "stop-payment", "status": "pending", "rulesTriggerCount": 2,
+
+"matchedRules": [
+
+{
+
+"reason": "Flags transactions above $10,000 for review (transaction amount 48000 exceeds
+
+10…",
+
+"ruleId": "ab4687262e07448cbb7fe8463068ca8f", "ruleName": "High Value Transaction",
+
+"ruleType": "detection", "description": "Flags transactions above $10,000 for review",
+
+"severityOrScore": "medium",
+
+"matchedConditions": [{"field": "transaction_amount", "value": "10000", "operator":
+
+"greater-than"}]
+
+},
+
+"… 1 more"
+
+],
+
+"decidedAt": "2026-10-01T22:38:10.760Z"
+
+},
+
+"… 3 more"
+
+],
+
+"summary": {
+
+"category": "stop-payment", "totalTransactions": 4, "totalAmount": 66800, "pendingReview": 4,
+
+"resolved": 0
+
+},
+
+"meta": {"totalItems": 4, "itemsCount": 4, "itemsPerPage": 5, "totalPages": 1, "currentPage": 1}
+
+}
+
+summary always carries all four tile values; screens that show fewer simply ignore the rest. The category is
+
+fixed by the route.
+
+Queue Status Why
+
+TM Not-
+
+Blocked
+
+empty for
+
+clean traffic
+
+Only transactions whose matched rule routes to tm-not-blocked appear. A transaction
+
+that matched nothing gets category: null and appears in no queue — so "cleared for
+
+processing" volume is not listed here today.
+
+Requires: transactions:read
+===== PAGE 64 =====
+15. Investigations — reporting actions & case management
+
+The "Reporting Actions" menu on Transaction Detail and the Account Statement. Session only — an API key gets
+
+401. :id is the transaction id; the server resolves the customer. The first action on a transaction creates its case.
+
+401 — called with an API key
+
+// request — POST /v1/transactions/fef5460c015b4b8081ca8e4df24497ff/actions/escalate-case
+
+{"notes": "x"}
+
+// response — HTTP 401
+
+{"status": false, "message": "Unauthorized"}
+
+15.1 Resolve case LIVE SESSION
+
+POST /v1/transactions/:id/actions/resolve-case
+
+// request — POST /v1/transactions/bb8ff7844f2d4af685499be5ceb589d5/actions/resolve-case
+
+{
+
+"resolutionType": "cleared-no-issues",
+
+"outcomeSummary": "Vehicle purchase confirmed with invoice from Bright Motors",
+
+"actionsTaken": ["customer-verification-completed", "source-of-funds-verified", "… 1 more"],
+
+"resolutionNotes": "Customer supplied dealer invoice INV-2209; amount matches."
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Case resolved successfully",
+
+"data": {
+
+"id": "cf5d7d443cf44538bbb10384787c4fdd", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "domain": "sandbox",
+
+"transactionId": "bb8ff7844f2d4af685499be5ceb589d5",
+
+"customerId": "33c479186e2741be98bce2af145959af", "status": "resolved",
+
+"resolutionType": "cleared-no-issues",
+
+"outcomeSummary": "Vehicle purchase confirmed with invoice from Bright Motors",
+
+"actionsTaken": ["customer-verification-completed", "source-of-funds-verified", "… 1 more"],
+
+"resolutionNotes": "Customer supplied dealer invoice INV-2209; amount matches.",
+
+"assignedTo": null, "resolvedAt": "2026-10-01T22:38:25.500Z",
+
+"resolvedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"createdAt": "2026-10-01T22:38:25.495Z", "updatedAt": "2026-10-01T22:38:25.500Z"
+
+}
+
+}
+
+Field Values
+
+resolutionType
+
+(required)
+
+cleared-no-issues , false-positive , escalated-to-authorities , resolved-
+
+after-contact , documentation-provided-cleared , risk-closed-insufficient-
+
+grounds
+
+actionsTaken
+
+(multi-select)
+
+customer-verification-completed , source-of-funds-verified , pep-screening-
+
+cleared , enhanced-due-diligence-performed , transaction-pattern-analyzed ,
+
+adverse-media-check-completed , business-relationship-reviewed , sanctions-
+
+screening-passed
+
+Requires: permission case:resolve
+===== PAGE 65 =====
+15.2 Escalate case LIVE SESSION
+
+POST /v1/transactions/:id/actions/escalate-case
+
+// request — POST /v1/transactions/423ce5a336da4d9b877d0606dcda0188/actions/escalate-case
+
+{"notes": "Payer name on instruction does not match KYC name — escalating to compliance lead."}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "Case escalated successfully",
+
+"data": {
+
+"id": "0520804e8b4847e29301123fe1ff254c", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "domain": "sandbox",
+
+"transactionId": "423ce5a336da4d9b877d0606dcda0188",
+
+"customerId": "33c479186e2741be98bce2af145959af", "status": "escalated",
+
+"resolutionType": null, "outcomeSummary": null, "actionsTaken": [],
+
+"resolutionNotes": "Payer name on instruction does not match KYC name — escalating to compliance
+
+lead.",
+
+"assignedTo": null, "resolvedAt": null, "resolvedBy": null,
+
+"createdAt": "2026-10-01T22:38:25.885Z", "updatedAt": "2026-10-01T22:38:25.888Z"
+
+}
+
+}
+
+Requires: permission case:escalate
+
+15.3 Place PND (Post No Debit) — also files a SAR LIVE SESSION
+
+POST /v1/transactions/:id/actions/place-pnd
+
+// request — POST /v1/transactions/03ee00beed0e4bc2a0c9a043ccb98da0/actions/place-pnd
+
+{
+
+"listType": "internal-watchlist", "entityType": "individual", "fullName": "Chidinma Eze",
+
+"nationality": "NG", "dateOfBirth": "1991-04-12", "idNumber": "A09876543",
+
+"idType": "passport", "address": "12 Admiralty Way, Lekki, Lagos", "riskLevel": "high",
+
+"reasonForListing": "Structuring",
+
+"narrative": "Single outbound transfer of 75,000 USD against a declared monthly value of 1.5M
+
+NGN.",
+
+"activityTypeTags": ["structuring", "velocity"], "amount": 75000,
+
+"documentReference": "DOC-7781", "evidenceReference": "EVD-2201",
+
+"reportingOfficer": "Ada Okafor"
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true,
+
+"message": "Placed on PND watchlist successfully, SAR rationale filed automatically",
+
+"data": {
+
+"pndListing": {
+
+"id": "3080365f4d47473a869c8e3ae20a9ce7",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0",
+
+"customerId": "33c479186e2741be98bce2af145959af",
+
+"caseId": "06475155d5d74d77b2a827da1cb9ff09", "status": "active",
+
+"listType": "internal-watchlist", "entityType": "individual", "fullName": "Chidinma Eze",
+
+"nationality": "NG", "dateOfBirth": "1991-04-12", "idNumber": "A09876543",
+
+"idType": "passport", "address": "12 Admiralty Way, Lekki, Lagos", "riskLevel": "high",
+
+"reasonForListing": "Structuring",
+
+"narrative": "Single outbound transfer of 75,000 USD against a declared monthly value of 1.5M
+
+…",
+
+"activityTypeTags": ["structuring", "velocity"], "amount": 75000,
+
+"documentReference": "DOC-7781", "evidenceReference": "EVD-2201",
+
+"reportingOfficer": "Ada Okafor", "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"resolvedDate": null, "resolutionType": null, "resolutionReason": null,
+
+"investigationOutcome": null, "resolutionActionsTaken": null, "approvedBy": null
+
+},
+===== PAGE 66 =====
+"sarFiling": {
+
+"id": "dffaa675f00b478a953fa52736cedac8", "caseId": "06475155d5d74d77b2a827da1cb9ff09",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0", "status": "pending",
+
+"subjectFullName": "Chidinma Eze", "entityType": "individual", "accountNumberMasked": null,
+
+"totalAmount": 75000, "riskLevel": "high", "activityType": null, "detectionDate": null,
+
+"activityStartDate": null, "activityEndDate": null, "filingJurisdiction": null,
+
+"filedDate": null, "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"suspiciousActivityCategories": ["structuring", "velocity"], "suspiciousIndicators": [],
+
+"narrative": {
+
+"openingStatement": "Single outbound transfer of 75,000 USD against a declared monthly value
+
+of 1.5M …",
+
+"whyItsSuspicious": "", "activityDescription": "", "investigationStepsTaken": "",
+
+"summaryAndRecommendation": ""
+
+},
+
+"relatedTransactionIds": ["03ee00beed0e4bc2a0c9a043ccb98da0"]
+
+}
+
+}
+
+}
+
+One call creates both a PND listing and a SAR filing. The design's submit button reads "File SAR". Do not also call
+
+§15.4 for the same PND — it would create a second, unrelated filing. Required: entityType
+
+( individual|business ), fullName , riskLevel ( low|medium|high|critical ), reasonForListing .
+
+Requires: permission pnd:manage
+
+15.4 Generate SAR rationale LIVE SESSION
+
+POST /v1/transactions/:id/sar-rationale
+
+// request — POST /v1/transactions/9e8539c64425421e98d4342efe4508fe/sar-rationale
+
+{
+
+"subjectFullName": "Chidinma Eze", "entityType": "individual",
+
+"accountNumberMasked": "******4567", "totalAmount": 3000, "riskLevel": "high",
+
+"activityType": "Sanctioned jurisdiction transfer", "detectionDate": "2026-10-01",
+
+"activityStartDate": "2026-10-01", "activityEndDate": "2026-10-01",
+
+"filingJurisdiction": "NFIU - NG",
+
+"suspiciousActivityCategories": ["Sanctions Evasion"],
+
+"suspiciousIndicators": [
+
+{
+
+"title": "Transfer to a sanctioned jurisdiction",
+
+"description": "Outbound transfer to an Iran-domiciled counterparty"
+
+}
+
+],
+
+"narrative": {
+
+"openingStatement": "Chidinma Eze, an individual customer, sent USD 3,000 to Tehran Trading Co
+
+(IR).",
+
+"activityDescription": "One outbound bank transfer on 2026-10-01 to a counterparty domiciled in
+
+Iran.",
+
+"whyItsSuspicious": "Iran is on the tenant's flagged-country list; no declared corridor covers
+
+it.",
+
+"investigationStepsTaken": "Reviewed declared account purpose (NG, GB corridors only) and 90-day
+
+history.",
+
+"summaryAndRecommendation": "File with NFIU and hold further transfers to IR pending review."
+
+},
+
+"relatedTransactionIds": ["9e8539c64425421e98d4342efe4508fe"]
+
+}
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "SAR rationale generated successfully",
+
+"data": {
+
+"id": "2f3354d94b594ab49e51a04b6ed94f29", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "domain": "sandbox",
+===== PAGE 67 =====
+"caseId": "e69b624ea2624e8f84c650d9edd9dab8",
+
+"transactionId": "9e8539c64425421e98d4342efe4508fe", "status": "pending",
+
+"subjectFullName": "Chidinma Eze", "entityType": "individual",
+
+"accountNumberMasked": "******4567", "totalAmount": 3000, "riskLevel": "high",
+
+"activityType": "Sanctioned jurisdiction transfer",
+
+"detectionDate": "2026-10-01T00:00:00.000Z", "activityStartDate": "2026-10-01T00:00:00.000Z",
+
+"activityEndDate": "2026-10-01T00:00:00.000Z", "filingJurisdiction": "NFIU - NG",
+
+"filedDate": null, "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"suspiciousActivityCategories": ["Sanctions Evasion"],
+
+"suspiciousIndicators": [
+
+{
+
+"title": "Transfer to a sanctioned jurisdiction",
+
+"description": "Outbound transfer to an Iran-domiciled counterparty"
+
+}
+
+],
+
+"narrative": {
+
+"openingStatement": "Chidinma Eze, an individual customer, sent USD 3,000 to Tehran Trading Co
+
+(IR).",
+
+"whyItsSuspicious": "Iran is on the tenant's flagged-country list; no declared corridor covers
+
+it.",
+
+"activityDescription": "One outbound bank transfer on 2026-10-01 to a counterparty domiciled in
+
+Iran.",
+
+"investigationStepsTaken": "Reviewed declared account purpose (NG, GB corridors only) and 90-
+
+day history.",
+
+"summaryAndRecommendation": "File with NFIU and hold further transfers to IR pending review."
+
+},
+
+"relatedTransactionIds": ["9e8539c64425421e98d4342efe4508fe"],
+
+"createdAt": "2026-10-01T22:38:26.681Z", "updatedAt": "2026-10-01T22:38:26.681Z"
+
+}
+
+}
+
+Required: subjectFullName , entityType , riskLevel . narrative has five lettered parts (A opening
+
+statement … E summary & recommendation) and suspiciousIndicators is the numbered list on the rendered
+
+document. Re-post to revise ("Edit Rationale").
+
+Requires: permission sar:file
+
+15.5 Case Management tab LIVE SESSION
+
+GET /v1/transactions/:id/case
+
+No action taken yet — data: null (not 404)
+
+// response — HTTP 200
+
+{"status": true, "message": "Case retrieved successfully", "data": null}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "Case retrieved successfully",
+
+"data": {
+
+"id": "06475155d5d74d77b2a827da1cb9ff09", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "domain": "sandbox",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0",
+
+"customerId": "33c479186e2741be98bce2af145959af", "status": "open", "resolutionType": null,
+
+"outcomeSummary": null, "actionsTaken": [], "resolutionNotes": null, "assignedTo": null,
+
+"resolvedAt": null, "resolvedBy": null, "createdAt": "2026-10-01T22:38:26.266Z",
+
+"updatedAt": "2026-10-01T22:38:26.277Z",
+
+"activity": [
+
+{
+
+"id": "371b97ba572d4673afd27a3a98fd316a", "kind": "sar-rationale-generated",
+
+"message": "SAR rationale generated: high risk",
+
+"actorId": "docs.demo.1790894194091@unifycomply.test",
+===== PAGE 68 =====
+"occurredAt": "2026-10-01T22:38:26.282Z"
+
+},
+
+{
+
+"id": "9f261bfeec6f4966ba16224979f2d079", "kind": "pnd-placed",
+
+"message": "Placed on PND watchlist: Structuring",
+
+"actorId": "docs.demo.1790894194091@unifycomply.test",
+
+"occurredAt": "2026-10-01T22:38:26.275Z"
+
+}
+
+],
+
+"pndListings": [
+
+{
+
+"id": "3080365f4d47473a869c8e3ae20a9ce7",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0",
+
+"customerId": "33c479186e2741be98bce2af145959af",
+
+"caseId": "06475155d5d74d77b2a827da1cb9ff09", "status": "active",
+
+"listType": "internal-watchlist", "entityType": "individual", "fullName": "Chidinma Eze",
+
+"nationality": "NG", "dateOfBirth": "1991-04-12", "idNumber": "A09876543",
+
+"idType": "passport", "address": "12 Admiralty Way, Lekki, Lagos", "riskLevel": "high",
+
+"reasonForListing": "Structuring",
+
+"narrative": "Single outbound transfer of 75,000 USD against a declared monthly valu…",
+
+"activityTypeTags": ["structuring", "velocity"], "amount": 75000,
+
+"documentReference": "DOC-7781", "evidenceReference": "EVD-2201",
+
+"reportingOfficer": "Ada Okafor", "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"resolvedDate": null, "resolutionType": null, "resolutionReason": null,
+
+"investigationOutcome": null, "resolutionActionsTaken": null, "approvedBy": null
+
+}
+
+],
+
+"sarFilings": [
+
+{
+
+"id": "dffaa675f00b478a953fa52736cedac8", "caseId": "06475155d5d74d77b2a827da1cb9ff09",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0", "status": "pending",
+
+"subjectFullName": "Chidinma Eze", "entityType": "individual",
+
+"accountNumberMasked": null, "totalAmount": 75000, "riskLevel": "high",
+
+"activityType": null, "detectionDate": null, "activityStartDate": null,
+
+"activityEndDate": null, "filingJurisdiction": null, "filedDate": null,
+
+"filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"suspiciousActivityCategories": ["structuring", "velocity"], "suspiciousIndicators": [],
+
+"narrative": {
+
+"openingStatement": "Single outbound transfer of 75,000 USD against a declared monthly
+
+valu…",
+
+"whyItsSuspicious": "", "activityDescription": "", "investigationStepsTaken": "",
+
+"summaryAndRecommendation": ""
+
+},
+
+"relatedTransactionIds": ["03ee00beed0e4bc2a0c9a043ccb98da0"]
+
+}
+
+]
+
+}
+
+}
+
+Requires: permission dashboard:access
+
+15.6 AI-assisted SAR draft (chat) PARTIAL SESSION
+
+POST /v1/transactions/:id/sar-draft/start
+
+POST /v1/transactions/:id/sar-draft/:conversationId/messages
+
+// response — HTTP 201
+
+{
+
+"status": true, "message": "SAR draft conversation ready",
+
+"data": {
+
+"id": "50b9b509b3084d6ab214e37ec16c2205", "caseId": "e69b624ea2624e8f84c650d9edd9dab8",
+
+"messages": [], "createdAt": "2026-10-01T22:38:27.854Z",
+
+"updatedAt": "2026-10-01T22:38:27.854Z"
+===== PAGE 69 =====
+}
+
+}
+
+Sending a message in an environment without an AI key — real response
+
+// request — POST /v1/transactions/9e8539c64425421e98d4342efe4508fe/sar-
+
+draft/50b9b509b3084d6ab214e37ec16c2205/messages
+
+{
+
+"message": "Draft the SAR narrative for this transfer to Iran and list the suspicious indicators."
+
+}
+
+// response — HTTP 500
+
+{"status": false, "message": "Internal server error", "data": null}
+
+// message response when the AI provider is configured (shape from the contract)
+
+{ "conversation": { "id": "…", "caseId": "…", "messages": [ { "role": "user", "content": "…" }, {
+
+"role": "assistant", "content": "…" } ] },
+
+"draftNarrative": { "narrative": { "openingStatement": "…", "activityDescription": "…",
+
+"whyItsSuspicious": "…",
+
+"investigationStepsTaken": "…", "summaryAndRecommendation": "…"
+
+},
+
+"suspiciousIndicators": [ { "title": "…", "description": "…" } ] } | null }
+
+Never auto-file from draftNarrative . Offer a "Use this draft" button that copies it into the §15.4 form; a human
+
+submits. draftNarrative is null whenever the reply lacks a parseable structured block.
+
+Field Status Why
+
+messages 500
+
+without AI
+
+key
+
+provider-gateway needs ANTHROPIC_API_KEY . The demo environment has none, and the
+
+failure surfaces as a generic 500 rather than a clear "AI not configured" — show a
+
+retry/"drafting unavailable" state.
+
+Requires: permission sar:file
+
+16. PND watchlist & SAR reports
+
+Session only. Reads need dashboard:access ; writes need pnd:manage / sar:file . These are top-level resources
+
+addressed by their own id.
+
+16.1 PND watchlist LIVE SESSION
+
+GET /v1/pnd-watchlist
+
+Query: status ( active|resolved|under-review ), riskLevel ( low|medium|high|critical ), page , limit .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "PND watchlist retrieved successfully",
+
+"data": [
+
+{
+
+"id": "3080365f4d47473a869c8e3ae20a9ce7",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0",
+
+"customerId": "33c479186e2741be98bce2af145959af",
+
+"caseId": "06475155d5d74d77b2a827da1cb9ff09", "status": "active",
+
+"listType": "internal-watchlist", "entityType": "individual", "fullName": "Chidinma Eze",
+
+"nationality": "NG", "dateOfBirth": "1991-04-12", "idNumber": "A09876543",
+
+"idType": "passport", "address": "12 Admiralty Way, Lekki, Lagos", "riskLevel": "high",
+===== PAGE 70 =====
+"reasonForListing": "Structuring",
+
+"narrative": "Single outbound transfer of 75,000 USD against a declared monthly valu…",
+
+"activityTypeTags": ["structuring", "velocity"], "amount": 75000,
+
+"documentReference": "DOC-7781", "evidenceReference": "EVD-2201",
+
+"reportingOfficer": "Ada Okafor", "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"resolvedDate": null, "resolutionType": null, "resolutionReason": null,
+
+"investigationOutcome": null, "resolutionActionsTaken": null, "approvedBy": null
+
+}
+
+],
+
+"summary": {"totalEntries": 1, "active": 1, "resolved": 0},
+
+"meta": {"totalItems": 1, "itemsCount": 1, "itemsPerPage": 10, "totalPages": 1, "currentPage": 1}
+
+}
+
+Requires: dashboard:access
+
+16.2 Resolve a PND restriction LIVE SESSION
+
+PATCH /v1/pnd-watchlist/:id/resolve
+
+// request — PATCH /v1/pnd-watchlist/3080365f4d47473a869c8e3ae20a9ce7/resolve
+
+{
+
+"resolutionType": "investigation-complete-no-issues",
+
+"resolutionReason": "Customer provided a signed property purchase agreement for the 75,000 USD
+
+transfer.",
+
+"investigationOutcome": "No suspicious activity confirmed.",
+
+"resolutionActionsTaken": "Reviewed 90-day history; verified source of funds with employer letter."
+
+}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "PND listing resolved successfully",
+
+"data": {
+
+"id": "3080365f4d47473a869c8e3ae20a9ce7", "tenantId": "7c9e91f81e064c6a9eada352ffeaf9c7",
+
+"appId": "1f62a4c6854e404385bf807eea9a7b5e", "domain": "sandbox",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0",
+
+"customerId": "33c479186e2741be98bce2af145959af",
+
+"caseId": "06475155d5d74d77b2a827da1cb9ff09", "status": "resolved",
+
+"listType": "internal-watchlist", "entityType": "individual", "fullName": "Chidinma Eze",
+
+"nationality": "NG", "dateOfBirth": "1991-04-12", "idNumber": "A09876543",
+
+"idType": "passport", "address": "12 Admiralty Way, Lekki, Lagos", "riskLevel": "high",
+
+"reasonForListing": "Structuring",
+
+"narrative": "Single outbound transfer of 75,000 USD against a declared monthly valu…",
+
+"activityTypeTags": ["structuring", "velocity"], "amount": 75000,
+
+"documentReference": "DOC-7781", "evidenceReference": "EVD-2201",
+
+"reportingOfficer": "Ada Okafor", "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"resolvedDate": "2026-10-01T22:38:31.112Z",
+
+"resolutionType": "investigation-complete-no-issues",
+
+"resolutionReason": "Customer provided a signed property purchase agreement for the 75,000 …",
+
+"investigationOutcome": "No suspicious activity confirmed.",
+
+"resolutionActionsTaken": "Reviewed 90-day history; verified source of funds with employer
+
+letter…",
+
+"approvedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"createdAt": "2026-10-01T22:38:26.272Z", "updatedAt": "2026-10-01T22:38:31.112Z"
+
+}
+
+}
+
+resolutionType (required): investigation-complete-no-issues , investigation-complete-issues-resolved ,
+
+case-closed , false-positive , customer-cleared-by-authorities — a different list from case resolution.
+
+resolutionReason , investigationOutcome , resolutionActionsTaken are required; approvedBy defaults to
+
+the signed-in user's email.
+
+Requires: permission pnd:manage
+===== PAGE 71 =====
+16.3 SAR reports — list, read, status, export LIVE SESSION
+
+GET /v1/sar-reports
+
+GET /v1/sar-reports/:id
+
+PATCH /v1/sar-reports/:id/status
+
+GET /v1/sar-reports/:id/export
+
+Query: status ( pending|under-review|submitted ), page , limit .
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "SAR reports retrieved successfully",
+
+"data": [
+
+{
+
+"id": "dffaa675f00b478a953fa52736cedac8", "caseId": "06475155d5d74d77b2a827da1cb9ff09",
+
+"transactionId": "03ee00beed0e4bc2a0c9a043ccb98da0", "status": "pending",
+
+"subjectFullName": "Chidinma Eze", "entityType": "individual", "accountNumberMasked": null,
+
+"totalAmount": 75000, "riskLevel": "high", "activityType": null, "detectionDate": null,
+
+"activityStartDate": null, "activityEndDate": null, "filingJurisdiction": null,
+
+"filedDate": null, "filedBy": "docs.demo.1790894194091@unifycomply.test",
+
+"suspiciousActivityCategories": ["structuring", "… 1 more"], "suspiciousIndicators": [],
+
+"narrative": {
+
+"openingStatement": "Single outbound transfer of 75,000 USD against a declared monthly
+
+valu…",
+
+"whyItsSuspicious": "", "activityDescription": "", "investigationStepsTaken": "",
+
+"summaryAndRecommendation": ""
+
+},
+
+"relatedTransactionIds": ["03ee00beed0e4bc2a0c9a043ccb98da0"]
+
+},
+
+"… 1 more"
+
+],
+
+"summary": {"totalFiles": 2, "pendingReview": 2, "submitted": 0, "underInvestigation": 0},
+
+"meta": {"totalItems": 2, "itemsCount": 2, "itemsPerPage": 10, "totalPages": 1, "currentPage": 1}
+
+}
+
+// request — PATCH /v1/sar-reports/2f3354d94b594ab49e51a04b6ed94f29/status
+
+{"status": "under-review"}
+
+// response — HTTP 200
+
+{
+
+"status": true, "message": "SAR filing status updated successfully",
+
+"data": {
+
+"id": "2f3354d94b594ab49e51a04b6ed94f29", "status": "under-review",
+
+"subjectFullName": "Chidinma Eze", "riskLevel": "high",
+
+"updatedAt": "2026-10-01T22:38:30.305Z"
+
+}
+
+}
+
+// response — HTTP 200
+
+Content-Type: application/pdf
+
+Content-Disposition: attachment; filename="sar-filing-2f3354d94b594ab49e51a04b6ed94f29.pdf"
+
+// 2750 bytes of PDF
+
+Export is a real PDF, not JSON. Fetch as a blob and trigger a download using the filename from Content-
+
+Disposition . The document renders Basic Information, numbered Suspicious Indicators and the five-part narrative.
+
+Requires: dashboard:access (reads/export), sar:file (status)
+===== PAGE 72 =====
+17. What's left — known gaps
+
+Real behaviour observed while building this guide. None blocks integration, but each needs a deliberate UI state.
+
+AI SAR drafting returns a bare 500 when no AI key is configured
+
+provider-gateway needs ANTHROPIC_API_KEY . Without it, §15.6 messages fail with "Internal server error" instead of a
+
+clear 503. Configure the key per environment and/or map this failure to a friendly error.
+
+Clean transactions appear in no queue
+
+A transaction that matches no rule gets category: null , so TM Not-Blocked ("cleared for processing") never lists it
+
+(§14.2).
+
+Investigation enums are not in the public option registry
+
+Case resolution types, actions-taken, PND resolution types, entity type and investigation risk level must be hardcoded
+
+from §15–§16 until they are registered in /v1/public/misc/options .
+
+Four seeded detection rules never fire
+
+High ML Fraud Probability, Large Withdrawal Pattern, New Device High Amount and Velocity Spike need
+
+windowed/velocity evaluation that does not exist yet (§13.1).
+
+Three Re-KYC triggers are no-ops
+
+high-risk-jurisdiction , forged-id , immigration-check (§13.4).
+
+Always-null fields
+
+monthlyVolume (§14.1), customer.maskedAccount and riskNarrative (§12.3), every device-information field
+
+(§10.4), most liveness detail (§10.5), director nationality/ID and share class (§10.7), extractedInformation (§10.1).
+
+Flags only come from ongoing monitoring
+
+Onboarding runs never raise flags (§8.7); the flag workflow UI will look empty until a post-onboarding AML observation
+
+arrives.
+
+Webhooks cover two events
+
+Only workflow.verified and workflow.failed (engine or manual decision). Re-KYC escalations to in-review ,
+
+transaction alerts and investigation actions are not pushed — poll the relevant endpoints.
+
+Source of truth: core-platform controllers under apps/core-platform/src/**/controllers , live Swagger at /v1/docs . Companion
+
+docs: docs/ui-contracts/transaction-monitoring-endpoints.md , docs/ui-contracts/verification-detail-
+
+tabs.md , docs/rekyc-tm-rules-rollout.md .

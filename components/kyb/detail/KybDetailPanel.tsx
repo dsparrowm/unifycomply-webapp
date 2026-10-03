@@ -21,10 +21,17 @@ import { KybLookupPlaceholderTab } from "@/components/kyb/lookup/KybLookupPlaceh
 import { KycDetailFooterActions } from "@/components/kyc/detail/KycDetailFooterActions";
 import { KycRiskAnalysisPanel } from "@/components/kyc/detail/KycRiskAnalysisPanel";
 import { KycRequestResubmissionModal } from "@/components/kyc/detail/KycRequestResubmissionModal";
+import { decisionErrorMessage } from "@/lib/api/errors";
+import { recordHasResubmission } from "@/lib/api/mappers/review-state";
 import { isLiveCustomerId } from "@/lib/customers/live-id";
+import { useRbac } from "@/lib/hooks/use-rbac";
+import { toastError, toastSuccess } from "@/lib/toast";
 import {
   applyFlagStatus,
   useCreateKybShareholder,
+  useDecideCustomer,
+  useEscalateCustomer,
+  useRequestCustomerResubmission,
   useUpdateKybShareholder,
   useUpdateKybDocument,
   useKybCustomerShareholders,
@@ -56,6 +63,7 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
   const [activeModal, setActiveModal] = useState<KybDetailModal>(null);
   const [overviewStatusSynced, setOverviewStatusSynced] = useState(false);
   const [flags, setFlags] = useState<CustomerFlag[]>(initialDetail.flags ?? []);
+  const [resubmission, setResubmission] = useState(Boolean(initialDetail.resubmission));
 
   const workflowId = initialDetail.workflowId;
   const liveCustomer = isLiveCustomerId(initialDetail.id);
@@ -79,6 +87,10 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
   const updateShareholder = useUpdateKybShareholder(initialDetail.id);
   const updateDocument = useUpdateKybDocument(initialDetail.id);
   const patchFlag = usePatchCustomerFlag("kyb", initialDetail.id);
+  const decide = useDecideCustomer("kyb", initialDetail.id);
+  const requestResubmission = useRequestCustomerResubmission("kyb", initialDetail.id);
+  const escalate = useEscalateCustomer("kyb", initialDetail.id);
+  const { canPerform } = useRbac();
 
   const liveRisk = riskQuery.data;
   const detailWithOverview = mergeKybDetailWithBusinessOverview(
@@ -130,7 +142,14 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
 
   return (
     <div className="flex flex-col gap-6 pb-4">
-      <KybDetailHeader detail={detail} status={status} canOffboard={liveCustomer} />
+      <KybDetailHeader
+        detail={{
+          ...detail,
+          resubmission: resubmission || recordHasResubmission(verificationQuery.data?.workflow),
+        }}
+        status={status}
+        canOffboard={liveCustomer}
+      />
       <CustomerIntakeLinks kind="kyb" customerId={detail.id} />
       <KybDetailTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -236,6 +255,7 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
               <VerificationRunHistory
                 detail={verificationQuery.data}
                 isLoading={verificationQuery.isLoading}
+                nextReviewLabel={detail.nextReviewLabel}
               />
             ) : null}
           </div>
@@ -257,6 +277,8 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
 
       <KycDetailFooterActions
         riskScore={detail.riskScore}
+        approveDisabled={!canPerform("verification:approve")}
+        rejectDisabled={!canPerform("verification:reject")}
         onRequestResubmission={() => setActiveModal("resubmission")}
         onReject={() => setActiveModal("reject")}
         onApprove={() => setActiveModal("approve")}
@@ -267,25 +289,69 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
         open={activeModal === "approve"}
         detail={detail}
         onClose={closeModal}
-        onConfirm={() => setStatus("approved")}
+        onConfirm={() => {
+          if (!liveCustomer) {
+            setStatus("approved");
+            return;
+          }
+          void decide
+            .mutateAsync({ decision: "approve", reason: "Approved on manual review." })
+            .then(() => {
+              setStatus("approved");
+              toastSuccess("Customer onboarding approved");
+            })
+            .catch((error: unknown) => {
+              toastError(
+                new Error(decisionErrorMessage(error, "Could not approve this customer")),
+                "Could not approve this customer",
+              );
+            });
+        }}
       />
 
       <KybRejectModal
         open={activeModal === "reject"}
         detail={detail}
         onClose={closeModal}
-        onConfirm={() => {
-          setStatus("rejected");
-          closeModal();
+        onConfirm={(reason, notes) => {
+          const combined = [reason, notes].filter(Boolean).join(" — ");
+          if (!liveCustomer) {
+            setStatus("rejected");
+            closeModal();
+            return;
+          }
+          void decide
+            .mutateAsync({ decision: "reject", reason: combined || reason })
+            .then(() => {
+              setStatus("rejected");
+              closeModal();
+              toastSuccess("Customer onboarding rejected");
+            })
+            .catch((error: unknown) => {
+              toastError(error, "Could not reject this customer");
+            });
         }}
       />
 
       <KycRequestResubmissionModal
         open={activeModal === "resubmission"}
         onClose={closeModal}
-        onConfirm={() => {
-          setStatus("resubmission");
-          closeModal();
+        onConfirm={(issueIds) => {
+          if (!liveCustomer) {
+            setStatus("resubmission");
+            closeModal();
+            return;
+          }
+          void requestResubmission
+            .mutateAsync(issueIds)
+            .then(() => {
+              setResubmission(true);
+              closeModal();
+              toastSuccess("Resubmission requested");
+            })
+            .catch((error: unknown) => {
+              toastError(error, "Could not request resubmission");
+            });
         }}
       />
 
@@ -293,9 +359,21 @@ export function KybDetailPanel({ detail: initialDetail }: KybDetailPanelProps) {
         open={activeModal === "escalate"}
         detail={detail}
         onClose={closeModal}
-        onConfirm={() => {
-          setStatus("escalated");
-          closeModal();
+        onConfirm={(notes) => {
+          if (!liveCustomer) {
+            setStatus("escalated");
+            closeModal();
+            return;
+          }
+          void escalate
+            .mutateAsync(notes)
+            .then(() => {
+              closeModal();
+              toastSuccess("Case escalated");
+            })
+            .catch((error: unknown) => {
+              toastError(error, "Could not escalate this case");
+            });
         }}
       />
     </div>

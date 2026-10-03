@@ -1,5 +1,6 @@
 import { apiFetch, apiFetchEnvelope } from "@/lib/api/client";
 import { extractMfaChallenge } from "@/lib/api/mfa-challenge";
+import { updatePassword } from "@/lib/api/settings";
 import type {
   AccessSwitchDto,
   ApiDomain,
@@ -108,8 +109,9 @@ export async function completeForgotPassword(input: {
 }): Promise<void> {
   await apiFetchEnvelope("/api/auth/forgot-password/complete", {
     method: "POST",
-    body: input,
+    body: { token: input.token, email: input.email },
   });
+  await updatePassword(input.password);
 }
 
 export async function requestEmailVerify(email: string): Promise<void> {

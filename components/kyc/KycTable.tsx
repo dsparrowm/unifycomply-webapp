@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { KycRecord } from "@/types/kyc";
-import { KycAssignedToCell } from "@/components/kyc/KycAssignedToCell";
+import { KycAssignedToCell, type AssigneeChoice } from "@/components/kyc/KycAssignedToCell";
 import { KycPriorityBadge, KycStatusBadge } from "@/components/kyc/KycStatusBadge";
 import { verificationDetailHref } from "@/lib/compliance/detail-href";
 
@@ -19,11 +19,17 @@ const columns = [
 type KycTableProps = {
   records: KycRecord[];
   emptyMessage?: string;
+  assignees?: AssigneeChoice[];
+  onAssign?: (workflowId: string, userId: string | null) => void;
+  assigningWorkflowId?: string | null;
 };
 
 export function KycTable({
   records,
   emptyMessage = "No User Activity",
+  assignees,
+  onAssign,
+  assigningWorkflowId,
 }: KycTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-[color:var(--border-default)] bg-[color:var(--bg-surface)] shadow-sm">
@@ -85,6 +91,9 @@ export function KycTable({
                     >
                       {record.customerName}
                     </Link>
+                    {record.resubmission ? (
+                      <p className="mt-0.5 text-xs text-[color:var(--text-muted)]">Resubmission</p>
+                    ) : null}
                   </td>
                   <td className="px-4 py-4 text-[color:var(--text-primary)]">
                     {record.documentType}
@@ -99,7 +108,15 @@ export function KycTable({
                   <td className="px-4 py-4">
                     <KycAssignedToCell
                       assignedTo={record.assignedTo}
+                      assignedToId={record.assignedToId}
                       customerName={record.customerName}
+                      assignees={record.workflowId ? assignees : undefined}
+                      disabled={assigningWorkflowId === record.workflowId}
+                      onAssign={
+                        record.workflowId && onAssign
+                          ? (userId) => onAssign(record.workflowId as string, userId)
+                          : undefined
+                      }
                     />
                   </td>
                   <td className="px-4 py-4 font-medium text-[color:var(--text-primary)]">
