@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Compliance tool — gap analysis and invention plan</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ddd;
+      --bg: #fff;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Georgia, "Times New Roman", serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+    }
+    .meta { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .meta p { margin: 0.15rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    h2 { font-size: 1.25rem; margin: 1.75rem 0 0.75rem; }
+    h3 { font-size: 1.05rem; margin: 1.25rem 0 0.4rem; }
+    p { margin: 0.5rem 0 0.75rem; }
+    ul, ol { margin: 0.35rem 0 0.75rem; padding-left: 1.25rem; }
+    li { margin: 0.35rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 0.5rem 0 1rem; }
+    th, td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f5f5f5; font-weight: 600; }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85em;
+      background: #f3f4f6;
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin: -1rem -1.5rem 1.25rem;
+      padding: 0.75rem 1.5rem;
+      background: #f0fdfa;
+      border-bottom: 1px solid #99f6e4;
+    }
+    .toolbar button {
+      font: inherit;
+      font-size: 0.9rem;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+    }
+    .toolbar button:hover { background: #115e59; }
+    .toolbar span { align-self: center; color: var(--muted); font-size: 0.85rem; margin-right: auto; }
+    @media print {
+      .toolbar { display: none; }
+      body { padding: 0; max-width: none; }
+      h2, h3 { break-after: avoid; }
+      li, tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span>Open this page, then save it as a PDF.</span>
+    <button type="button" onclick="window.print()">Save as PDF</button>
+  </div>
+
+  <h1>Compliance tool — gap analysis and invention plan</h1>
+  <div class="meta">
+    <p><strong>From:</strong> Frontend (UnifyComply WebApp)</p>
+    <p><strong>For:</strong> Product / UnifyCompliance Team — screen-change and new-screen approval</p>
+    <p><strong>Date:</strong> 2 October 2026</p>
+    <p><strong>UI source of truth:</strong> Figma WebApp page (<code>1:2</code>)</p>
+    <p><strong>API:</strong> <code>https://unifycomply-api.rokxier.com</code> (<code>/v1/docs</code>)</p>
+  </div>
+
+  <hr />
+
+  <h2>Why this document exists</h2>
+  <p>The Figma file is a <strong>product UI</strong>, and the house rule is that I do not invent a screen, a flow, or relabel copy without your sign-off. Reading the frontend integration guide end to end from the backend Dev, the gap is bigger than “a few endpoints we can’t wire yet”: <strong>the Core Platform now ships the full lifecycle of a compliance tool, and the Figma UI only models the front half of it.</strong></p>
+  <p>Figma gives us a strong <strong>intake + review desk</strong> — add a customer, upload documents, run checks, read the result, approve or reject. The backend goes further: it treats each customer as a living file that is <strong>re-screened over time</strong> (nine Re-KYC triggers), keeps an <strong>auditable reason trail</strong> on every status change (<code>detail.reason</code> / <code>detail.trigger</code>), gates approval on a <strong>risk decision</strong> (<code>canApprove</code> / <code>requiresEscalation</code>), and ships a complete <strong>investigation + regulatory-reporting</strong> surface — case management, PND watchlist, and SAR filings with PDF export. The later-lifecycle pieces are the ones with <strong>no home in the current screens</strong>.</p>
+  <p>This document separates the work into buckets you can approve independently:</p>
+  <ul>
+    <li><strong>Part A — Screens / flows to invent.</strong> The backend ships them live; Figma has no built screen (or the frame exists but is gated off).</li>
+    <li><strong>Part B — Existing screens to adjust.</strong> The screen is right, but it can’t express what the API (and a compliance officer) needs.</li>
+    <li><strong>Part C — The “essence” gaps.</strong> The conceptual pieces that turn this from a KYC form into a compliance tool. These justify Parts A and B.</li>
+  </ul>
+  <p>Items already wired inside the current screens (approve, reject, offboard, flags, documents, account purpose, start verification, TM queues, and the <strong>transaction-detail investigation actions</strong> — resolve/escalate/place-PND/SAR rationale/SAR-draft chat) are not repeated here.</p>
+
+  <h2>The lifecycle the backend assumes</h2>
+  <table>
+    <thead>
+      <tr><th>Intake</th><th>Review</th><th>Decision</th><th>Ongoing + report</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Create customer, documents, and account purpose</td>
+        <td>Run checks. Workflow can sit in review. Risk decision includes <code>canApprove</code>. Reason trail on <code>detail.reason</code>.</td>
+        <td>Approve moves the customer to onboarded. Reject moves them to blocked.</td>
+        <td>A Re-KYC trigger (nine kinds) sends the file back to review. A monitoring alert opens a case, then a PND listing and a SAR filing, then a SAR report with PDF export.</td>
+      </tr>
+      <tr>
+        <td>Figma: strong</td>
+        <td>Figma: partial</td>
+        <td>Figma: strong</td>
+        <td>Figma: the desk is missing. The API is live, and the write side is already wired on transaction detail.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Figma covers <strong>intake</strong> and most of <strong>review/decision</strong>. The <strong>ongoing + report</strong> column is where the product is thin — and that column is exactly what a regulator inspects. The backend for that column is <strong>live</strong>, and we’ve already wired the write side on transaction detail. What’s missing is the <strong>desk</strong> to see and work it: the Re-KYC trigger settings, the Due-for-refresh view, the reason line on the case, and the standalone SAR / PND screens.</p>
+
+  <h2>Part A — Screens and flows to invent</h2>
+  <p>Each item: what the backend ships, why a compliance tool needs it, the exact endpoint, the smallest screen I’d propose, and the permission required. All are <strong>new surfaces or re-enabled nav</strong>.</p>
+
+  <h3>A1. Re-KYC trigger settings (Settings)</h3>
+  <ul>
+    <li><strong>Backend (live):</strong> <code>GET /v1/tenants/apps/{appId}/re-kyc/trigger-rules</code> and <code>PATCH …/re-kyc/trigger-rules/{kind}</code> with <code>{ status: "active" | "inactive" }</code>. A fixed catalogue of <strong>nine</strong> kinds; enable/disable/tune <code>config</code>, no create or delete.</li>
+    <li><strong>Why:</strong> this is the control that decides <em>when an onboarded customer is pulled back into review</em> — periodic refresh, a new PEP/sanctions hit, an expired ID, a monitoring escalation, suspected account-takeover. Without it the tool only ever does <strong>one-time</strong> KYC, which is not a compliance programme.</li>
+    <li><strong>Live catalogue:</strong> six evaluate — <code>pep-sanctions</code>, <code>transaction-monitoring-escalation</code>, <code>basic-kyc</code>, <code>expired-id</code>, <code>proof-of-address</code>, <code>suspected-ato</code>; three are <strong>no-ops today</strong> (<code>high-risk-jurisdiction</code>, <code>forged-id</code>, <code>immigration-check</code>).</li>
+    <li><strong>Propose:</strong> a section on <strong>Settings → Compliance Rules</strong>, one row per kind (label, one-line description, on/off switch), reusing the existing settings-row pattern. The three no-op kinds render as “not evaluated” and do not pretend to fire.</li>
+    <li><strong>Permission needed:</strong> add a section to an existing settings page.</li>
+  </ul>
+
+  <h3>A2. SAR Reports desk (<code>/sar</code>) — Milestone 4 scope</h3>
+  <ul>
+    <li><strong>Backend (live):</strong> <code>GET /v1/sar-reports</code> (filters <code>status=pending|under-review|submitted</code>, <code>page</code>, <code>limit</code>; response includes a summary tile block — totalFiles / pendingReview / submitted / underInvestigation), <code>GET /v1/sar-reports/:id</code>, <code>PATCH /v1/sar-reports/:id/status</code>, and <code>GET /v1/sar-reports/:id/export</code> (<strong>real PDF</strong>, download via <code>Content-Disposition</code>). Each filing carries the five-part narrative (opening / why suspicious / activity / steps taken / summary) and numbered suspicious indicators.</li>
+    <li><strong>Why:</strong> a Suspicious Activity Report is the <strong>regulated output</strong> of the AML programme. We already create filings from transaction detail, but there is <strong>no screen to list, review, advance status, or export</strong> them. A programme that can file a SAR but not track or hand it to a regulator is incomplete.</li>
+    <li><strong>Figma:</strong> there are <strong>no</strong> frames for SAR Reports. The COMPLIANCE sidebar label is only a nav item.</li>
+    <li><strong>Propose:</strong> a new <code>/sar</code> list + detail + status + PDF export.</li>
+    <li><strong>Permission needed:</strong> unlock M4 nav + build the SAR Report page.</li>
+  </ul>
+
+  <h3>A3. PND Watchlist desk (<code>/pnd-watchlist</code>)</h3>
+  <ul>
+    <li><strong>Backend (live):</strong> <code>GET /v1/pnd-watchlist</code> (filters <code>status=active|resolved|under-review</code>, <code>riskLevel</code>, paging; summary tiles) and <code>PATCH /v1/pnd-watchlist/:id/resolve</code> with a required <code>resolutionType</code> (<code>investigation-complete-no-issues</code>, <code>investigation-complete-issues-resolved</code>, <code>case-closed</code>, <code>false-positive</code>, <code>customer-cleared-by-authorities</code>) plus <code>resolutionReason</code>, <code>investigationOutcome</code>, <code>resolutionActionsTaken</code>.</li>
+    <li><strong>Why:</strong> “Post-No-Debit” is the enforcement side of monitoring — the officer’s lever to freeze and then clear activity. We already place PND from transaction detail, but there is <strong>no screen to see or resolve</strong> the resulting watchlist.</li>
+    <li><strong>Figma:</strong> the only frame named PND is <code>1532:241310</code> (Transaction Monitoring). It is the Place PND flow, already wired from transaction detail — not a watchlist desk. No <code>/pnd-watchlist</code> frame exists.</li>
+    <li><strong>Permission needed:</strong> unlock M4 nav + build the PND Watchlist page.</li>
+  </ul>
+
+  <h3>A4. “Start refresh” on an onboarded case (Re-KYC manual cycle)</h3>
+  <ul>
+    <li><strong>Backend:</strong> the same <code>POST /v1/verifications/{kyc|kyb}</code> on the same <code>customerId</code> — no new resource. A sensitive-field change via <code>PUT</code> already flips a verified workflow to <code>in-review</code> via the <code>suspected-ato</code> trigger; the manual refresh is the officer-initiated equivalent.</li>
+    <li><strong>Why:</strong> once a case is approved, there is no action that means “run this file again.” Periodic/triggered re-screening is the ongoing half of A1.</li>
+    <li><strong>Propose:</strong> on an <strong>approved live case only</strong>, a <strong>Start refresh</strong> action on the case header that reuses the existing start-verification screen (ask account purpose again only if missing). Hidden on pending/in-review cases.</li>
+    <li><strong>Permission needed:</strong> a new action on an existing screen.</li>
+  </ul>
+
+  <h3>A5. Customer edit form (full replace)</h3>
+  <ul>
+    <li><strong>Backend (live):</strong> <code>PUT /v1/customers/{kyc|kyb}/{id}</code> is a <strong>full replace</strong> requiring every field create requires; a partial “change the phone” is rejected. Changing 2+ of email/phone/address within 72h is exactly what the <code>suspected-ato</code> trigger counts.</li>
+    <li><strong>Why:</strong> an officer currently cannot correct an email, phone, or address — both an ops gap and the reason the ATO trigger has nothing to observe on this desk.</li>
+    <li><strong>Propose:</strong> an edit form opened from the case, pre-filled with the current record, submitted as a full replace. Reuse the onboarding wizard’s personal/business step as a single form.</li>
+    <li><strong>Permission needed:</strong> a new form reachable from the case.</li>
+  </ul>
+
+  <h2>Part B — Existing screens to adjust</h2>
+  <p>The screen stays; it just can’t currently carry what the API and the officer need. Smallest change each.</p>
+
+  <h3>B1. Case event panel — show the reason a file is back in review</h3>
+  <ul>
+    <li><strong>Today:</strong> the verification run panel lists each event as action + time + actor.</li>
+    <li><strong>Backend:</strong> every event carries <code>detail.reason</code> (the sentence) and <code>detail.trigger</code> (which of the nine kinds fired). Verified example: a monitoring escalation wrote “Transaction-monitoring activity identifies risk requiring renewed customer due diligence. Activity used crypto, direct-debit, not among the declared channels” with <code>trigger: transaction-monitoring-escalation</code>.</li>
+    <li><strong>Change:</strong> render that sentence as the secondary line under the existing event row. No new tab, no rename.</li>
+    <li><strong>Why it’s essence:</strong> “why is this in review” is the first question an officer and an auditor ask. The data is there; we don’t show it.</li>
+  </ul>
+
+  <h3>B2. KYC/KYB list — “Due for refresh” filter</h3>
+  <ul>
+    <li><strong>Today:</strong> filters are Date / Status / Priorities / Single entity / More filters. No way to ask “whose review date has passed.”</li>
+    <li><strong>Backend:</strong> every customer carries <code>nextReviewAt</code> and <code>lastReviewedAt</code> (an onboarded customer gets <code>nextReviewAt = lastReviewedAt + kycExpiryDays</code>; the example shows a real <code>2027-10-01</code> timestamp). The client can filter on it.</li>
+    <li><strong>Change:</strong> one entry under <strong>More filters</strong> — <em>Due for refresh</em> — onboarded customers whose review date is today or earlier. Zero rows use the existing “No User Activity” empty state. Status chips unchanged.</li>
+  </ul>
+
+  <h3>B3. Document edit modal — require the file again</h3>
+  <ul>
+    <li><strong>Today:</strong> the modal edits type, number, issue date, expiry and saves without a file.</li>
+    <li><strong>Backend:</strong> <code>PUT …/documents/{id}</code> rejects a metadata-only save for upload-required types — the file must be present; changing an expiry means re-attaching the file.</li>
+    <li><strong>Change:</strong> add a file field to the same modal, required when the type needs an upload. Labels stay.</li>
+  </ul>
+
+  <h3>B4. Settings → API keys — key list, not a single key</h3>
+  <ul>
+    <li><strong>Today:</strong> one primary key (<code>…/api-key</code>): show, rotate, secret once.</li>
+    <li><strong>Backend (live):</strong> <code>GET/POST/DELETE /v1/tenants/apps/{appId}/keys</code> + <code>…/keys/{keyId}/rotate</code>. Multiple keys per app per domain, each with a <strong>scope</strong> set (<code>customers:read</code>, <code>verifications:write</code>, <code>transactions:*</code>, <code>webhooks:*</code>, …), secret shown once at creation.</li>
+    <li><strong>Change:</strong> replace the single-key control with a key <strong>list</strong> (name, scopes, created, rotate, revoke) + a create dialog with scope checkboxes + a copy-once secret dialog. Reuse the team-list rows and invite-dialog chrome.</li>
+    <li><strong>Why it’s essence:</strong> scoped, rotatable, revocable, per-app keys are how an integration is governed. A single scopeless key is a toy, not a control.</li>
+  </ul>
+
+  <h3>B5. Settings → Notifications — rotate signing secret</h3>
+  <ul>
+    <li><strong>Today:</strong> webhook URL, enable, delivery history, redeliver.</li>
+    <li><strong>Backend:</strong> <code>POST …/webhook/rotate-secret</code> issues a new HMAC signing secret.</li>
+    <li><strong>Change:</strong> one <em>Rotate signing secret</em> control with the same copy-once treatment as a key. URL, enable, and history stay.</li>
+  </ul>
+
+  <h3>B6. KYC wizard — the business step has nowhere to go</h3>
+  <ul>
+    <li><strong>Today:</strong> the individual onboarding wizard collects a business step.</li>
+    <li><strong>Backend:</strong> <code>POST /v1/customers/kyc</code> has <strong>no</strong> company fields; a business file is <code>POST /v1/customers/kyb</code>. Those values are collected and silently dropped.</li>
+    <li><strong>Change (needs a product call):</strong> remove the business step from the KYC wizard, or route a business subject into the existing KYB wizard. We will not invent a combined create.</li>
+  </ul>
+
+  <h3>B7. Approve button — respect the risk decision</h3>
+  <ul>
+    <li><strong>Today:</strong> Approve / Reject are live (<code>POST …/approve|reject</code>; reject requires a reason). Approve is offered the same way regardless of risk.</li>
+    <li><strong>Backend:</strong> each run’s <code>risk</code> carries <code>band</code>, <code>priority</code>, <code>decision</code> (<code>onboard</code> | <code>review</code> | <code>block</code>), and <code>canApprove</code> and <code>requiresEscalation</code>. A sanctions/PEP block returns <code>canApprove: false</code>, <code>requiresEscalation: true</code>, <code>decision: "block"</code>.</li>
+    <li><strong>Change:</strong> when <code>canApprove</code> is false, the Approve action should reflect that — disabled with a “requires escalation” hint. This is the difference between a review screen and a four-eyes risk gate.</li>
+  </ul>
+
+  <h2>Part C — The essence of a compliance tool</h2>
+  <p>The conceptual reasons Parts A and B matter. Each is something the backend models that the current UI does not yet express as a first-class idea.</p>
+  <ol>
+    <li><strong>Two status worlds, one badge.</strong> The customer has a lifecycle (<code>pending → onboarded → review → blocked → offboarded</code>, with full lifecycle history). The workflow has a status (<code>not-started → processing → in-review → verified → failed</code>). The UI shows one badge and blurs the two. “The person is onboarded, but their latest screening is back in review” is Re-KYC — and the API already returns the lifecycle history to show it.</li>
+    <li><strong>The file is alive, not one-and-done.</strong> Re-KYC (A1, A4, B2) is the line between a KYC form and an ongoing-monitoring programme. The whole nine-trigger catalogue exists for this and has no UI.</li>
+    <li><strong>Auditability.</strong> Every status change has a reason, a trigger, and an actor (B1); approve/reject write a <code>customer.review.approved|rejected</code> event; cases carry an activity log. An auditor’s core question is “who did what, when, and why” — we have the data and under-surface the why.</li>
+    <li><strong>Resubmission as a real path.</strong> A compliance desk usually sends a file back for a corrected document without blocking the person. The case footer already shows <strong>Request Resubmission</strong> and <strong>Escalate</strong> next to Approve and Reject. Approve and Reject are the live decisions. Request Resubmission and Escalate stay on the screen as designed.</li>
+    <li><strong>Reporting is the point, and it’s live.</strong> SAR (A2) and PND (A3) are the regulated outputs. The backend ships them with PDF export; we create filings from transaction detail but have no desk to list, review, advance status, or export them.</li>
+    <li><strong>Risk is a decision, not a number (B7).</strong> The API gives an internal 0–100 score, an external 0–4 band, then priority and <code>decision</code>, and explicit <code>canApprove</code> / <code>requiresEscalation</code>. The UI should let the decision gate the Approve action, not just paint a score.</li>
+    <li><strong>Investigations are case-centric.</strong> On transaction monitoring, the first time an officer acts on a payment — resolve it, escalate it, freeze it, or start a suspicious-activity report — the system opens a folder for that payment. That folder then holds everything that follows: the freeze (PND), the report (SAR), and a timeline of who did what. That folder is the case. On KYC and KYB there is no folder like that. What looks like a case is the identity check and its history: documents, risk result, and events. Approving or rejecting a person does not open the same kind of investigation folder. An officer ends up with two desks — “who is this customer?” and “what happened with this payment?” — and they are not joined into one file. The product question is whether those stay separate, or whether one customer should have one case that contains both the identity review and the payment investigation.</li>
+    <li><strong>Who can click a button.</strong> The screen decides from the person’s job title: Admin, Compliance Officer, Compliance Manager, and so on. If the title is allowed into that area, the button shows. The API decides from a specific ability: open the dashboard (<code>dashboard:access</code>), change tenant settings (<code>tenant-settings:update</code>), resolve a case (<code>case:resolve</code>), escalate a case (<code>case:escalate</code>), place or lift a freeze (<code>pnd:manage</code>), and file a suspicious-activity report (<code>sar:file</code>). One Compliance Officer can have “resolve a case” and not have “file a SAR.” Those two checks can disagree. The screen shows File SAR because the job title can see transaction monitoring, the person clicks it, and the API refuses because that account does not have the file-a-SAR ability. SAR, PND, and case actions (A2, A3, and the wired transaction-monitoring actions) should appear only when the account has that ability.</li>
+  </ol>
+
+  <h2>Part D — Decisions needed (ranked by compliance value)</h2>
+  <ol>
+    <li>Build <strong>SAR Reports</strong> (<code>/sar</code>) and <strong>PND Watchlist</strong> (<code>/pnd-watchlist</code>) with no Figma frame, and advance to <strong>M4</strong> (A2, A3). Endpoints are live. The existing SAR frames are the rationale wizard (<code>SAR Rationale // 8</code> = <code>1532:232754</code> and siblings), already shipped; the PND frame is <code>1532:241310</code> (Place PND), already shipped.</li>
+    <li>Add the <strong>Re-KYC trigger settings</strong> section (A1) and the <strong>reason sentence</strong> on the event row (B1).</li>
+    <li>Add the <strong>Due for refresh</strong> filter (B2) and the <strong>Start refresh</strong> action (A4).</li>
+    <li>Make <strong>Approve respect <code>canApprove</code> / <code>requiresEscalation</code></strong> (B7).</li>
+    <li>Build the <strong>customer edit</strong> form (A5) and add the <strong>file field</strong> to the document edit modal (B3).</li>
+    <li>Rebuild <strong>API keys</strong> as a scoped key list (B4) and add <strong>webhook secret rotation</strong> (B5).</li>
+    <li>Resolve the <strong>KYC wizard business step</strong> (B6): drop it, or route to KYB.</li>
+    <li>Migrate action and nav gating from job titles to the specific abilities in C8.</li>
+  </ol>
+</body>
+</html>

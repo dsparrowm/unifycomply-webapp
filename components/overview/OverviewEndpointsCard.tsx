@@ -27,7 +27,9 @@ export function OverviewEndpointsCard({ endpoints }: OverviewEndpointsCardProps)
         </p>
       </div>
 
-      {endpoints.length > 0 ? (
+      {endpoints.length === 0 ? (
+        <p className="mt-20 text-xs text-[color:var(--text-light)]">No checks yet</p>
+      ) : (
         <div className="mt-8 space-y-6">
           {endpoints.map((endpoint) => (
             <div key={endpoint.id}>
@@ -46,7 +48,7 @@ export function OverviewEndpointsCard({ endpoints }: OverviewEndpointsCardProps)
             </div>
           ))}
         </div>
-      ) : null}
+      )}
     </section>
   );
 }

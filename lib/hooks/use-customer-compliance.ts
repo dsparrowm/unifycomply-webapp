@@ -6,8 +6,16 @@ import {
   getKycDocumentRequirements,
   getKybDocumentRequirements,
   listKybShareholders,
+  approveKybCustomer,
+  approveKycCustomer,
+  escalateKybCustomer,
+  escalateKycCustomer,
   offboardKybCustomer,
   offboardKycCustomer,
+  rejectKybCustomer,
+  rejectKycCustomer,
+  requestKybResubmission,
+  requestKycResubmission,
   updateKybShareholder,
   updateKybDocument,
   patchKycFlagStatus,
@@ -142,6 +150,59 @@ export function usePatchCustomerFlag(kind: "kyc" | "kyb", customerId: string) {
         queryKey:
           kind === "kyc" ? ["customers", "kyc", customerId] : ["customers", "kyb", customerId],
       });
+    },
+  });
+}
+
+export function useDecideCustomer(kind: "kyc" | "kyb", customerId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ decision, reason }: { decision: "approve" | "reject"; reason: string }) => {
+      if (kind === "kyc") {
+        return decision === "approve"
+          ? approveKycCustomer(customerId, reason)
+          : rejectKycCustomer(customerId, reason);
+      }
+      return decision === "approve"
+        ? approveKybCustomer(customerId, reason)
+        : rejectKybCustomer(customerId, reason);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["customers", kind] });
+      await queryClient.invalidateQueries({ queryKey: ["verifications", kind] });
+    },
+  });
+}
+
+export function useRequestCustomerResubmission(kind: "kyc" | "kyb", customerId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (issues: string[]) => {
+      const body = { issues };
+      return kind === "kyc"
+        ? requestKycResubmission(customerId, body)
+        : requestKybResubmission(customerId, body);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["customers", kind] });
+      await queryClient.invalidateQueries({ queryKey: ["verifications", kind] });
+    },
+  });
+}
+
+export function useEscalateCustomer(kind: "kyc" | "kyb", customerId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (notes: string) =>
+      kind === "kyc"
+        ? escalateKycCustomer(customerId, { notes })
+        : escalateKybCustomer(customerId, { notes }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["customers", kind] });
+      await queryClient.invalidateQueries({ queryKey: ["verifications", kind] });
     },
   });
 }

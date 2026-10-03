@@ -9,6 +9,7 @@ import {
   onboardingGenderOptions,
   onboardingNationalityOptions,
 } from "@/lib/data/onboarding";
+import { useMatchingOptions } from "@/lib/hooks/use-public-options";
 import type { OnboardingPersonalInfo } from "@/types/onboarding";
 
 const personalInfoSchema = z.object({
@@ -43,6 +44,7 @@ export function OnboardingPersonalInfoStep({
     resolver: zodResolver(personalInfoSchema) as never,
     defaultValues,
   });
+  const genderOptions = useMatchingOptions("genders", onboardingGenderOptions);
 
   return (
     <form
@@ -77,7 +79,7 @@ export function OnboardingPersonalInfoStep({
         />
         <SettingsSelect
           label="Gender"
-          options={onboardingGenderOptions}
+          options={genderOptions}
           error={errors.gender?.message}
           {...register("gender")}
         />

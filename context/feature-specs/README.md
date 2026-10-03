@@ -91,3 +91,4 @@ Mock data shape (required for v1).
 | `12-account-purpose-and-verification.md` | Account purpose + start verification | Done (API-derived / no Figma) |
 | `15-settings-app-picker.md` | Settings App picker + app-scoped settings | Done (API-derived / no Figma) |
 | `16-prekyc-rekyc-tenant-flow.md` | Pre-KYC / Re-KYC tenant flow (missing screens) | Plan only |
+| `17-compliance-rules-add.md` | Settings → Compliance Rules add document / country | Done (API-derived / no Figma) |

@@ -452,7 +452,11 @@ export function useMfaActions() {
 }
 
 export function useSwitchDomain() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (domain: "sandbox" | "production") => switchDomain({ domain }),
+    onSuccess: async () => {
+      await queryClient.resetQueries();
+    },
   });
 }

@@ -26,6 +26,7 @@ export default function TenantSelectionPage() {
     role: normalizeTenantRole(null) ?? "compliance-officer",
     roleId: access.roleId,
     tenantId: access.tenantId,
+    apiPermissions: [],
   }));
 
   const handleSelect = async (accessId: string) => {

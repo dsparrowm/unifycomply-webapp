@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 type VerificationRunHistoryProps = {
   detail: ApiVerificationDetail;
   isLoading?: boolean;
+  nextReviewLabel?: string;
 };
 
 function formatLabel(value: string | undefined | null): string {
@@ -44,7 +45,15 @@ function OutcomeIcon({ outcome }: { outcome?: string }) {
   return <Clock3 className="h-4 w-4" />;
 }
 
+function eventText(event: ApiVerificationEvent, key: "reason" | "trigger"): string | undefined {
+  const value = event.detail?.[key];
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
 function EventRow({ event }: { event: ApiVerificationEvent }) {
+  const reason = eventText(event, "reason");
+  const trigger = eventText(event, "trigger");
+
   return (
     <li className="flex gap-3 border-b border-[color:var(--border-default)] py-3 last:border-b-0">
       <span className="mt-0.5 rounded-full bg-[color:var(--bg-muted)] p-1.5 text-[color:var(--text-muted)]">
@@ -57,13 +66,21 @@ function EventRow({ event }: { event: ApiVerificationEvent }) {
         <p className="text-xs text-[color:var(--text-muted)]">
           {formatDate(event.createdAt)}
           {event.actor ? ` · ${event.actor}` : ""}
+          {trigger ? ` · ${formatLabel(trigger)}` : ""}
         </p>
+        {reason ? (
+          <p className="mt-1 text-sm text-[color:var(--text-primary)]">{reason}</p>
+        ) : null}
       </div>
     </li>
   );
 }
 
-export function VerificationRunHistory({ detail, isLoading = false }: VerificationRunHistoryProps) {
+export function VerificationRunHistory({
+  detail,
+  isLoading = false,
+  nextReviewLabel,
+}: VerificationRunHistoryProps) {
   const tasks = detail.run?.tasks ?? [];
   const events = detail.events ?? [];
   const risk = detail.risk;
@@ -108,6 +125,14 @@ export function VerificationRunHistory({ detail, isLoading = false }: Verificati
                 {risk?.score ?? "Pending"}
               </p>
             </div>
+            {nextReviewLabel ? (
+              <div className="rounded-lg bg-[color:var(--bg-muted)] p-3">
+                <p className="text-xs text-[color:var(--text-muted)]">Next review</p>
+                <p className="mt-1 text-sm font-medium text-[color:var(--text-primary)]">
+                  {nextReviewLabel}
+                </p>
+              </div>
+            ) : null}
           </div>
 
           {tasks.length > 0 ? (

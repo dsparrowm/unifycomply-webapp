@@ -843,6 +843,9 @@ export type ApiVerificationListQuery = {
   dateFrom?: string;
   dateTo?: string;
   search?: string;
+  /** One customer's runs. An empty value is a 400. */
+  customerId?: string;
+  assigneeId?: string;
 };
 
 export type ApiRiskContribution = {
@@ -1060,8 +1063,16 @@ export type ApiTransactionMatchedRule = {
   ruleId?: string;
   ruleName?: string;
   ruleType?: string;
+  description?: string | null;
+  reason?: string | null;
   severityOrScore?: string | number | null;
   matchedConditions?: unknown;
+};
+
+export type ApiTransactionTimelineEvent = {
+  kind?: string | null;
+  message?: string | null;
+  occurredAt?: string | null;
 };
 
 export type ApiTransactionRisk = {
@@ -1081,6 +1092,7 @@ export type ApiTransactionDetail = {
   risk?: ApiTransactionRisk | null;
   analystStatus?: string | null;
   riskNarrative?: string | null;
+  timeline?: ApiTransactionTimelineEvent[] | null;
 };
 
 export type ApiTransactionListQuery = {

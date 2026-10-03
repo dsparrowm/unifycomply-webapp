@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ApprovalThresholdsSection } from "@/components/settings/ApprovalThresholdsSection";
 import { RiskFactorRow } from "@/components/settings/RiskFactorRow";
 import type { SettingsApprovals, SettingsRiskFactor, SettingsRiskFactorImpact, SettingsApprovalThresholds } from "@/types/settings";
+import { useRbac } from "@/lib/hooks/use-rbac";
 import { cn } from "@/lib/utils";
 
 type ApprovalsTab = "risk-factors" | "approval-thresholds";
@@ -18,6 +19,8 @@ type ApprovalsPanelProps = {
 };
 
 export function ApprovalsPanel({ approvals, onSave }: ApprovalsPanelProps) {
+  const { canPerform } = useRbac();
+  const settingsLocked = !canPerform("tenant-settings:update");
   const [activeTab, setActiveTab] = useState<ApprovalsTab>("risk-factors");
   const [riskFactors, setRiskFactors] = useState<SettingsRiskFactor[]>(approvals.riskFactors);
   const [thresholds, setThresholds] = useState<SettingsApprovalThresholds>(approvals.thresholds);
@@ -73,7 +76,7 @@ export function ApprovalsPanel({ approvals, onSave }: ApprovalsPanelProps) {
         <button
           type="button"
           onClick={handleSave}
-          disabled={!isDirty || isSubmitting}
+          disabled={!isDirty || isSubmitting || settingsLocked}
           className={cn(
             "inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-2.5 text-xs font-medium transition-colors",
             isDirty

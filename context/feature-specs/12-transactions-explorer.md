@@ -22,7 +22,7 @@ Read `AGENTS.md` before starting.
 1. **Header** — “Real-time Monitoring”, subtitle fraud-detection dashboard
 2. **Metrics** — Total Transaction, Not Blocked, Stop Payment, Cumulative Frequency, TM-Blocked
 3. **Filters** — Date, Status, Category, More filters, Search, Export Report
-4. **Table** — checkbox, Transaction ID, Timestamp (relative + clock), Customer, Amount, TM Category, Risk Score bar, Rules Trigger, Status, view
+4. **Table** — checkbox, Transaction ID, Timestamp (relative + clock), Customer, Amount, TM Category, Risk Score bar, Rules Trigger, Status, view. Status is shown only when the list item sends `status`. A missing status renders "—". Do not derive it from the case or the PND listing.
 5. **Empty** — “No User Activity” (`TM Category-2`)
 6. **Pagination** — Previous / pages / Next
 
@@ -32,6 +32,14 @@ Read `AGENTS.md` before starting.
 2. Tabs — Transaction Details | Case Management
 3. Left — AI Risk Analysis, Transaction Summary, Counterparty, Customer (+ View Account Activity), Rules Triggered, Related Transactions
 4. Right — Timeline, Quick Stats, Full Metadata
+
+## Case Management tab
+
+Design: `design/figma/webapp/tm/stop-payment/detail-post-sar-pnd-outgoing.png` and `detail-post-sar-pnd-incoming.png` (same cards; direction differs).
+
+Left — **Rationale Filed**, then **Post No Debit (PND) Placed**. Right — the same Transaction Timeline, Quick Stats, and Full Metadata as the details tab. Assigned to stays above the cards.
+
+Live read: `GET /v1/transactions/{id}/case`. SAR number, priority, PND number, freeze amount, legal basis, and file attachments are not on that payload — those labels stay, values show "—" until the API provides them. Account number falls back to the transaction’s masked account.
 
 ## Data
 

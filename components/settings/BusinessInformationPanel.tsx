@@ -10,6 +10,7 @@ import {
   employeeCountOptions,
   industryOptions,
 } from "@/lib/data/settings";
+import { useRbac } from "@/lib/hooks/use-rbac";
 import { cn } from "@/lib/utils";
 import type { SettingsBusinessInformation } from "@/types/settings";
 
@@ -47,6 +48,8 @@ export function BusinessInformationPanel({
   employeeCountOptionsOverride,
   onSave,
 }: BusinessInformationPanelProps) {
+  const { canPerform } = useRbac();
+  const settingsLocked = !canPerform("tenant-settings:update");
   const industryChoices = industryOptionsOverride ?? industryOptions;
   const employeeChoices = employeeCountOptionsOverride ?? employeeCountOptions;
   const {
@@ -87,7 +90,7 @@ export function BusinessInformationPanel({
         </h2>
         <button
           type="submit"
-          disabled={!isDirty || isSubmitting}
+          disabled={!isDirty || isSubmitting || settingsLocked}
           className={cn(
             "rounded-lg px-4 py-2 text-sm font-medium transition-colors",
             isDirty

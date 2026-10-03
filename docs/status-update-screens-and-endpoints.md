@@ -89,11 +89,7 @@ Figma-aligned screens are implemented and connected to the authenticated Core Pl
 | Customer offboarding | Frontend | **Done** (`DELETE /customers/kyc|kyb/{id}`; soft lifecycle transition) |
 | KYB document metadata editing | Frontend | **Done** (`PUT /customers/kyb/{id}/documents/{documentId}`) |
 | Webhook delivery history and redelivery | Frontend | **Done** (app-scoped delivery list and redelivery) |
-| Perform Lookup + bulk xlsx | Backend | UI done; **no OpenAPI** |
-| Approve / Reject / Escalate / Resubmit | Backend | UI done; **no OpenAPI** (or confirm flags are the only decision API) |
-| Rich OCR / liveness / IP / AML read models | Backend | OCR remains pending; IP/device and dedicated liveness return unavailable; AML task read is live |
-| PND Watchlist + SAR Reports | Backend / M4 | API routes exist upstream but are not enabled in the frontend BFF or M4 UI |
-| AML + bank analysis + audit logs | Backend | UI done or mocked; **no usable OpenAPI contract** |
+| PND Watchlist + SAR Reports | Frontend (M4) | Screens not started. Nav stays on the earlier milestone until the organisation says to build them. |
 | Packages / Request / Pre-KYC screens | Design | Sidebar labels only; no section frames |
 | KYC wizard Business step vs `POST /customers/kyc` | Product | UI collects it; DTO has no business fields |
 | Officer queue = customers vs workflows | Product | List is customers today |
@@ -151,7 +147,7 @@ Browser → `/api/*` → Core Platform `https://unifycomply-api.rokxier.com`.
 
 ### Still mock or unavailable
 
-Lookup/bulk, standalone AML, bank analysis, audit logs, Packages/Request, PND Watchlist, SAR Reports, OCR extraction, IP/device capture, dedicated liveness results, and decision actions.
+Packages/Request, PND Watchlist, and SAR Reports. Lookup, standalone AML, bank analysis, audit logs, OCR, device, and liveness panels stay on their current screens.
 
 ---
 

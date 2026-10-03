@@ -117,12 +117,14 @@ export async function listVerifications(filters?: {
   status?: string;
   page?: number;
   limit?: number;
+  customerId?: string;
 }): Promise<PagedResult<ApiVerificationWorkflow[]>> {
   const envelope = await apiFetchEnvelope<ApiVerificationWorkflow[]>("/api/v1/verifications", {
     query: {
       ...pageQuery(filters?.page, filters?.limit),
       profileType: filters?.profileType,
       status: filters?.status,
+      customerId: filters?.customerId,
     },
   });
   return { items: envelope.data ?? [], meta: envelope.meta };
@@ -136,7 +138,11 @@ export async function findVerificationForCustomer(
   customerId: string,
   preferredRunId?: string | null,
 ) {
-  const { items } = await listVerifications({ profileType: "individual", limit: 40 });
+  const { items } = await listVerifications({
+    profileType: "individual",
+    customerId,
+    limit: 40,
+  });
   const details = (
     await Promise.all(items.map((workflow) => getVerification(workflow.id).catch(() => null)))
   ).filter((detail): detail is ApiVerificationDetail => Boolean(detail));

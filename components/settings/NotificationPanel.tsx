@@ -6,6 +6,7 @@ import { SettingsToggle } from "@/components/settings/SettingsToggle";
 import { WebhookDeliveryHistory } from "@/components/settings/WebhookDeliveryHistory";
 import { toastSuccess } from "@/lib/toast";
 import type { SettingsNotifications } from "@/types/settings";
+import { useRbac } from "@/lib/hooks/use-rbac";
 import { cn } from "@/lib/utils";
 
 type NotificationPanelProps = {
@@ -14,6 +15,8 @@ type NotificationPanelProps = {
 };
 
 export function NotificationPanel({ notifications, onSave }: NotificationPanelProps) {
+  const { canPerform } = useRbac();
+  const settingsLocked = !canPerform("tenant-settings:update");
   const [webhookEnabled, setWebhookEnabled] = useState(notifications.webhookEnabled);
   const [webhookUrl, setWebhookUrl] = useState(notifications.webhookUrl);
   const [isDirty, setIsDirty] = useState(false);
@@ -60,7 +63,7 @@ export function NotificationPanel({ notifications, onSave }: NotificationPanelPr
         <button
           type="button"
           onClick={handleSave}
-          disabled={!isDirty || isSubmitting}
+          disabled={!isDirty || isSubmitting || settingsLocked}
           className={cn(
             "inline-flex shrink-0 items-center justify-center rounded-lg px-4 py-2.5 text-xs font-medium transition-colors",
             isDirty

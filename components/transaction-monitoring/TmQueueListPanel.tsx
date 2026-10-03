@@ -35,7 +35,7 @@ export function TmQueueListPanel({ data }: TmQueueListPanelProps) {
         record.transactionId,
         record.customerName,
         record.amountLabel,
-        record.status,
+        record.status ?? "",
         record.entityType,
         record.severityLabel,
         String(record.riskScore),

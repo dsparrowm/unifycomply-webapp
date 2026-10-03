@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useAuthHydrated } from "@/lib/hooks/use-auth-hydrated";
 import { useSwitchDomain } from "@/lib/hooks/use-settings";
 import { runAction } from "@/lib/toast";
 import { useAuthStore } from "@/store/auth.store";
@@ -23,8 +25,15 @@ export function SandboxBanner() {
 export function EnvironmentToggle() {
   const environment = useUiStore((state) => state.environment);
   const setEnvironment = useUiStore((state) => state.setEnvironment);
+  const domain = useAuthStore((state) => state.domain);
   const setDomain = useAuthStore((state) => state.setDomain);
+  const hydrated = useAuthHydrated();
   const switchDomainMutation = useSwitchDomain();
+
+  useEffect(() => {
+    if (!hydrated) return;
+    setEnvironment(domain);
+  }, [hydrated, domain, setEnvironment]);
 
   const handleSwitch = async (value: "sandbox" | "production") => {
     if (value === environment || switchDomainMutation.isPending) return;

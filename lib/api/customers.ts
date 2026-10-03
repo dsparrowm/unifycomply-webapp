@@ -90,6 +90,40 @@ export function getKycCustomer(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}`);
 }
 
+export function approveKycCustomer(customerId: string, reason: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}/approve`, {
+    method: "POST",
+    body: { reason },
+  });
+}
+
+export function rejectKycCustomer(customerId: string, reason: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}/reject`, {
+    method: "POST",
+    body: { reason },
+  });
+}
+
+export function requestKycResubmission(
+  customerId: string,
+  body: { issues: string[]; instructions?: string },
+) {
+  return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}/request-resubmission`, {
+    method: "POST",
+    body,
+  });
+}
+
+export function escalateKycCustomer(
+  customerId: string,
+  body: { notes: string; userId?: string },
+) {
+  return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}/escalate`, {
+    method: "POST",
+    body,
+  });
+}
+
 export function offboardKycCustomer(customerId: string, reason?: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyc/${customerId}`, {
     method: "DELETE",
@@ -117,6 +151,40 @@ export function listAllKybCustomers() {
 
 export function getKybCustomer(customerId: string) {
   return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}`);
+}
+
+export function approveKybCustomer(customerId: string, reason: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/approve`, {
+    method: "POST",
+    body: { reason },
+  });
+}
+
+export function rejectKybCustomer(customerId: string, reason: string) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/reject`, {
+    method: "POST",
+    body: { reason },
+  });
+}
+
+export function requestKybResubmission(
+  customerId: string,
+  body: { issues: string[]; instructions?: string },
+) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/request-resubmission`, {
+    method: "POST",
+    body,
+  });
+}
+
+export function escalateKybCustomer(
+  customerId: string,
+  body: { notes: string; userId?: string },
+) {
+  return apiFetch<unknown>(`/api/v1/customers/kyb/${customerId}/escalate`, {
+    method: "POST",
+    body,
+  });
 }
 
 export function offboardKybCustomer(customerId: string, reason?: string) {

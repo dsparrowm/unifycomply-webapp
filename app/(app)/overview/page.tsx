@@ -17,6 +17,7 @@ import type {
   OverviewActivityTone,
   OverviewApiCallsPoint,
   OverviewDashboardApiData,
+  OverviewEndpointUsage,
 } from "@/types/overview";
 
 function activityTone(status: string | undefined): OverviewActivityTone {
@@ -35,6 +36,7 @@ function mapActivities(
     message?: string;
     user?: string;
     actor?: string;
+    customerName?: string;
     createdAt?: string;
     timestamp?: string;
     status?: string;
@@ -43,10 +45,23 @@ function mapActivities(
   return activities.map((activity, index) => ({
     id: activity.id ?? `activity-${index}`,
     message: activity.message ?? activity.event ?? activity.action ?? "Tenant activity",
-    user: activity.user ?? activity.actor ?? "System",
+    user: activity.user ?? activity.actor ?? activity.customerName ?? "System",
     timestamp: activity.timestamp ?? activity.createdAt ?? "Recently",
     tone: activityTone(activity.status ?? activity.event ?? activity.action),
   }));
+}
+
+function mapEndpoints(
+  types: Array<{ type?: string; label?: string; count?: number; percentage?: number }>,
+): OverviewEndpointUsage[] {
+  return [...types]
+    .sort((left, right) => (right.count ?? 0) - (left.count ?? 0))
+    .map((item, index) => ({
+      id: item.type ?? `check-${index}`,
+      name: item.label ?? item.type ?? "Check",
+      calls: item.count ?? 0,
+      percentage: item.percentage ?? 0,
+    }));
 }
 
 function mapApiCalls(
@@ -85,12 +100,11 @@ export default function OverviewPage() {
         highRiskCount: data.highRiskCount,
         activities: mapActivities(data.activities),
         apiCalls: mapApiCalls(data.apiCalls),
+        endpoints: mapEndpoints(data.verificationTypes ?? []),
       }
     : null;
 
-  const { walletBalance, verification, highRiskCount, endpoints, activities, apiCalls } =
-    overviewDashboardData;
-  const dashboard = liveData ?? { verification, highRiskCount, activities, apiCalls };
+  const { walletBalance } = overviewDashboardData;
 
   return (
     <div className="flex flex-col gap-[32px]">
@@ -99,16 +113,16 @@ export default function OverviewPage() {
       <OverviewQuickActions actions={overviewQuickActions} />
 
       <div className="grid gap-[32px] xl:grid-cols-[722fr_573fr]">
-        <OverviewVerificationCard stats={dashboard.verification} />
-        <OverviewHighRiskCard count={dashboard.highRiskCount} />
+        <OverviewVerificationCard stats={liveData?.verification ?? null} />
+        <OverviewHighRiskCard count={liveData?.highRiskCount ?? null} />
       </div>
 
       <div className="grid gap-[32px] xl:grid-cols-[818fr_477fr]">
-        <OverviewEndpointsCard endpoints={endpoints} />
-        <OverviewRecentActivityCard activities={dashboard.activities} />
+        <OverviewEndpointsCard endpoints={liveData?.endpoints ?? []} />
+        <OverviewRecentActivityCard activities={liveData?.activities ?? []} />
       </div>
 
-      <OverviewApiCallsChart data={dashboard.apiCalls} />
+      <OverviewApiCallsChart data={liveData?.apiCalls ?? []} />
     </div>
   );
 }

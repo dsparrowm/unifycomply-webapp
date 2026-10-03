@@ -45,5 +45,5 @@ export type OverviewDashboardData = {
 
 export type OverviewDashboardApiData = Pick<
   OverviewDashboardData,
-  "verification" | "highRiskCount" | "activities" | "apiCalls"
+  "verification" | "highRiskCount" | "activities" | "apiCalls" | "endpoints"
 >;

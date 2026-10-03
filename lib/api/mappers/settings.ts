@@ -195,8 +195,8 @@ const DOCUMENT_LABELS: Record<string, string> = {
   "id-document": "ID Document",
   "proof-of-address": "Proof of Address",
   "liveness-check": "Liveness Check",
-  "certificat-of-incorporation": "Certificate of Incorporation",
-  "tax-id": "Tax ID",
+  "certificate-of-incorporation": "Certificate of Incorporation",
+  "tax-identity": "Tax Identity",
   "proof-of-business-address": "Proof of Business Address",
   "directors-id": "Directors ID",
 };

@@ -86,7 +86,7 @@ export type TmTransactionRecord = {
   category: TmTxCategory;
   riskScore: number;
   rulesTriggered: number;
-  status: TmTxStatus;
+  status: TmTxStatus | null;
   entityType: TmEntityType;
   severityLabel: string;
 };
@@ -161,6 +161,7 @@ export type TmRuleResult = {
   id: string;
   label: string;
   outcome: "cleared" | "flagged";
+  reason?: string;
 };
 
 export type TmTimelineStep = {
@@ -222,4 +223,43 @@ export type TmTransactionDetail = {
   timeline: TmTimelineStep[];
   quickStats: { label: string; value: string }[];
   metadata: { label: string; value: string }[];
+};
+
+export type TmCaseTone = "success" | "warning" | "danger" | "muted";
+
+export type TmCaseRationaleCard = {
+  byline: string | null;
+  statusLabel: string | null;
+  statusTone: TmCaseTone;
+  sarNumber: string;
+  filingDate: string;
+  priority: string;
+  priorityTone: TmCaseTone;
+  category: string;
+  narrative: string;
+  parties: string[];
+  documents: string[];
+};
+
+export type TmCasePndCard = {
+  byline: string | null;
+  statusLabel: string | null;
+  statusTone: TmCaseTone;
+  pndNumber: string;
+  filingDate: string;
+  riskLevel: string;
+  riskTone: TmCaseTone;
+  accountNumber: string;
+  reason: string;
+  freezeAmount: string;
+  legalBasis: string;
+  reviewDate: string;
+  documents: string[];
+};
+
+export type TmCaseManagement = {
+  assignedTo: string | null;
+  assignedToId: string | null;
+  rationale: TmCaseRationaleCard;
+  pnd: TmCasePndCard;
 };

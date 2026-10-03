@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Asks for the backend</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #1a1a1a;
+      --muted: #555;
+      --border: #ddd;
+      --bg: #fff;
+      --accent: #0f766e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Georgia, "Times New Roman", serif;
+      line-height: 1.5;
+      color: var(--text);
+      background: var(--bg);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin: 0 0 0.5rem;
+      color: var(--accent);
+    }
+    .meta { color: var(--muted); font-size: 0.95rem; margin-bottom: 1.5rem; }
+    .meta p { margin: 0.15rem 0; }
+    hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+    h2 { font-size: 1.25rem; margin: 1.75rem 0 0.75rem; }
+    p { margin: 0.5rem 0 0.75rem; }
+    ul { margin: 0.35rem 0 0.75rem; padding-left: 1.25rem; }
+    li { margin: 0.35rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 0.5rem 0 1rem; }
+    th, td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f5f5f5; font-weight: 600; }
+    code {
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 0.85em;
+      background: #f3f4f6;
+      padding: 0.1em 0.3em;
+      border-radius: 3px;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin: -1rem -1.5rem 1.25rem;
+      padding: 0.75rem 1.5rem;
+      background: #f0fdfa;
+      border-bottom: 1px solid #99f6e4;
+    }
+    .toolbar button {
+      font: inherit;
+      font-size: 0.9rem;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 0.9rem;
+      cursor: pointer;
+    }
+    .toolbar button:hover { background: #115e59; }
+    .toolbar span { align-self: center; color: var(--muted); font-size: 0.85rem; margin-right: auto; }
+    @media print {
+      .toolbar { display: none; }
+      body { padding: 0; max-width: none; }
+      h2 { break-after: avoid; }
+      li, tr { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <span>Open this page, then save it as a PDF.</span>
+    <button type="button" onclick="window.print()">Save as PDF</button>
+  </div>
+
+  <h1>Asks for the backend</h1>
+  <div class="meta">
+    <p><strong>From:</strong> Frontend (UnifyComply WebApp)</p>
+    <p><strong>To:</strong> Backend (same team)</p>
+    <p><strong>Date:</strong> 2 October 2026</p>
+    <p><strong>API:</strong> <code>https://unifycomply-api.rokxier.com</code></p>
+    <p><strong>Behaviour source:</strong> Frontend Integration Guide, 1 October 2026</p>
+  </div>
+
+  <p>These items were taken out of the notes for the UnifyComply team. That pack asks only for permission to add or change screens. This note is what the API still has to provide before those screens can tell the truth.</p>
+  <p><strong>Answered 2 October 2026.</strong> Status below is theirs: live, partial, or not built.</p>
+
+  <hr />
+
+  <h2>1. The review clock does not start on approve — live</h2>
+  <p>Approve now sets <code>lastReviewedAt</code> to now and <code>nextReviewAt</code> to now plus the app’s expiry days. Reject, offboard, or a return to review clears <code>nextReviewAt</code>. Due book is <code>status=onboarded</code> and <code>nextReviewAt &lt;= now</code>. Customers approved by hand before 2 October can still have <code>nextReviewAt: null</code> until a backfill. Show that as “no review scheduled”, not an error.</p>
+
+  <h2>2. A second run is not marked as a refresh — partial</h2>
+  <p><code>customerId</code> is live on <code>GET /v1/verifications</code>, <code>/verifications/kyc</code>, and <code>/verifications/kyb</code>. <code>cycle</code>, <code>trigger</code>, <code>reason</code>, and the 409 for a refresh on a customer who is not onboarded are not built. Until then, the reason a file returned to review is on the workflow event: <code>detail.trigger</code> and <code>detail.reason</code>.</p>
+
+  <h2>3. Send-back without blocking the customer — live</h2>
+  <p>Request resubmission is <code>POST /v1/customers/{kyc|kyb}/{customerId}/request-resubmission</code> with <code>{ issues, instructions? }</code>. Issues load from <code>resubmission-issues</code>. The list pill stays Pending and the row carries <code>resubmission</code>. Escalate is <code>POST …/escalate</code> with <code>{ notes, userId? }</code>. A high-risk approve returns 409 <code>escalation-required</code> until the case has been escalated.</p>
+
+  <h2>4. Assignment has no write — live</h2>
+  <p><code>PUT /v1/verifications/{workflowId}/assignee</code> with <code>{ userId }</code> or <code>{ userId: null }</code>. Queue rows return <code>assignedTo: { id, name }</code>. Cases use <code>POST /v1/transactions/{transactionId}/actions/assign-case</code>.</p>
+
+  <h2>5. Investigation dropdowns are not in the option registry — live</h2>
+  <p>New option keys: <code>case-resolution-types</code>, <code>case-actions-taken</code>, <code>pnd-resolution-types</code>, <code>pnd-statuses</code>, <code>investigation-entity-types</code>, <code>investigation-risk-levels</code>, <code>sar-statuses</code>. Send the option value. Keep the words already on the screen when a label differs.</p>
+
+  <h2>6. Reads the designed screens still cannot fill — not built</h2>
+  <p>They treat these as new features. Their suggestion to hide Lookup, hide Bank Analysis, and drop the standalone AML module is a screen change, so the screens stay until the UnifyComply team says otherwise.</p>
+
+  <h2>7. Behaviour the guide already marks as incomplete — partial</h2>
+  <p>SAR draft now returns 503 with <code>data.code === "ai-not-configured"</code>. Trigger rows carry <code>evaluated</code>. Two dead rules still wait on numbers from Compliance. Extra webhooks are not built, except <code>workflow.resubmission-requested</code>, which is live.</p>
+</body>
+</html>

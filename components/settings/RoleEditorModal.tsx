@@ -7,6 +7,7 @@ import { SettingsToggle } from "@/components/settings/SettingsToggle";
 import { getErrorMessage } from "@/lib/api/errors";
 import type { ApiPermissionOption } from "@/lib/api/types";
 import type { SettingsRole } from "@/types/settings";
+import { useRbac } from "@/lib/hooks/use-rbac";
 import { cn } from "@/lib/utils";
 
 export type RoleEditorValues = {
@@ -35,6 +36,8 @@ export function RoleEditorModal({
   onClose,
   onSubmit,
 }: RoleEditorModalProps) {
+  const { canPerform } = useRbac();
+  const settingsLocked = !canPerform("tenant-settings:update");
   const [name, setName] = useState("");
   const [riskLevelMinimum, setRiskLevelMinimum] = useState(0);
   const [riskLevelMaximum, setRiskLevelMaximum] = useState(1);
@@ -284,7 +287,7 @@ export function RoleEditorModal({
           </button>
           <button
             type="button"
-            disabled={isSubmitting}
+            disabled={isSubmitting || settingsLocked}
             onClick={() => void handleSubmit()}
             className={cn(
               "rounded-lg bg-[color:var(--accent-primary-hover)] px-4 py-2.5 text-sm font-medium text-white hover:bg-[color:var(--accent-primary)] disabled:opacity-60",

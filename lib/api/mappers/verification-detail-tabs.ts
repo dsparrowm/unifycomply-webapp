@@ -131,9 +131,10 @@ function mapTimeline(events: ApiVerificationEvent[] | undefined): KycTimelineEve
       asString(event.action)?.replace(/[._]/g, " ") ??
       asString(event.toStatus) ??
       "Workflow update";
+    const reason = isRecord(event.detail) ? asString(event.detail.reason) : undefined;
     return {
       id: asString(event.id) ?? `event-${index}`,
-      title: humanizeLabel(title),
+      title: reason ? `${humanizeLabel(title)} — ${reason}` : humanizeLabel(title),
       timestamp: formatRelativeTime(asString(event.createdAt)),
       status: index === 0 ? "in-progress" : "completed",
     };

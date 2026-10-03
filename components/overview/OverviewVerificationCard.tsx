@@ -29,7 +29,7 @@ function RateStat({ value, label, tone }: RateStatProps) {
 }
 
 type OverviewVerificationCardProps = {
-  stats: OverviewVerificationStats;
+  stats: OverviewVerificationStats | null;
 };
 
 export function OverviewVerificationCard({ stats }: OverviewVerificationCardProps) {
@@ -38,13 +38,17 @@ export function OverviewVerificationCard({ stats }: OverviewVerificationCardProp
       <OverviewSectionHeader icon={Activity} title="Total Verification" />
 
       <p className="mt-14 text-[60px] font-semibold leading-none text-[color:var(--text-primary)]">
-        {stats.total}
+        {stats ? stats.total : "—"}
       </p>
 
       <div className="mt-auto flex flex-wrap gap-x-8 gap-y-4 pt-8">
-        <RateStat value={stats.successRate} label="Success rate" tone="success" />
-        <RateStat value={stats.failureRate} label="Failure rate" tone="error" />
-        <RateStat value={stats.pendingReviewRate} label="Pending review" tone="warning" />
+        {stats ? (
+          <>
+            <RateStat value={stats.successRate} label="Success rate" tone="success" />
+            <RateStat value={stats.failureRate} label="Failure rate" tone="error" />
+            <RateStat value={stats.pendingReviewRate} label="Pending review" tone="warning" />
+          </>
+        ) : null}
       </div>
     </section>
   );

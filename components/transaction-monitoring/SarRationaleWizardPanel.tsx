@@ -19,7 +19,6 @@ import {
 import type { LucideIcon } from "lucide-react";
 import {
   createSarWizardState,
-  sarAssistantSeedReply,
   sarAssistantSuggestions,
   sarJurisdictionOptions,
   sarRedFlagOptions,
@@ -36,6 +35,7 @@ import type {
   SarWizardState,
   SarWizardStepId,
 } from "@/types/sar-rationale";
+import { useSarDraft } from "@/lib/hooks/use-transaction-monitoring";
 import { cn } from "@/lib/utils";
 
 const stepIcons: Record<SarWizardStepId, LucideIcon> = {
@@ -55,7 +55,7 @@ const labelClass = "mb-1.5 block text-sm font-medium text-[color:var(--text-prim
 
 type SarRationaleWizardPanelProps = {
   detail: TmTransactionDetail;
-  onSubmit?: (state: SarWizardState) => void;
+  onSubmit?: (state: SarWizardState) => void | Promise<void>;
 };
 
 export function SarRationaleWizardPanel({ detail, onSubmit }: SarRationaleWizardPanelProps) {
@@ -65,6 +65,8 @@ export function SarRationaleWizardPanel({ detail, onSubmit }: SarRationaleWizard
   const [assistantMessages, setAssistantMessages] = useState<SarAssistantMessage[]>([]);
   const [assistantPrompt, setAssistantPrompt] = useState("");
   const [savedOpen, setSavedOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const askDraft = useSarDraft(detail.id);
 
   const stepId = sarWizardSteps[stepIndex].id;
 
@@ -116,12 +118,18 @@ export function SarRationaleWizardPanel({ detail, onSubmit }: SarRationaleWizard
       role: "user",
       content: trimmed,
     };
-    setAssistantMessages((prev) => [
-      ...prev,
-      userMessage,
-      { ...sarAssistantSeedReply, id: `assistant-${Date.now()}` },
-    ]);
+    setAssistantMessages((prev) => [...prev, userMessage]);
     setAssistantPrompt("");
+    void askDraft(trimmed).then((content) => {
+      setAssistantMessages((prev) => [
+        ...prev,
+        {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content,
+        },
+      ]);
+    });
   };
 
   const primaryLabel =
@@ -205,15 +213,19 @@ export function SarRationaleWizardPanel({ detail, onSubmit }: SarRationaleWizard
         </button>
         <button
           type="button"
+          disabled={saving}
           onClick={() => {
             if (stepId === "export-review") {
-              onSubmit?.(state);
-              setSavedOpen(true);
+              setSaving(true);
+              void Promise.resolve(onSubmit?.(state))
+                .then(() => setSavedOpen(true))
+                .catch(() => undefined)
+                .finally(() => setSaving(false));
               return;
             }
             setStepIndex((index) => Math.min(sarWizardSteps.length - 1, index + 1));
           }}
-          className="inline-flex h-10 items-center justify-center rounded-lg bg-[color:var(--accent-primary-hover)] px-4 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)]"
+          className="inline-flex h-10 items-center justify-center rounded-lg bg-[color:var(--accent-primary-hover)] px-4 text-sm font-medium text-white transition-colors hover:bg-[color:var(--accent-primary)] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {primaryLabel}
         </button>

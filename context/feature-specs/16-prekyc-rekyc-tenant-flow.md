@@ -130,7 +130,7 @@ Offboard                 DELETE …/{customerId}
 - No documented `expiresAt` / `lastOnboardedAt` on the customer list row.
 - No list query `dueForRefresh=true`.
 - No documented “this verification is a refresh” flag.
-- Approve / Reject / Escalate still have no dedicated endpoints.
+- Approve, Reject, Escalate, and Request Resubmission have dedicated customer endpoints (wired 2026-10-03). A refresh is still not marked `cycle: "refresh"`.
 
 Until those exist: keep the **Start refresh** CTA and the filter chrome, but the filter cannot go live on real data. Log as a backend blocker; do not invent expiry by guessing `createdAt + kycExpiryDays` unless product signs that off.
 

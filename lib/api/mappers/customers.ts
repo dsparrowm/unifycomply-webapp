@@ -1,4 +1,5 @@
 import { countryLabelFromCode } from "@/lib/api/mappers/onboarding";
+import { formatNextReview, hasResubmission } from "@/lib/api/mappers/review-state";
 import { mapCustomerFlags } from "@/lib/api/mappers/customer-compliance";
 import { KYB_DOCUMENT_PREVIEW_SRC } from "@/lib/data/kyb-documents";
 import { buildKybDetailFromRecord } from "@/lib/data/kyb-detail";
@@ -544,6 +545,8 @@ export function mapApiKycToDetail(
   return {
     ...detail,
     extractedFields: overlayExtractedFields(detail.extractedFields, customer, unwrapCollection(documentsData)),
+    nextReviewLabel: formatNextReview(customer),
+    resubmission: hasResubmission(customer),
     flags,
     documentAlert:
       flags[0] !== undefined
@@ -597,5 +600,7 @@ export function mapApiKybToDetail(
     documents: documents.length > 0 ? mapKybDocuments(documents) : { sectionStatus: "Pending", documents: [] },
     shareholders: mapKybShareholders(unwrapCollection(shareholdersData)),
     flags: mapCustomerFlags(customer.flags),
+    nextReviewLabel: formatNextReview(customer),
+    resubmission: hasResubmission(customer),
   };
 }
